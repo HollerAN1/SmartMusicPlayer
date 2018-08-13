@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/library"
+        android:title="Library"
+        android:icon="@drawable/icon_library" />
+    <item android:id="@+id/playlists"
+        android:title="Playlists"
+        android:icon="@drawable/icon_playlist"/>
+    <item android:id="@+id/now_playing"
+        android:title="Now Playing"
+        android:icon="@drawable/icon_play"/>
+    <item android:id="@+id/settings"
+        android:title="Settings"
+        android:icon="@drawable/icon_settings"/>
+</menu>

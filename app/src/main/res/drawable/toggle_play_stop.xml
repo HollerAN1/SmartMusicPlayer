@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:constantSize="true">
+    <item
+        android:drawable="@drawable/ic_play_arrow_black_24dp"
+
+        android:id="@+id/play_state" />
+    <item
+        android:drawable="@drawable/ic_pause_black_24dp"
+        android:state_checked="true"
+        android:id="@+id/stop_state"/>
+    
+    <transition
+        android:drawable="@drawable/toggle_stop"
+        android:fromId="@id/play_state"
+        android:toId="@id/stop_state"
+        />
+
+    <transition
+        android:drawable="@drawable/toggle_play"
+        android:fromId="@id/stop_state"
+        android:toId="@id/play_state"
+        />
+    
+</animated-selector>

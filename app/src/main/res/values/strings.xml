@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">SmartPlayer</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="SONG_TITLE">Song Title</string>
+    <string name="ARTIST_NAME">Artist Name</string>
+    <string name="ALBUM_NAME">Album Name</string>
+
+    <!-- Library -->
+    <string name="LIBRARY">Library</string>
+
+    <!-- Now Playing -->
+    <string name="NOW_PLAYING">Now Playing</string>
+
+    <!-- Playlists -->
+    <string name="PLAYLISTS">Playlists</string>
+
+    <!-- Settings -->
+    <string name="SETTINGS">Settings</string>
+
+    <!-- Song Info -->
+    <!-- Tags -->
+    <string name="ALBUM_TAG">Album: </string>
+    <string name="YEAR_TAG">Year: </string>
+    <string name="TRACK_TAG">Track: </string>
+    <string name="GENRE_TAG">Genre: </string>
+    <string name="DURATION_TAG">Duration: </string>
+    <string name="PLAYS_TAG">Number of Plays: </string>
+
+
+
+    <!--Transition Strings-->
+    <string name="song_title_transition_name">song_title</string>
+    <string name="artist_name_transition_name">artist_name</string>
+    <string name="album_art_transition_name">album_art</string>
+    <string name="play_button_transition_name">play_button</string>
+    <string name="album_name_transition_name">album_name</string>
+    <string name="album_container_transition_name">container</string>
+
+
+    <!--Animated Vector Strings-->
+    <string name="path_play">M16,24L38,24L27.3,30.8L16,38ZM16,10L27.3,17.2L38,24L16,24Z</string>
+    <string name="path_stop">M6,6h12v12H6z</string>
+    <string name="path_pause">M12,10L20,10L20,38L12,38ZM28,10L36,10L36,38L28,38Z</string>
+
+    <string name="path_play_vector">M8,5L19,12L19,12L8,19z</string>
+    <string name="path_stop_vector">M6,6L18,6L18,18L6,18z</string>
+</resources>

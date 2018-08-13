@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:onClick="openNowPlaying"
+    android:elevation="5dp"
+    android:background="@color/colorPrimaryDark"
+    >
+    <!--android:background="#CC000000"-->
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/album_cover_card"
+        android:layout_gravity="center_horizontal"
+        app:cardElevation="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="10dp">
+
+        <ImageView
+            android:id="@+id/image_album_art"
+            android:background="@drawable/temp_album_art"
+            android:scaleType="fitCenter"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:contentDescription="smallActionBarAlbumArt"
+            android:transitionName="@string/album_art_transition_name"
+            />
+    </android.support.v7.widget.CardView>
+
+
+
+    <RelativeLayout
+        android:id="@+id/small_button_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        >
+
+        <ImageView
+            android:id="@+id/now_playing_small_play_button"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:src="@drawable/small_play_button"
+            android:tint="@color/rippleColor"
+            android:scaleType="centerCrop"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="0dp"
+            android:onClick="onPlayBtnClick"
+            android:transitionName="@string/play_button_transition_name"
+            />
+
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/song_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/album_cover_card"
+        android:layout_toLeftOf="@id/small_button_items">
+
+        <TextView
+            android:id="@+id/now_playing_small_songName"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:text="Song Title"
+            android:textSize="18dp"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:ellipsize="marquee"
+            android:transitionName="@string/song_title_transition_name"/>
+
+        <TextView
+            android:id="@+id/now_playing_small_artistName"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:text="Artist Name"
+            android:textSize="12dp"
+            android:fontFamily="sans-serif-condensed"
+            android:textAllCaps="true"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/now_playing_small_songName"
+            android:transitionName="@string/artist_name_transition_name"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

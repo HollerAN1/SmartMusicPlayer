@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="500"
+        android:interpolator="@android:interpolator/linear"
+        android:propertyName="pathData"
+        android:valueFrom="@string/path_play_vector"
+        android:valueTo="@string/path_stop_vector"
+        android:valueType="pathType"
+        />
+</set>

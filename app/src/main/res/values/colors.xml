@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+
+
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+
+    <!--<color name="colorPrimary">#000000</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorPrimaryDark">#000000</color>-->
+    <!--<color name="colorPrimaryDark">#212121</color>-->
+    <color name="colorAccent">#005b4f</color>
+    <color name="transparent">#00000000 </color>
+    <!--<color name="rippleColor">#f816a463</color>-->
+    <!--<color name="themeGreen">#2e8b57</color>-->
+
+
+    <!-- Grey Blue Color Scheme -->
+    <color name="colorPrimaryDark">#e65100</color>
+    <color name="colorPrimary">#ff8f00</color>
+    <color name="themeGreen">#ffffff</color>
+    <color name="rippleColor">#E0F2F1</color>
+    <color name="background">#cfd8dc</color>
+    <color name="tintedBackground">#ffca4f</color>
+    <color name="background_material_light">#fff8e1</color>
+
+
+</resources>

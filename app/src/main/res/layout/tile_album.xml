@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="172dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@android:color/white"
+    android:layout_height="220dp"
+    android:layout_weight="1"
+    android:elevation="10dp"
+    android:layout_margin="3dp"
+    android:translationZ="10dp"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="10dp"
+    android:id="@+id/tile_album_card"
+    android:transitionName="@string/album_container_transition_name">
+
+    <RelativeLayout
+        android:id="@+id/list_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="5dp">
+
+
+        <ImageButton
+            android:id="@+id/list_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="3dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_more_vert_black_24dp" />
+
+
+        <LinearLayout
+            android:id="@+id/list_songInfo"
+            android:layout_width="wrap_content"
+            android:layout_toLeftOf="@id/list_options"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="8dp"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tile_album_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="Shape of you"
+                android:textColor="@android:color/black"
+                android:textSize="13dp"
+                android:transitionName="@string/album_name_transition_name"/>
+
+            <TextView
+                android:id="@+id/tile_artist_name"
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="Ed Sheeran"
+                android:textSize="11dp"
+                android:textColor="@android:color/darker_gray"
+                android:transitionName="@string/artist_name_transition_name"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:elevation="10dp"
+        android:translationZ="10dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        android:transitionName="@string/album_art_transition_name">
+
+        <ImageView
+            android:id="@+id/tile_albumArt"
+            android:layout_width="172dp"
+            android:layout_height="172dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/temp_album_art" />
+    </android.support.v7.widget.CardView>
+</android.support.v7.widget.CardView>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:backgroundTint="@color/rippleColor"
+        app:cardElevation="20dp">
+
+        <ImageView
+            android:id="@+id/now_playing_favorite_ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/favorite_button_large"
+            android:tint="@android:color/holo_red_light"
+            android:elevation="50dp"
+            android:padding="65dp"
+            android:visibility="gone"
+            />
+
+        <!--<ImageView-->
+            <!--android:id="@+id/now_playing_album_art"-->
+            <!--android:layout_width="280dp"-->
+            <!--android:layout_height="280dp"-->
+            <!--android:elevation="20dp"-->
+            <!--android:transitionName="@string/album_art_transition_name" />-->
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>

@@ -1,0 +1,83 @@
+<resources>
+
+    <!--&lt;!&ndash; Base application theme. &ndash;&gt;-->
+    <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--</style>-->
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/tintedBackground</item>
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <!--<item name="windowContentOverlay">@null</item>-->
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <!--<item name="windowActionBarOverlay">true</item>-->
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+        <item name="android:windowEnterTransition">@transition/change_image_transform</item>
+        <item name="android:windowExitTransition">@transition/change_image_transform</item>
+
+    </style>
+
+    <style name="MyTheme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_drawable</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="FlatButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlHighlight">@color/transparent</item>
+    </style>
+
+    <style name="AppTheme.Main">
+        <item name="android:windowExitTransition">@transition/main_exit</item>
+        <item name="android:windowReenterTransition">@transition/main_reenter</item>
+        <!-- enable window content transitions -->
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
+    <style name="AppTheme.Detail">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowEnterTransition">@transition/detail_enter</item>
+    </style>
+
+    <style name="MediaPlayerTheme" parent="AppTheme" >
+        <item name="android:colorBackground">@color/background_material_light</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.Transparent" parent="AppTheme">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="colorPrimary">@android:color/transparent</item>
+    </style>
+
+
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/tintedBackground</item>
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <!--<item name="windowContentOverlay">@null</item>-->
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="android:windowEnterTransition">@transition/change_image_transform</item>
+        <item name="android:windowExitTransition">@transition/change_image_transform</item>
+    </style>
+
+
+</resources>

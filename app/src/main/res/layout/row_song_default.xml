@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:padding="5dp"
+    android:id="@+id/song_background">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp">
+        <TextView
+            android:id="@+id/song_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/SONG_TITLE"
+            android:textSize="18dp"
+            android:textColor="@color/colorPrimaryDark" />
+        <TextView
+            android:id="@+id/song_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4:36" />
+    </LinearLayout>
+
+    <com.wnafee.vector.MorphButton
+        android:id="@+id/song_btnPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/list_options"
+        android:layout_toStartOf="@id/list_options"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        app:vc_startDrawable="@drawable/ic_play_to_stop_anim"
+        app:vc_endDrawable="@drawable/ic_stop_to_play_anim"/>
+
+    <ImageButton
+        android:id="@+id/list_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_more_vert_black_24dp" />
+
+</RelativeLayout>

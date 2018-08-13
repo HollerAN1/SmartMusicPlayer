@@ -1,0 +1,70 @@
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="true"
+    android:duration="3000"
+    android:interpolator="@android:interpolator/accelerate_decelerate">
+    <!-- Before rotating, immediately set the alpha to 0. -->
+    <!--<objectAnimator-->
+        <!--android:valueFrom="1.0"-->
+        <!--android:valueTo="0.0"-->
+        <!--android:propertyName="alpha"-->
+        <!--android:duration="0" />-->
+
+    <!--&lt;!&ndash; Rotate. &ndash;&gt;-->
+    <!--<objectAnimator-->
+        <!--android:valueFrom="180"-->
+        <!--android:valueTo="0"-->
+        <!--android:propertyName="rotationY"-->
+        <!--android:interpolator="@android:interpolator/accelerate_decelerate"-->
+        <!--android:duration="3000" />-->
+
+    <!--&lt;!&ndash; Half-way through the rotation (see startOffset), set the alpha to 1. &ndash;&gt;-->
+    <!--<objectAnimator-->
+        <!--android:valueFrom="0.0"-->
+        <!--android:valueTo="1.0"-->
+        <!--android:propertyName="alpha"-->
+        <!--android:startOffset="1500"-->
+        <!--android:duration="1" />-->
+
+    <!--<alpha-->
+        <!--android:fromAlpha="1.0"-->
+        <!--android:toAlpha="0.0"-->
+        <!--/>-->
+    <!--<rotate-->
+        <!--android:fromDegrees="180"-->
+        <!--android:toDegrees="0"-->
+        <!--android:pivotX="50%"-->
+        <!--android:pivotY="50%"-->
+        <!--/>-->
+    <!--<alpha-->
+        <!--android:fromAlpha="0.0"-->
+        <!--android:toAlpha="1.0"-->
+        <!--/>-->
+    <!--<translate-->
+        <!--android:fromXDelta="100%"-->
+        <!--android:toXDelta="0%"-->
+        <!--/>-->
+
+    <!--<scale-->
+        <!--android:fromXScale="100%"-->
+        <!--android:toXScale="0%"-->
+        <!--android:pivotX="50%"-->
+        <!--android:pivotY="50%"-->
+        <!--/>-->
+    <scale
+        android:duration="200"
+        android:fromXScale="0.0"
+        android:fromYScale="1.0"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="200"
+        android:toXScale="1.0"
+        android:toYScale="1.0" />
+
+    <alpha
+        android:duration="1"
+        android:fromAlpha="0.0"
+        android:startOffset="200"
+        android:toAlpha="1.0" />
+
+</set>
