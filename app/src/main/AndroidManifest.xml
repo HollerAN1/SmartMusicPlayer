@@ -35,6 +35,8 @@
         <activity android:name=".album.AlbumActivity"
             android:theme="@style/NoActionBar"/>
 
+        <service android:name=".SPDatabaseService" />
+
     </application>
 
 </manifest>

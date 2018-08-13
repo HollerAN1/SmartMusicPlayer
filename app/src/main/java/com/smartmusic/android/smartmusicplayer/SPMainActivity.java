@@ -40,7 +40,7 @@ public class SPMainActivity
         implements NavigationView.OnNavigationItemSelectedListener, SongEventListener{
 
 
-    MPDatabaseService mService;
+    SPDatabaseService mService;
     boolean mBound = false;
 
 
@@ -171,8 +171,8 @@ public class SPMainActivity
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to MPDatabaseService, cast the IBinder and get Service instance
-            MPDatabaseService.MPDatabaseBinder binder = (MPDatabaseService.MPDatabaseBinder) service;
+            // We've bound to SPDatabaseService, cast the IBinder and get Service instance
+            SPDatabaseService.SPDatabaseBinder binder = (SPDatabaseService.SPDatabaseBinder) service;
             mService = binder.getService();
             mBound = true;
         }
@@ -187,7 +187,7 @@ public class SPMainActivity
     protected void onStart() {
         super.onStart();
         // Bind to databaseService
-        Intent intent = new Intent(this, MPDatabaseService.class);
+        Intent intent = new Intent(this, SPDatabaseService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 

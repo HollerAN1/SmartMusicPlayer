@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SmartPlayer</string>
+
+
     <string name="open">Open</string>
     <string name="close">Close</string>
 
@@ -30,7 +32,6 @@
     <string name="GENRE_TAG">Genre: </string>
     <string name="DURATION_TAG">Duration: </string>
     <string name="PLAYS_TAG">Number of Plays: </string>
-
 
 
     <!--Transition Strings-->

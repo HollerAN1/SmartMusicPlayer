@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Database service that runs as long as the
@@ -27,10 +28,10 @@ import java.util.List;
  * Created by holle on 7/29/2018.
  */
 
-public class MPDatabaseService extends Service {
+public class SPDatabaseService extends Service {
 
     // Binder given to clients
-    private final IBinder mBinder = new MPDatabaseBinder();
+    private final IBinder mBinder = new SPDatabaseBinder();
 
     private static final List<SongInfo> _songs = Collections.synchronizedList(new ArrayList<SongInfo>());
     private static final List<AlbumInfo> _albums = Collections.synchronizedList(new ArrayList<AlbumInfo>());
@@ -38,13 +39,13 @@ public class MPDatabaseService extends Service {
     private static final List<PlaylistInfo> _playlists = Collections.synchronizedList(new ArrayList<PlaylistInfo>());
 
 
-    public class MPDatabaseBinder extends Binder {
-        public MPDatabaseService getService() {
-            // Return this instance of MPDatabaseBinder so clients
+    public class SPDatabaseBinder extends Binder {
+        public SPDatabaseService getService() {
+            // Return this instance of SPDatabaseBinder so clients
             // can call public methods
-            return MPDatabaseService.this;
+            return SPDatabaseService.this;
         }
-    } // end MPDatabaseBinder
+    } // end SPDatabaseBinder
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -211,4 +212,9 @@ public class MPDatabaseService extends Service {
         _albums.add(al);
     }
 
-} // end com.smartmusic.android.smartmusicplayer.MPDatabaseService
+    public Integer getRandomInt(){
+        Random random = new Random();
+        return  random.nextInt();
+    }
+
+} // end com.smartmusic.android.smartmusicplayer.SPDatabaseService
