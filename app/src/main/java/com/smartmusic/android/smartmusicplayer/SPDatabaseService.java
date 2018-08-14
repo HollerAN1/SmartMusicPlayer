@@ -52,7 +52,11 @@ public class SPDatabaseService extends Service {
         return mBinder;
     }
 
-
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        loadDatabase();
+    }
 
     /* ------------- Public methods clients can call ----------------- */
 

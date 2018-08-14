@@ -12,7 +12,7 @@ import java.util.Comparator;
 
 public class PlaylistDateComparator implements Comparator<PlaylistInfo> {
 
-    PlaylistDateComparator(){}
+    public PlaylistDateComparator(){}
 
     @Override
     public int compare(PlaylistInfo o1, PlaylistInfo o2) {
