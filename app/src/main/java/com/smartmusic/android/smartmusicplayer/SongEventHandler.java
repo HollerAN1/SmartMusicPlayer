@@ -42,6 +42,16 @@ public class SongEventHandler {
                     listener.onShuffleOffEvent(songEvent);
                 }
                 break;
+            case SONG_ADDED:
+                for(SongEventListener listener : songEventListenerList) {
+                    listener.onSongAddedEvent(songEvent);
+                }
+                break;
+            case SONG_REMOVED:
+                for(SongEventListener listener : songEventListenerList) {
+                    listener.onSongRemovedEvent(songEvent);
+                }
+                break;
 //            case SONG_STOPPED:
 //                for(SongEventListener listener : songEventListenerList){
 //                    listener.onSongStopEvent(songEvent);

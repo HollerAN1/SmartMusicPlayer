@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.SongPlayer;
+import com.smartmusic.android.smartmusicplayer.SongPlayerService;
 import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.wnafee.vector.MorphButton;
@@ -49,7 +49,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
     /*Resources*/
     private static SongAdapter songAdapter;
-    private SongPlayer songPlayer;
+    private SongPlayerService songPlayer;
 
     /*Fonts*/
     Typeface tvSongNameFont;
@@ -248,6 +248,16 @@ public class SongListFragment extends Fragment implements SongEventListener {
             setRecyclerViewNormalTheme(prevPosition);
             prevExists = false;
         }
+    }
+
+    @Override
+    public void onSongAddedEvent(SongEvent e) {
+
+    }
+
+    @Override
+    public void onSongRemovedEvent(SongEvent e) {
+
     }
 
     @Override

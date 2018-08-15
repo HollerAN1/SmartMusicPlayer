@@ -1,6 +1,7 @@
 package com.smartmusic.android.smartmusicplayer;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,7 +31,11 @@ import java.util.Random;
 
 public class SPDatabaseService extends Service {
 
+
+    private SongEventHandler mEventHandler = new SongEventHandler();
+
     // Binder given to clients
+    private boolean mBound = false;
     private final IBinder mBinder = new SPDatabaseBinder();
 
     private static final List<SongInfo> _songs = Collections.synchronizedList(new ArrayList<SongInfo>());
@@ -49,16 +54,27 @@ public class SPDatabaseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        mBound = true;
         return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mBound = false;
+        return super.onUnbind(intent);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        loadDatabase();
+//        loadDatabase();
     }
 
     /* ------------- Public methods clients can call ----------------- */
+
+    public boolean isBound(){
+        return this.mBound;
+    }
 
     public ArrayList<SongInfo> getSongs(Comparator<SongInfo> sort){
         synchronized ( _songs ) {
@@ -146,44 +162,70 @@ public class SPDatabaseService extends Service {
         }
     }
 
-    private void loadDatabase(){
-        /*Uniform Resource Identifier (URI)
-        A Uri object is usually used to tell a ContentProvider what
-        we want to access by reference. It is an immutable one-to-one
-         mapping to a resource or data. The method Uri.parse creates
-          a new Uri object from a properly formatted String.
-        * */
+    public int getTotalSongCount() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //locates media
         String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
         Cursor cursor = this.getContentResolver().query(uri,null,selection,null,null);
         if(cursor != null){
-            if(cursor.moveToFirst()){
-                do{
-                    String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                    String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                    String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                    String track = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
-                    String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                    String year = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
-                    String album= cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-
-                    Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
-                    Uri albumArt = ContentUris.withAppendedId(albumArtUri, cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
-
-
-                    SongInfo s = new SongInfo(name,artist, album, url, albumArt);
-                    _songs.add(s);
-
-
-                    updateArtists(s);
-                    updateAlbums(s);
-
-                }while (cursor.moveToNext());
-            }
-
-            cursor.close();
-
+            return cursor.getCount();
         }
+        return 0;
+    }
+
+    public void loadDatabase(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                /*Uniform Resource Identifier (URI)
+                A Uri object is usually used to tell a ContentProvider what
+                we want to access by reference. It is an immutable one-to-one
+                 mapping to a resource or data. The method Uri.parse creates
+                  a new Uri object from a properly formatted String.
+                * */
+                Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //locates media
+                String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
+                Cursor cursor = getContentResolver().query(uri,null,selection,null,null);
+                if(cursor != null){
+                    if(cursor.moveToFirst()){
+                        do{
+                            String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                            String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                            String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                            String track = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
+                            String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                            String year = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
+                            String album= cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
+
+                            Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
+                            Uri albumArt = ContentUris.withAppendedId(albumArtUri, cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
+
+
+                            SongInfo s = new SongInfo(name,artist, album, url, albumArt);
+                            _songs.add(s);
+
+
+                            updateArtists(s);
+                            updateAlbums(s);
+
+                            mEventHandler.dispatchEvent(new SongEvent(s, cursor.getColumnCount(), SongEvent.Type.SONG_ADDED));
+
+                            // Gives time for song loading
+                            // animation to display.
+                            try {
+                                Thread.sleep(5);
+                            } catch (InterruptedException ex) {
+
+                            }
+                        } while (cursor.moveToNext());
+                    }
+
+                    cursor.close();
+
+                }
+            }
+        });
+
+        thread.start();
     }
 
     private void updateArtists(SongInfo s){

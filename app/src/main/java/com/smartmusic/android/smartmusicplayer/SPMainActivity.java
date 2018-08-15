@@ -4,19 +4,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -56,23 +53,9 @@ public class SPMainActivity
     FragmentManager fragmentManager;
     FragmentTransaction transaction;
 
-
-    /*Saved States*/
-    private NowPlaying nowPlaying;
-    private Library library;
-    private Playlists playlists;
-    private Settings settings;
-
     private static SongInfo currentSong = null;
-    private static SongPlayer songPlayer = null;
+    private static SongPlayerService songPlayer = null;
     private static boolean shuffleOn = false;
-
-    private Fragment currFrag;
-
-    public final static String LIBRARY_TAG = "library_tag";
-    public final static String NOW_PLAYING_TAG = "now_playing_tag";
-    public final static String PLAYLISTS_TAG = "playlists_tag";
-    public final static String SETTINGS_TAG = "settings_tag";
 
 
     private TextView navName = null;
@@ -101,12 +84,6 @@ public class SPMainActivity
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
 
-    /*Fonts*/
-    Typeface tvSongNameFont;
-    Typeface nowPlayingFont;
-
-    Toolbar toolbar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +91,7 @@ public class SPMainActivity
         setContentView(R.layout.activity_smmain);
 
         // Initialize media player
-        songPlayer = new SongPlayer();
+        songPlayer = new SongPlayerService();
         songEventHandler.addSongEventListener(this);
 
         mFragmentContainer = (LinearLayout)findViewById(R.id.fragment_container);
@@ -124,7 +101,8 @@ public class SPMainActivity
         navName = (TextView)findViewById(R.id.navigation_header_songName);
         navArtist = (TextView)findViewById(R.id.navigation_header_artistName);
         navAlbumArt = (ImageView)findViewById(R.id.navigation_album_art);
-        /*---------------------------Navigation Drawer---------------------------*/
+
+        /*------------------------ Setup Navigation Drawer---------------------------*/
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
@@ -146,7 +124,7 @@ public class SPMainActivity
 
 
         // Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
+        // the fragment_container
         if(findViewById(R.id.fragment_container) != null) {
 
             // However, if we're being restored from a previous state,
@@ -158,11 +136,8 @@ public class SPMainActivity
 
             /*Instantiates library as first fragment*/
             Library library = new Library();
-            this.library = library;
 
-            this.currFrag = library;
-
-            transaction.add(R.id.fragment_container, library, LIBRARY_TAG);
+            transaction.add(R.id.fragment_container, library, getResources().getString(R.string.LIBRARY_TAG));
             transaction.commit();
         }
     }
@@ -214,9 +189,9 @@ public class SPMainActivity
 
     /**
      * Returns the song player object used to play a song.
-     * @return SongPlayer the song player
+     * @return SongPlayerService the song player
      */
-    public static SongPlayer getSongPlayer(){
+    public static SongPlayerService getSongPlayer(){
         return songPlayer;
     }
 
@@ -308,7 +283,7 @@ public class SPMainActivity
             //------------------------------------LIBRARY-----------------------------------------//
             case R.id.library:
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
-                Library libraryFrag = (Library) getSupportFragmentManager().findFragmentByTag(LIBRARY_TAG);
+                Library libraryFrag = (Library) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.LIBRARY_TAG));
 
                 if(libraryFrag == null) {
                     libraryFrag = new Library();
@@ -316,7 +291,7 @@ public class SPMainActivity
 
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, libraryFrag, LIBRARY_TAG)
+                        .replace(R.id.fragment_container, libraryFrag, getResources().getString(R.string.LIBRARY_TAG))
                         .addToBackStack(null)
                         .commit();
 
@@ -324,7 +299,7 @@ public class SPMainActivity
             //-------------------------------------NOW_PLAYING-------------------------------------//
             case R.id.now_playing:
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
-                NowPlaying nowPlayingFrag = (NowPlaying) getSupportFragmentManager().findFragmentByTag(NOW_PLAYING_TAG);
+                NowPlaying nowPlayingFrag = (NowPlaying) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.NOW_PLAYING_TAG));
 
                 if(nowPlayingFrag == null) {
                     nowPlayingFrag = new NowPlaying();
@@ -332,7 +307,7 @@ public class SPMainActivity
 
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, nowPlayingFrag, NOW_PLAYING_TAG)
+                        .replace(R.id.fragment_container, nowPlayingFrag, getResources().getString(R.string.NOW_PLAYING_TAG))
                         .addToBackStack(null)
                         .commit();
 
@@ -340,7 +315,7 @@ public class SPMainActivity
             //-------------------------------------PLAYLISTS--------------------------------------//
             case R.id.playlists:
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
-                Playlists playlistsFrag = (Playlists) getSupportFragmentManager().findFragmentByTag(PLAYLISTS_TAG);
+                Playlists playlistsFrag = (Playlists) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.PLAYLISTS_TAG));
 
                 if(playlistsFrag == null) {
                     playlistsFrag = new Playlists();
@@ -348,7 +323,7 @@ public class SPMainActivity
 
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, playlistsFrag, PLAYLISTS_TAG)
+                        .replace(R.id.fragment_container, playlistsFrag, getResources().getString(R.string.PLAYLISTS_TAG))
                         .addToBackStack(null)
                         .commit();
 
@@ -356,7 +331,7 @@ public class SPMainActivity
             //-------------------------------------SETTINGS---------------------------------------//
             case R.id.settings:
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
-                Settings settingsFrag = (Settings) getSupportFragmentManager().findFragmentByTag(SETTINGS_TAG);
+                Settings settingsFrag = (Settings) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.SETTINGS_TAG));
 
                 if(settingsFrag == null){
                     settingsFrag = new Settings();
@@ -364,7 +339,7 @@ public class SPMainActivity
 
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, settingsFrag, SETTINGS_TAG)
+                        .replace(R.id.fragment_container, settingsFrag, getResources().getString(R.string.SETTINGS_TAG))
                         .addToBackStack(null)
                         .commit();
 
@@ -421,6 +396,16 @@ public class SPMainActivity
 
         navArtist.setText("Select a song.");
         navName.setText("");
+    }
+
+    @Override
+    public void onSongAddedEvent(SongEvent e) {
+
+    }
+
+    @Override
+    public void onSongRemovedEvent(SongEvent e) {
+
     }
 
     @Override

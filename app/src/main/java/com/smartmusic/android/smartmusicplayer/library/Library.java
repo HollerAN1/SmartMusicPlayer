@@ -32,7 +32,7 @@ import android.widget.Toast;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.SongPlayer;
+import com.smartmusic.android.smartmusicplayer.SongPlayerService;
 import com.smartmusic.android.smartmusicplayer.model.AlbumInfo;
 import com.smartmusic.android.smartmusicplayer.model.ArtistInfo;
 import com.smartmusic.android.smartmusicplayer.model.SongInfo;
@@ -87,7 +87,7 @@ public class Library extends Fragment implements SongEventListener {
     private ImageView nowPlayingAlbumArt;
     private ImageView nowPlayingActionButton;
 
-    private static SongPlayer songPlayer;
+    private static SongPlayerService songPlayer;
 
 
     @Override
@@ -424,6 +424,16 @@ public class Library extends Fragment implements SongEventListener {
     @Override
     public void onSongStopEvent(SongEvent e) {
         hideNowPlayingBar();
+    }
+
+    @Override
+    public void onSongAddedEvent(SongEvent e) {
+
+    }
+
+    @Override
+    public void onSongRemovedEvent(SongEvent e) {
+
     }
 }
 

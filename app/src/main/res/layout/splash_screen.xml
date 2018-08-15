@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/weave">
+
+    <ProgressBar
+        android:id="@+id/splash_screen_progress_bar"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
+        android:layout_marginRight="5dp"
+        app:theme="@style/Widget.AppCompat.ProgressBar"/>
+
+    <TextView
+        android:id="@+id/splash_screen_progress_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/splash_screen_progress_bar"
+        android:text="Getting songs..."
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="18dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adding Songs"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="18dp"
+        android:layout_above="@id/splash_screen_progress_bar"
+        />
+
+</RelativeLayout>

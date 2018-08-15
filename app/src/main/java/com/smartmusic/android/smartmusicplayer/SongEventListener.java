@@ -16,6 +16,8 @@ public interface SongEventListener extends EventListener{
     public void onShuffleOnEvent(SongEvent e);
     public void onShuffleOffEvent(SongEvent e);
     public void onSongStopEvent(SongEvent e);
+    public void onSongAddedEvent(SongEvent e);
+    public void onSongRemovedEvent(SongEvent e);
 //
 //    public void onNextSongEvent(SongEvent e);
 //

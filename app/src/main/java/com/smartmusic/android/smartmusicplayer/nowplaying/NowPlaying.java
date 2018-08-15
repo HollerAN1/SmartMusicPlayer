@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.SongPlayer;
+import com.smartmusic.android.smartmusicplayer.SongPlayerService;
 import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
@@ -29,7 +29,7 @@ import jp.wasabeef.picasso.transformations.BlurTransformation;
 public class NowPlaying extends Fragment implements SongEventListener {
 
     SongInfo currentSong;
-    SongPlayer songPlayer;
+    SongPlayerService songPlayer;
 
     /*Views*/
 //    private ImageView albumArt;
@@ -80,7 +80,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
         return v;
     }
 
-    private void setUpNowPlaying(View v, SongInfo info, final SongPlayer songPlayer){
+    private void setUpNowPlaying(View v, SongInfo info, final SongPlayerService songPlayer){
 
         if( songPlayer.getMediaPlayer() == null || info == null){
             return;
@@ -425,6 +425,16 @@ public class NowPlaying extends Fragment implements SongEventListener {
         currentSong = null;
         setUpNowPlaying(null, null, SPMainActivity.getSongPlayer());
         setUpAlbumArt(null, null);
+    }
+
+    @Override
+    public void onSongAddedEvent(SongEvent e) {
+
+    }
+
+    @Override
+    public void onSongRemovedEvent(SongEvent e) {
+
     }
 
     @Override
