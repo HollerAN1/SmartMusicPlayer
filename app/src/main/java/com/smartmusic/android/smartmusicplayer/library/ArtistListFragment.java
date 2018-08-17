@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
+import com.smartmusic.android.smartmusicplayer.comparators.artists.ArtistNameComparator;
 import com.smartmusic.android.smartmusicplayer.model.ArtistInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 
@@ -26,14 +27,6 @@ public class ArtistListFragment extends Fragment {
     private RecyclerView recyclerView = null;
     private ArtistAdapter artistAdapter = null;
 
-    private Typeface artistNameFont = null;
-    private Typeface songCountFont = null;
-
-    public final static String LIBRARY_TAG = "library_tag";
-    public final static String NOW_PLAYING_TAG = "now_playing_tag";
-    public final static String PLAYLISTS_TAG = "playlists_tag";
-    public final static String SETTINGS_TAG = "settings_tag";
-
     View rootView = null;
 
     public ArtistListFragment() {
@@ -41,8 +34,7 @@ public class ArtistListFragment extends Fragment {
     }
 
     private void initData(){
-//        Library libraryFragment = (Library) getFragmentManager().findFragmentByTag(LIBRARY_TAG);
-        this._artists = SPMainActivity.getArtists();
+        this._artists = SPMainActivity.mDatabaseService.getArtists(new ArtistNameComparator());
     }
 
     @Override
@@ -60,13 +52,8 @@ public class ArtistListFragment extends Fragment {
 
 
     private void setUpRecyclerView(View fragView){
-
-        /*Links objects on XML to javadoc*/
-        artistNameFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Raleway-Regular.ttf");
-        songCountFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/highTea.otf");
-
-        recyclerView = (RecyclerView) fragView.findViewById(R.id.recyclerView);
-        artistAdapter = new ArtistAdapter(getContext(), _artists, artistNameFont, songCountFont);
+        recyclerView = fragView.findViewById(R.id.recyclerView);
+        artistAdapter = new ArtistAdapter(getContext(), _artists);
 
         recyclerView.setAdapter(artistAdapter);
 

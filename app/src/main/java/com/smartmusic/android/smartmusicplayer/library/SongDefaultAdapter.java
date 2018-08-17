@@ -40,14 +40,6 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
 
     private OnItemClickListener backOnItemClickListener;
 
-    Typeface songNameTypeface;
-    Typeface artistNameTypeface;
-
-    /**
-     * Tells whether a song is currently playing.
-     */
-    Boolean songPlaying;
-
     SongDefaultHolder songDefaultHolder;
 
     /**
@@ -57,19 +49,8 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
      */
     public SongDefaultAdapter(Context context, ArrayList<SongInfo> songs, Typeface typeface, Typeface aTypeface) {
         this.context = context;
-        Collections.sort(songs);
-        System.err.println("Songs size:" + songs.size());
         this._songs = songs;
-        this.songNameTypeface = typeface;
-        this.artistNameTypeface = aTypeface;
-        this.songPlaying = false;
     }
-
-    public void setSongPlaying(Boolean bool){
-        this.songPlaying = bool;
-    }
-
-    public boolean getSongPlaying(){ return this.songPlaying; }
 
     public interface OnItemClickListener {
         void onItemClick(MorphButton b, View view, SongInfo obj, int position, ArrayList<SongInfo> songs, int i);
@@ -144,7 +125,9 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
         final SongInfo s = _songs.get(i);
         this.songDefaultHolder = songDefaultHolder;
         songDefaultHolder.tvSongName.setText(_songs.get(i).getSongname());
-        songDefaultHolder.tvSongName.setTypeface(songNameTypeface);
+        songDefaultHolder.tvSongName.setTypeface(Typeface.createFromAsset(
+                                                            context.getAssets(),
+                                                            context.getString(R.string.raleway_regular_font)));
 
         songDefaultHolder.btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,9 +220,6 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
             background = (View)itemView.findViewById(R.id.song_background);
             tvDuration = (TextView) itemView.findViewById(R.id.song_duration);
         }
-        public void setSelected(Boolean bool){this.selected = bool;}
-
-        public Boolean isSelected(){return this.selected;}
 
         public void onClick(View view){
 

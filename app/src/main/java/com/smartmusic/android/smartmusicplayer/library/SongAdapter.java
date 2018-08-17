@@ -46,14 +46,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
     private OnItemClickListener backOnItemClickListener;
 
-    Typeface songNameTypeface;
-    Typeface artistNameTypeface;
-
-    /**
-     * Tells whether a song is currently playing.
-     */
-    Boolean songPlaying;
-
     SongHolder songHolder;
 
     /**
@@ -61,21 +53,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
      * @param context context
      * @param songs list of songs
      */
-    public SongAdapter(Context context, ArrayList<SongInfo> songs, Typeface typeface, Typeface aTypeface) {
+    public SongAdapter(Context context, ArrayList<SongInfo> songs) {
         this.context = context;
-        Collections.sort(songs);
-        System.err.println("Songs size:" + songs.size());
         this._songs = songs;
-        this.songNameTypeface = typeface;
-        this.artistNameTypeface = aTypeface;
-        this.songPlaying = false;
     }
-
-    public void setSongPlaying(Boolean bool){
-        this.songPlaying = bool;
-    }
-
-    public boolean getSongPlaying(){ return this.songPlaying; }
 
     public interface OnItemClickListener {
         void onItemClick(MorphButton b, View view, SongInfo obj, int position, ArrayList<SongInfo> songs, int i);
@@ -150,9 +131,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         final SongInfo s = _songs.get(i);
         this.songHolder = songHolder;
         songHolder.tvSongName.setText(_songs.get(i).getSongname());
-        songHolder.tvSongName.setTypeface(songNameTypeface);
+        songHolder.tvSongName.setTypeface(Typeface.createFromAsset(
+                                                    context.getAssets(),
+                                                    context.getString(R.string.raleway_regular_font)));
         songHolder.tvSongArtist.setText(_songs.get(i).getArtistname());
-        songHolder.tvSongArtist.setTypeface(artistNameTypeface);
+        songHolder.tvSongArtist.setTypeface(Typeface.createFromAsset(
+                                                    context.getAssets(),
+                                                    context.getString(R.string.high_tea_font)));
 
 
         Uri uri = _songs.get(i).getAlbumArt();
@@ -253,17 +238,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             btnAction = (MorphButton) itemView.findViewById(R.id.btnPlay);
             background = (View)itemView.findViewById(R.id.list_background);
             tvAlbumArt = (ImageView)itemView.findViewById(R.id.list_albumArt);
-        }
-        public void setSelected(Boolean bool){this.selected = bool;}
-
-        public Boolean isSelected(){return this.selected;}
-
-        public void setSongName(String name){
-            tvSongName.setText(name);
-        }
-
-        public void setArtistName(String name){
-            tvSongArtist.setText(name);
         }
 
         public void onClick(View view){

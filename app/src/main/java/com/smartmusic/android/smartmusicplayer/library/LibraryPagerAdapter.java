@@ -5,19 +5,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.smartmusic.android.smartmusicplayer.R;
+
 /**
+ * Handles switching between different fragments
  * Created by holle on 3/7/2018.
  */
 
 public class LibraryPagerAdapter extends FragmentPagerAdapter {
 
-    final int PAGE_COUNT = 3;
-    private String tabTitles[] = new String[] { "Songs", "Artists", "Albums" };
     private Context context;
+    final int PAGE_COUNT = 3;
+    private String tabTitles[];
 
     public LibraryPagerAdapter(FragmentManager fm, Context context){
         super(fm);
         this.context = context;
+        tabTitles = new String[] {
+                context.getString(R.string.pager_title_songs),
+                context.getString(R.string.pager_title_artists),
+                context.getString(R.string.pager_title_albums)};
     }
 
     @Override

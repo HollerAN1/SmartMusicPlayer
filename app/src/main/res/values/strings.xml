@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">SmartPlayer</string>
+    <string name="APP_LOGGER">SmartPlayerLogger</string>
 
 
     <string name="open">Open</string>
@@ -42,6 +43,10 @@
     <string name="album_name_transition_name">album_name</string>
     <string name="album_container_transition_name">container</string>
 
+    <string name="pager_title_songs">Songs</string>
+    <string name="pager_title_albums">Albums</string>
+    <string name="pager_title_artists">Artists</string>
+
 
     <!--Animated Vector Strings-->
     <string name="path_play">M16,24L38,24L27.3,30.8L16,38ZM16,10L27.3,17.2L38,24L16,24Z</string>
@@ -50,4 +55,25 @@
 
     <string name="path_play_vector">M8,5L19,12L19,12L8,19z</string>
     <string name="path_stop_vector">M6,6L18,6L18,18L6,18z</string>
+
+
+    <!--Activity Tags-->
+    <string name="LIBRARY_TAG">library_tag</string>
+    <string name="NOW_PLAYING_TAG">now_playing_tag</string>
+    <string name="PLAYLISTS_TAG">playlists_tag</string>
+    <string name="SETTINGS_TAG">settings_tag</string>
+
+
+    <!--Font Directory-->
+    <string name="raleway_regular_font">fonts/Raleway-Regular.ttf</string>
+    <string name="high_tea_font">fonts/highTea.otf</string>
+
+
+    <!--Intent Extras-->
+    <string name="EXTRA_ALBUM_NAME">EXTRA_ALBUM_NAME</string>
+    <string name="EXTRA_ALBUM_ARTIST">EXTRA_ALBUM_ARTIST</string>
+    <string name="EXTRA_ALBUM_ART">EXTRA_ALBUM_ART</string>
+    <string name="EXTRA_ALBUM_SONGLIST">EXTRA_ALBUM_SONGLIST</string>
+    <string name="EXTRA_SENDER">EXTRA_SENDER</string>
+
 </resources>

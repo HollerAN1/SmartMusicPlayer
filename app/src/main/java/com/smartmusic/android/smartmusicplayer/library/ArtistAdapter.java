@@ -38,14 +38,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
 
     private OnItemClickListener backOnItemClickListener;
 
-    Typeface artistNameTypeface;
-    Typeface songCountTypeface;
-
-    /**
-     * Tells whether a song is currently playing.
-     */
-    Boolean songPlaying;
-
     ArtistHolder artistHolder;
 
     /**
@@ -53,20 +45,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
      * @param context context
      * @param artists list of artists
      */
-    public ArtistAdapter(Context context, ArrayList<ArtistInfo> artists, Typeface typeface, Typeface aTypeface) {
+    public ArtistAdapter(Context context, ArrayList<ArtistInfo> artists) {
         this.context = context;
-        Collections.sort(artists);
         this._artists = artists;
-        this.artistNameTypeface = typeface;
-        this.songCountTypeface = aTypeface;
-        this.songPlaying = false;
     }
-
-    public void setSongPlaying(Boolean bool){
-        this.songPlaying = bool;
-    }
-
-    public boolean getSongPlaying(){ return this.songPlaying; }
 
     public interface OnItemClickListener {
         void onItemClick(ImageButton b, View view, SongInfo obj, int position, ArrayList<SongInfo> songs, int i);
@@ -142,8 +124,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
         this.artistHolder = artistHolder;
         artistHolder.tvArtistName.setText(a.getArtistname());
         artistHolder.tvSongCount.setText(a.getSongCount() + " songs");
-        artistHolder.tvArtistName.setTypeface(artistNameTypeface);
-        artistHolder.tvSongCount.setTypeface(songCountTypeface);
+        artistHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
+                                                        context.getAssets(),
+                                                        context.getString(R.string.raleway_regular_font)));
+        artistHolder.tvSongCount.setTypeface(Typeface.createFromAsset(
+                                                        context.getAssets(),
+                                                        context.getString(R.string.high_tea_font)));
 
         String letter = String.valueOf(a.getArtistname().charAt(0));
 

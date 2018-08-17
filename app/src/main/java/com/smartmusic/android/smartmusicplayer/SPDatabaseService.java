@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.smartmusic.android.smartmusicplayer.model.AlbumInfo;
 import com.smartmusic.android.smartmusicplayer.model.ArtistInfo;
@@ -54,12 +55,16 @@ public class SPDatabaseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.i(getString(R.string.APP_LOGGER),
+                intent.getStringExtra(getString(R.string.EXTRA_SENDER)) + " bound to SPDatabaseService");
         mBound = true;
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.i(getString(R.string.APP_LOGGER),
+                intent.getStringExtra(getString(R.string.EXTRA_SENDER)) + " unbound from SPDatabaseService");
         mBound = false;
         return super.onUnbind(intent);
     }
@@ -67,7 +72,16 @@ public class SPDatabaseService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i(getString(R.string.APP_LOGGER),
+                "SPDatabaseService started");
 //        loadDatabase();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(getString(R.string.APP_LOGGER),
+                "SPDatabaseService stopped");
     }
 
     /* ------------- Public methods clients can call ----------------- */
@@ -151,12 +165,14 @@ public class SPDatabaseService extends Service {
 
     public void addPlaylist( PlaylistInfo pl ) {
         synchronized ( _playlists ){
+            Log.d(getString(R.string.APP_LOGGER), "Adding playlist " + pl.getName());
             _playlists.add(pl);
         }
     }
 
     public void removePlaylist( PlaylistInfo pl ) {
         synchronized ( _playlists ) {
+            Log.d(getString(R.string.APP_LOGGER), "Removing playlist " + pl.getName());
             int i = _playlists.indexOf(pl);
             _playlists.remove(i);
         }
@@ -167,8 +183,10 @@ public class SPDatabaseService extends Service {
         String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
         Cursor cursor = this.getContentResolver().query(uri,null,selection,null,null);
         if(cursor != null){
+            Log.d(getString(R.string.APP_LOGGER), "Total song count is " + cursor.getCount());
             return cursor.getCount();
         }
+        Log.d(getString(R.string.APP_LOGGER), "Unable to get song count, cursor is null");
         return 0;
     }
 
@@ -176,6 +194,7 @@ public class SPDatabaseService extends Service {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.i(getString(R.string.APP_LOGGER), "SPDatabaseService is loading database");
                 /*Uniform Resource Identifier (URI)
                 A Uri object is usually used to tell a ContentProvider what
                 we want to access by reference. It is an immutable one-to-one

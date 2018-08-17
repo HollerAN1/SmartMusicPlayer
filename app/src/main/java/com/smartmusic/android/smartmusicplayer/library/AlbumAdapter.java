@@ -36,14 +36,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
 
     private OnItemClickListener backOnItemClickListener;
 
-    Typeface artistNameTypeface;
-    Typeface songCountTypeface;
-
-    /**
-     * Tells whether a song is currently playing.
-     */
-    Boolean songPlaying;
-
     AlbumHolder albumHolder;
 
     /**
@@ -51,20 +43,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
      * @param context context
      * @param albums list of albums
      */
-    public AlbumAdapter(Context context, ArrayList<AlbumInfo> albums, Typeface typeface, Typeface aTypeface) {
+    public AlbumAdapter(Context context, ArrayList<AlbumInfo> albums) {
         this.context = context;
-        Collections.sort(albums);
         this._albums= albums;
-        this.artistNameTypeface = typeface;
-        this.songCountTypeface = aTypeface;
-        this.songPlaying = false;
     }
-
-    public void setSongPlaying(Boolean bool){
-        this.songPlaying = bool;
-    }
-
-    public boolean getSongPlaying(){ return this.songPlaying; }
 
     public interface OnItemClickListener {
         void onItemClick(ImageView b, View view, AlbumInfo obj, int position, ArrayList<AlbumInfo> albums, int i);
@@ -140,8 +122,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         this.albumHolder = albumHolder;
         albumHolder.tvAlbumName.setText(al.getAlbumName());
         albumHolder.tvArtistName.setText(al.getArtistname());
-        albumHolder.tvAlbumName.setTypeface(artistNameTypeface);
-        albumHolder.tvArtistName.setTypeface(songCountTypeface);
+        albumHolder.tvAlbumName.setTypeface(Typeface.createFromAsset(
+                                                    context.getAssets(),
+                                                    context.getString(R.string.raleway_regular_font)));
+        albumHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
+                                                    context.getAssets(),
+                                                    context.getString(R.string.high_tea_font)));
 
         Uri uri = _albums.get(i).getAlbumArt();
         Picasso.with(context)

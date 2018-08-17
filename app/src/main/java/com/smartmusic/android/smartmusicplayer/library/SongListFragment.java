@@ -19,11 +19,13 @@ import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
 import com.smartmusic.android.smartmusicplayer.SongPlayerService;
+import com.smartmusic.android.smartmusicplayer.comparators.songs.SongNameComparator;
 import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.wnafee.vector.MorphButton;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
@@ -40,16 +42,9 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
     /*Views*/
     private static RecyclerView recyclerView;
-    private static RelativeLayout listBackground;
-
-
-    private TextView listSongName;
-    private MorphButton mediaPlayerButton;
-
 
     /*Resources*/
     private static SongAdapter songAdapter;
-    private SongPlayerService songPlayer;
 
     /*Fonts*/
     Typeface tvSongNameFont;
@@ -60,13 +55,9 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
 
     /*Stores information about the last selected song*/
-    ImageView prevNavAlbumArt;
-    TextView prevNavName;
-    TextView prevNavArtist;
     Boolean prevExists = false;
     Integer prevPosition;
-    SongInfo prevObj;
-    ImageButton prevB;
+
 
     /**
      * Listeners
@@ -76,14 +67,8 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
     private SongEventListener songEventListener;
 
-    public final static String LIBRARY_TAG = "library_tag";
-    public final static String NOW_PLAYING_TAG = "now_playing_tag";
-    public final static String PLAYLISTS_TAG = "playlists_tag";
-    public final static String SETTINGS_TAG = "settings_tag";
-
     View mainView = null;
 
-    Library libFrag = null;
     private boolean playBarShowing = false;
 
     /*
@@ -109,8 +94,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
 
     private void initData(){
-//        libFrag = (Library) getFragmentManager().findFragmentByTag(LIBRARY_TAG);
-        this._songs = SPMainActivity.getSongs();
+        this._songs = SPMainActivity.mDatabaseService.getSongs(new SongNameComparator());
     }
 
     @Override
@@ -118,12 +102,11 @@ public class SongListFragment extends Fragment implements SongEventListener {
                              Bundle savedInstanceState) {
         setRetainInstance(true);
 
-        if(mainView == null) {
+        if( mainView == null ) { // Setup view
             // Inflate the layout for this fragment
             mainView = inflater.inflate(R.layout.recycler_view_layout, container, false);
             initData();
             setUpRecyclerView(mainView);
-            songPlayer = SPMainActivity.getSongPlayer();
 
             SlideInLeftAnimator animator = new SlideInLeftAnimator();
             animator.setInterpolator(new OvershootInterpolator());
@@ -143,11 +126,17 @@ public class SongListFragment extends Fragment implements SongEventListener {
     private void setUpRecyclerView(final View fragView){
 
         /*Links objects on XML to javadoc*/
-        tvSongNameFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Raleway-Regular.ttf");
-        tvArtistNameFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/highTea.otf");
+        tvSongNameFont
+                = Typeface.createFromAsset(
+                        getActivity().getAssets(),
+                        getString(R.string.raleway_regular_font));
+        tvArtistNameFont
+                = Typeface.createFromAsset(
+                        getActivity().getAssets(),
+                        getString(R.string.high_tea_font));
 
-        recyclerView = (RecyclerView)fragView.findViewById(R.id.recyclerView);
-        songAdapter = new SongAdapter(getContext(), _songs, tvSongNameFont, tvArtistNameFont);
+        recyclerView = fragView.findViewById(R.id.recyclerView);
+        songAdapter = new SongAdapter(getContext(), _songs);
 
         recyclerView.setAdapter(songAdapter);
 
@@ -163,36 +152,13 @@ public class SongListFragment extends Fragment implements SongEventListener {
             /*Implements interface method onItemClick*/
             @Override
             public void onItemClick(final MorphButton b, final View view, final SongInfo obj, final int position, final ArrayList<SongInfo> songs, final int i) {
-
-                /* If a song is already playing and
-                 * the user selects a different song,
-                 * we want to revert the old song view back to the
-                 * normal layout. So we keep track of the previous
-                 * song.
-                 */
-//                if(prevExists){
-//                    setRecyclerViewNormalTheme(prevPosition);
-//                    prevExists = false;
-//                }
-
-                /*Links recyclerView item*/
-                listBackground = (RelativeLayout) recyclerView.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.list_background);
-                listSongName = (TextView) recyclerView.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.tvSongName);
-
-
-                //If a prev song is not selected store information about current song
-//                if(!prevExists){
-//                    prevExists = true;
-//                    prevPosition = i;
-//                }
-
                 // Play the selected song
                 if(!b.isSelected()){
-                    songPlayer.playSong(obj);
+                    SPMainActivity.mPlayerService.playSong(obj);
                 }
                 // Stop the selected song
-                if (b.isSelected() || (songAdapter.getSongPlaying() == true)) {
-                    songPlayer.stop();
+                if (b.isSelected() || (SPMainActivity.mPlayerService.isSongPlaying())) {
+                    SPMainActivity.mPlayerService.stop();
                 }
             }
         });
@@ -238,12 +204,13 @@ public class SongListFragment extends Fragment implements SongEventListener {
             prevPosition = e.getSongIndex();
         }
 
+        // Update the currently playing song
         setRecyclerViewPlayingTheme(e.getSongIndex());
-
     }
 
     @Override
     public void onSongStopEvent(SongEvent e) {
+        // If a song was playing, reset the view
         if(prevExists){
             setRecyclerViewNormalTheme(prevPosition);
             prevExists = false;
@@ -251,18 +218,11 @@ public class SongListFragment extends Fragment implements SongEventListener {
     }
 
     @Override
-    public void onSongAddedEvent(SongEvent e) {
-
-    }
-
+    public void onSongAddedEvent(SongEvent e) {}
     @Override
-    public void onSongRemovedEvent(SongEvent e) {
-
-    }
-
+    public void onSongRemovedEvent(SongEvent e) {}
     @Override
     public void onShuffleOnEvent(SongEvent e) {}
-
     @Override
     public void onShuffleOffEvent(SongEvent e) {}
 

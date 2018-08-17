@@ -32,6 +32,7 @@ public class SongEventHandler {
                 for(SongEventListener listener : songEventListenerList){
                     listener.onSongStopEvent(songEvent);
                 }
+                break;
             case SHUFFLE_ON:
                 for(SongEventListener listener : songEventListenerList){
                     listener.onShuffleOnEvent(songEvent);

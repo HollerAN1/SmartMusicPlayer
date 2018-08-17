@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,11 +34,13 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.i(getString(R.string.APP_LOGGER), SplashActivity.this.getLocalClassName() + " disconnected from SPDatabaseService");
             mServiceBound = false;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i(getString(R.string.APP_LOGGER), SplashActivity.this.getLocalClassName() + " connected to SPDatabaseService");
             SPDatabaseService.SPDatabaseBinder mBinder = (SPDatabaseService.SPDatabaseBinder) service;
             mService = mBinder.getService();
             mServiceBound = true;
@@ -99,24 +102,25 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
     @Override
     protected void onStart() {
         super.onStart();
+//        bindServices();
+    }
 
-        // Bind to SPDatabaseService
-        Intent intent = new Intent(this, SPDatabaseService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindServices();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindServices();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mServiceBound) {
-            unbindService(mServiceConnection);
-            mServiceBound = false;
-        }
-    }
-
-    private void createHandler(){
-
+//        unbindServices();
     }
 
     private void startLoadingDatabase(){
@@ -125,6 +129,21 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
         mProgress.setProgress(0);
 
         mService.loadDatabase();
+    }
+
+    private void bindServices(){
+        // Bind to SPDatabaseService
+        Intent intent = new Intent(this, SPDatabaseService.class);
+        intent.putExtra(getString(R.string.EXTRA_SENDER), this.getLocalClassName());
+        startService(intent);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void unbindServices(){
+        if (mServiceBound) {
+            unbindService(mServiceConnection);
+            mServiceBound = false;
+        }
     }
 
     @Override

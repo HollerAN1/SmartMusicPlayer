@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.album.AlbumActivity;
+import com.smartmusic.android.smartmusicplayer.comparators.albums.AlbumNameComparator;
 import com.smartmusic.android.smartmusicplayer.model.AlbumInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 
@@ -30,14 +31,6 @@ public class AlbumListFragment extends Fragment {
     private RecyclerView recyclerView = null;
     private AlbumAdapter albumAdapter = null;
 
-    private Typeface artistNameFont = null;
-    private Typeface songCountFont = null;
-
-    public final static String LIBRARY_TAG = "library_tag";
-    public final static String NOW_PLAYING_TAG = "now_playing_tag";
-    public final static String PLAYLISTS_TAG = "playlists_tag";
-    public final static String SETTINGS_TAG = "settings_tag";
-
     View rootView = null;
 
     public AlbumListFragment() {
@@ -45,8 +38,7 @@ public class AlbumListFragment extends Fragment {
     }
 
     private void initData(){
-//        Library libraryFragment = (Library) getFragmentManager().findFragmentByTag(LIBRARY_TAG);
-        this._albums = SPMainActivity.getAlbums();
+        this._albums = SPMainActivity.mDatabaseService.getAlbums(new AlbumNameComparator());
     }
 
     @Override
@@ -64,12 +56,8 @@ public class AlbumListFragment extends Fragment {
 
     private void setUpRecyclerView(View fragView){
 
-        /*Links objects on XML to javadoc*/
-        artistNameFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Raleway-Regular.ttf");
-        songCountFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/highTea.otf");
-
         recyclerView = (RecyclerView) fragView.findViewById(R.id.recyclerView);
-        albumAdapter = new AlbumAdapter(getContext(), _albums, artistNameFont, songCountFont);
+        albumAdapter = new AlbumAdapter(getContext(), _albums);
 
         recyclerView.setAdapter(albumAdapter);
 
@@ -80,28 +68,28 @@ public class AlbumListFragment extends Fragment {
         recyclerView.setLayoutManager(gridLayoutManager);
 
 
-        albumAdapter.setOnItemClickListener(new AlbumAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(ImageView b, View view, AlbumInfo obj, int position, ArrayList<AlbumInfo> albums, int i) {
-                Intent intent = new Intent(getContext(), AlbumActivity.class);
-                intent.putExtra("EXTRA_ALBUM_NAME", obj.getAlbumName());
-                intent.putExtra("EXTRA_ALBUM_ARTIST", obj.getArtistname());
-                intent.putExtra("EXTRA_ALBUM_ART", obj.getAlbumArt().toString());
-                intent.putExtra("EXTRA_ALBUM_SONGLIST", obj.getSongs());
-
-                final ImageView albumArt = (ImageView) view.findViewById(R.id.tile_albumArt);
-                final TextView artistName = (TextView) view.findViewById(R.id.tile_artist_name);
-//                final TextView albumName = (TextView) view.findViewById(R.id.tile_album_name);
+//        albumAdapter.setOnItemClickListener(new AlbumAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(ImageView b, View view, AlbumInfo obj, int position, ArrayList<AlbumInfo> albums, int i) {
+//                Intent intent = new Intent(getContext(), AlbumActivity.class);
+//                intent.putExtra("EXTRA_ALBUM_NAME", obj.getAlbumName());
+//                intent.putExtra("EXTRA_ALBUM_ARTIST", obj.getArtistname());
+//                intent.putExtra("EXTRA_ALBUM_ART", obj.getAlbumArt().toString());
+//                intent.putExtra("EXTRA_ALBUM_SONGLIST", obj.getSongs());
 //
-//                Pair<View, String> albumArtTransition = Pair.create((View)albumArt, getString(R.string.album_art_transition_name));
-//                Pair<View, String> artistNameTransition = Pair.create((View)artistName, getString(R.string.artist_name_transition_name));
-//                Pair<View, String> containerTransition = Pair.create(view, getString(R.string.album_container_transition_name));
-//                ActivityOptionsCompat options = ActivityOptionsCompat
-//                        .makeSceneTransitionAnimation(getActivity(), albumArtTransition, artistNameTransition, containerTransition);
-
-                startActivity(intent);
-            }
-        });
+//                final ImageView albumArt = (ImageView) view.findViewById(R.id.tile_albumArt);
+//                final TextView artistName = (TextView) view.findViewById(R.id.tile_artist_name);
+////                final TextView albumName = (TextView) view.findViewById(R.id.tile_album_name);
+////
+////                Pair<View, String> albumArtTransition = Pair.create((View)albumArt, getString(R.string.album_art_transition_name));
+////                Pair<View, String> artistNameTransition = Pair.create((View)artistName, getString(R.string.artist_name_transition_name));
+////                Pair<View, String> containerTransition = Pair.create(view, getString(R.string.album_container_transition_name));
+////                ActivityOptionsCompat options = ActivityOptionsCompat
+////                        .makeSceneTransitionAnimation(getActivity(), albumArtTransition, artistNameTransition, containerTransition);
+//
+//                startActivity(intent);
+//            }
+//        });
 
     }
 

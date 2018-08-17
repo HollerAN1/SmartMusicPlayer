@@ -1,5 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.nowplaying;
 
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,9 +29,6 @@ import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class NowPlaying extends Fragment implements SongEventListener {
 
-    SongInfo currentSong;
-    SongPlayerService songPlayer;
-
     /*Views*/
 //    private ImageView albumArt;
     private ImageView largeAlbumArt;
@@ -58,6 +56,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
     private Handler mHandler = new Handler();
 
+    private SongInfo currentSong;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,18 +71,16 @@ public class NowPlaying extends Fragment implements SongEventListener {
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        currentSong = SPMainActivity.getCurrentSong();
-        songPlayer = SPMainActivity.getSongPlayer();
         SPMainActivity.getSongEventHandler().addSongEventListener(this);
+        currentSong = SPMainActivity.mPlayerService.getCurrentSong();
 
-
-        setUpNowPlaying(v, currentSong, songPlayer);
+        setUpNowPlaying(v);
         return v;
     }
 
-    private void setUpNowPlaying(View v, SongInfo info, final SongPlayerService songPlayer){
+    private void setUpNowPlaying(View v){
 
-        if( songPlayer.getMediaPlayer() == null || info == null){
+        if( !SPMainActivity.mPlayerService.isMediaPlayerSet() || currentSong == null){
             return;
         }
 
@@ -99,22 +97,22 @@ public class NowPlaying extends Fragment implements SongEventListener {
             favoriteButton = (ImageView) v.findViewById(R.id.now_playing_favorite);
             prevButton = (ImageView) v.findViewById(R.id.now_playing_previous_button);
             nextButton = (ImageView) v.findViewById(R.id.now_playing_next_button);
-            setUpAlbumArt(v, info);
+            setUpAlbumArt(v, currentSong);
         }
 
 
         //Load large album image
         Picasso.with(getContext())
-                .load(info.getAlbumArt())
+                .load(currentSong.getAlbumArt())
                 .transform(new BlurTransformation(getContext(), 30))
                 .into(largeAlbumArt);
 
 
-        songName.setText(info.getSongname());
+        songName.setText(currentSong.getSongname());
         songName.setSelected(true);
         songName.setHorizontallyScrolling(true);
 
-        artistName.setText(info.getArtistname());
+        artistName.setText(currentSong.getArtistname());
 
 //        if( mediaPlayer.isPlaying() ){
 //            playButton.setSelected(true);
@@ -122,32 +120,37 @@ public class NowPlaying extends Fragment implements SongEventListener {
 //            playButton.setSelected(false);
 //        }
 
+        int maxPos = SPMainActivity.mPlayerService.getMediaPlayer().getDuration();
+        int currPos = SPMainActivity.mPlayerService.getMediaPlayer().getCurrentPosition();
 
-        seekBar.setMax(songPlayer.getMediaPlayer().getDuration());
-        seekBar.setProgress(songPlayer.getMediaPlayer().getCurrentPosition());
+        seekBar.setMax(maxPos);
+        seekBar.setProgress(currPos);
 
 
-        progressCount.setText(milliToTime(songPlayer.getMediaPlayer().getCurrentPosition()));
-        duration.setText(milliToTime(songPlayer.getMediaPlayer().getDuration()));
+        progressCount.setText(milliToTime(currPos));
+        duration.setText(milliToTime(maxPos));
 
 
         updateTimeRunnable = new Runnable() {
             @Override
             public void run() {
-                if(songPlayer.getMediaPlayer() == null){
+                if(!SPMainActivity.mPlayerService.isMediaPlayerSet()){
                     mHandler.postDelayed(this, 1000);
                     return;
                 }
 
-                if(songPlayer.getMediaPlayer().isPlaying()){
+                if(SPMainActivity.mPlayerService.isSongPlaying()){
                     playButton.setSelected(true);
                 } else {
                     playButton.setSelected(false);
                 }
 
-                progressCount.setText(milliToTime(songPlayer.getMediaPlayer().getCurrentPosition()));
-                duration.setText(milliToTime(songPlayer.getMediaPlayer().getDuration()));
-                seekBar.setProgress(songPlayer.getMediaPlayer().getCurrentPosition());
+                int new_currPos = SPMainActivity.mPlayerService.getMediaPlayer().getCurrentPosition();
+                int new_maxPos = SPMainActivity.mPlayerService.getMediaPlayer().getDuration();
+
+                progressCount.setText(milliToTime(new_currPos));
+                duration.setText(milliToTime(new_maxPos));
+                seekBar.setProgress(new_currPos);
 
 
                 mHandler.postDelayed(this, 1000);
@@ -158,11 +161,11 @@ public class NowPlaying extends Fragment implements SongEventListener {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(songPlayer.getMediaPlayer().isPlaying()) {
-                    songPlayer.pause();
+                if(SPMainActivity.mPlayerService.isSongPlaying()) {
+                    SPMainActivity.mPlayerService.pause();
                     playButton.setSelected(false);
                 } else {
-                    songPlayer.playSong(currentSong);
+                    SPMainActivity.mPlayerService.playSong(currentSong);
                     playButton.setSelected(true);
                 }
             }
@@ -178,8 +181,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(songPlayer.getMediaPlayer() != null && fromUser){
-                    songPlayer.getMediaPlayer().seekTo(progress);
+                if( SPMainActivity.mPlayerService.isMediaPlayerSet() && fromUser){
+                    SPMainActivity.mPlayerService.getMediaPlayer().seekTo(progress);
                     seekBar.setProgress(progress);
                     progressCount.setText(milliToTime(progress));
                 }
@@ -245,14 +248,14 @@ public class NowPlaying extends Fragment implements SongEventListener {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                songPlayer.playNextSong();
+                SPMainActivity.mPlayerService.playNextSong();
             }
         });
 
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                songPlayer.playPreviousSong();
+                SPMainActivity.mPlayerService.playPreviousSong();
             }
         });
 
@@ -319,11 +322,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
     }
 
     public void update(){
-        currentSong = SPMainActivity.getCurrentSong();
-        songPlayer = SPMainActivity.getSongPlayer();
-
-        setUpNowPlaying(null, currentSong, songPlayer);
-
+        setUpNowPlaying(null);
     }
 
     @Override
@@ -416,14 +415,14 @@ public class NowPlaying extends Fragment implements SongEventListener {
     @Override
     public void onSongChangeEvent(SongEvent e) {
         currentSong = e.getSource();
-        setUpNowPlaying(null, e.getSource(), SPMainActivity.getSongPlayer());
+        setUpNowPlaying(null);
         setUpAlbumArt(null, e.getSource());
     }
 
     @Override
     public void onSongStopEvent(SongEvent e) {
         currentSong = null;
-        setUpNowPlaying(null, null, SPMainActivity.getSongPlayer());
+        setUpNowPlaying(null);
         setUpAlbumArt(null, null);
     }
 
