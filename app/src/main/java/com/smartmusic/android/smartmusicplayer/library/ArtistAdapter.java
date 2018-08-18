@@ -94,7 +94,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
     public ArtistHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.row_artist,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.row_artist_modern,viewGroup,false);
         return new ArtistHolder(myView);
     }
 
@@ -124,12 +124,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
         this.artistHolder = artistHolder;
         artistHolder.tvArtistName.setText(a.getArtistname());
         artistHolder.tvSongCount.setText(a.getSongCount() + " songs");
-        artistHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
-                                                        context.getAssets(),
-                                                        context.getString(R.string.raleway_regular_font)));
-        artistHolder.tvSongCount.setTypeface(Typeface.createFromAsset(
-                                                        context.getAssets(),
-                                                        context.getString(R.string.high_tea_font)));
+//        artistHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
+//                                                        context.getAssets(),
+//                                                        context.getString(R.string.raleway_regular_font)));
+//        artistHolder.tvSongCount.setTypeface(Typeface.createFromAsset(
+//                                                        context.getAssets(),
+//                                                        context.getString(R.string.high_tea_font)));
 
         String letter = String.valueOf(a.getArtistname().charAt(0));
 

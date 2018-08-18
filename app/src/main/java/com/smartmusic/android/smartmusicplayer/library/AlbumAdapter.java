@@ -92,7 +92,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
     public AlbumHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.tile_album,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.tile_album_modern,viewGroup,false);
         return new AlbumHolder(myView);
     }
 
@@ -122,12 +122,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         this.albumHolder = albumHolder;
         albumHolder.tvAlbumName.setText(al.getAlbumName());
         albumHolder.tvArtistName.setText(al.getArtistname());
-        albumHolder.tvAlbumName.setTypeface(Typeface.createFromAsset(
-                                                    context.getAssets(),
-                                                    context.getString(R.string.raleway_regular_font)));
-        albumHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
-                                                    context.getAssets(),
-                                                    context.getString(R.string.high_tea_font)));
+//        albumHolder.tvAlbumName.setTypeface(Typeface.createFromAsset(
+//                                                    context.getAssets(),
+//                                                    context.getString(R.string.raleway_regular_font)));
+//        albumHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
+//                                                    context.getAssets(),
+//                                                    context.getString(R.string.high_tea_font)));
 
         Uri uri = _albums.get(i).getAlbumArt();
         Picasso.with(context)

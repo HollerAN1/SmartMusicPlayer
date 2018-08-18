@@ -131,7 +131,9 @@ public class SongPlayerService
         this.shuffleOn = on;
     }
 
-
+    public boolean isShuffleOn(){
+        return this.shuffleOn;
+    }
     /**
      * Plays the given song. Searches through
      * the song list to determine the position

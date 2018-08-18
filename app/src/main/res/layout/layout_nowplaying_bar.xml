@@ -6,21 +6,21 @@
     android:layout_height="70dp"
     android:onClick="openNowPlaying"
     android:elevation="5dp"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     >
     <!--android:background="#CC000000"-->
 
     <android.support.v7.widget.CardView
         android:id="@+id/album_cover_card"
         android:layout_gravity="center_horizontal"
-        app:cardElevation="15dp"
+        app:cardElevation="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_margin="5dp"
-        app:cardCornerRadius="10dp">
+        app:cardCornerRadius="2dp">
 
         <ImageView
             android:id="@+id/image_album_art"
@@ -49,7 +49,7 @@
             android:layout_width="50sp"
             android:layout_height="50sp"
             android:src="@drawable/small_play_button"
-            android:tint="@color/rippleColor"
+            android:tint="@color/pastel_rose"
             android:scaleType="centerCrop"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
@@ -74,23 +74,33 @@
         android:layout_toLeftOf="@id/small_button_items">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/archivo_black"
+            android:text="@string/NOW_PLAYING"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"/>
+
+        <TextView
             android:id="@+id/now_playing_small_songName"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
             android:text="Song Title"
-            android:textSize="18dp"
-            android:maxLines="1"
-            android:textColor="@android:color/white"
+            android:textSize="16dp"
+            android:singleLine="true"
+            android:textColor="@color/pastel_rose"
+            android:fontFamily="@font/exo_medium"
             android:ellipsize="marquee"
             android:transitionName="@string/song_title_transition_name"/>
 
         <TextView
             android:id="@+id/now_playing_small_artistName"
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="wrap_content"
             android:text="Artist Name"
-            android:textSize="12dp"
-            android:fontFamily="sans-serif-condensed"
+            android:textSize="10dp"
+            android:fontFamily="@font/comfortaa_light"
             android:textAllCaps="true"
             android:maxLines="1"
             android:textColor="@android:color/white"

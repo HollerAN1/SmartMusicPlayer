@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chibde.visualizer.BarVisualizer;
+import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
@@ -102,7 +104,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     public SongHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.row_song,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.row_song_modern,viewGroup,false);
         return new SongHolder(myView);
     }
 
@@ -131,13 +133,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         final SongInfo s = _songs.get(i);
         this.songHolder = songHolder;
         songHolder.tvSongName.setText(_songs.get(i).getSongname());
-        songHolder.tvSongName.setTypeface(Typeface.createFromAsset(
-                                                    context.getAssets(),
-                                                    context.getString(R.string.raleway_regular_font)));
+//        songHolder.tvSongName.setTypeface(Typeface.createFromAsset(
+//                                                    context.getAssets(),
+//                                                    context.getString(R.string.raleway_regular_font)));
         songHolder.tvSongArtist.setText(_songs.get(i).getArtistname());
-        songHolder.tvSongArtist.setTypeface(Typeface.createFromAsset(
-                                                    context.getAssets(),
-                                                    context.getString(R.string.high_tea_font)));
+//        songHolder.tvSongArtist.setTypeface(Typeface.createFromAsset(
+//                                                    context.getAssets(),
+//                                                    context.getString(R.string.high_tea_font)));
 
 
         Uri uri = _songs.get(i).getAlbumArt();
@@ -160,24 +162,25 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
         if(!_songs.get(i).getSelected()){
             // Not playing
-            songHolder.tvSongName.setTextColor(Color.BLACK);
+//            songHolder.tvSongName.setTextColor(Color.WHITE);
             songHolder.tvSongName.setHorizontallyScrolling(false);
             songHolder.background.setBackgroundResource(R.drawable.ripple_effect);
             if(songHolder.btnAction.getState() != MorphButton.MorphState.START) {
                 songHolder.btnAction.setState(MorphButton.MorphState.START, true);
             }
-            songHolder.btnAction.setForegroundColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+            songHolder.btnAction.setForegroundColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
             songHolder.btnAction.setSelected(false);
         } else {
             // Playing
-            songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.tintedBackground));
-            songHolder.tvSongName.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             songHolder.tvSongName.setHorizontallyScrolling(true);
+//            songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.tintedBackground));
+            songHolder.background.setBackgroundResource(R.drawable.orange_glow_gradient);
+//            songHolder.tvSongName.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             if(songHolder.btnAction.getState() != MorphButton.MorphState.END) {
                 songHolder.btnAction.setState(MorphButton.MorphState.END, true);
             }
             songHolder.btnAction.setSelected(true);
-            songHolder.btnAction.setForegroundColorFilter(context.getResources().getColor(R.color.colorPrimaryDark),
+            songHolder.btnAction.setForegroundColorFilter(Color.WHITE,
                     PorterDuff.Mode.SRC_ATOP);
         }
 

@@ -1,25 +1,31 @@
 package com.smartmusic.android.smartmusicplayer.nowplaying;
 
-import android.media.MediaPlayer;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.SongPlayerService;
 import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
@@ -32,8 +38,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
     /*Views*/
 //    private ImageView albumArt;
     private ImageView largeAlbumArt;
-    private TextView songName;
-    private TextView artistName;
+    private TextSwitcher songName;
+    private TextSwitcher artistName;
     private ImageView playButton;
     private SeekBar seekBar;
     private TextView progressCount;
@@ -58,6 +64,12 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
     private SongInfo currentSong;
 
+    // Declare in and out animations and load them using AnimationUtils class
+    private Animation inL;
+//    private Animation outL;
+//    private Animation inR;
+    private Animation outR;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -74,12 +86,18 @@ public class NowPlaying extends Fragment implements SongEventListener {
         SPMainActivity.getSongEventHandler().addSongEventListener(this);
         currentSong = SPMainActivity.mPlayerService.getCurrentSong();
 
-        setUpNowPlaying(v);
+        inL = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_left);
+        outR = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_right);
+//        inR = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_right);
+//        outL = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_left);
+
+
+        initNowPlaying(v);
         return v;
     }
 
-    private void setUpNowPlaying(View v){
 
+    private void initNowPlaying(View v){
         if( !SPMainActivity.mPlayerService.isMediaPlayerSet() || currentSong == null){
             return;
         }
@@ -87,8 +105,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
         // initialize views
         if( v != null ) {
             largeAlbumArt = (ImageView) v.findViewById(R.id.now_playing_large_album_art);
-            songName = (TextView) v.findViewById(R.id.now_playing_songName);
-            artistName = (TextView) v.findViewById(R.id.now_playing_artistName);
+            songName = (TextSwitcher) v.findViewById(R.id.now_playing_songName_textSwitcher);
+            artistName = (TextSwitcher) v.findViewById(R.id.now_playing_artistName_textSwitcher);
             playButton = (ImageView) v.findViewById(R.id.now_playing_play_button);
             seekBar = (SeekBar) v.findViewById(R.id.now_playing_seekBar);
             progressCount = (TextView) v.findViewById(R.id.now_playing_progress);
@@ -97,39 +115,47 @@ public class NowPlaying extends Fragment implements SongEventListener {
             favoriteButton = (ImageView) v.findViewById(R.id.now_playing_favorite);
             prevButton = (ImageView) v.findViewById(R.id.now_playing_previous_button);
             nextButton = (ImageView) v.findViewById(R.id.now_playing_next_button);
+            shuffleButton = (ImageView) v.findViewById(R.id.now_playing_shuffle);
             setUpAlbumArt(v, currentSong);
         }
 
 
-        //Load large album image
-        Picasso.with(getContext())
-                .load(currentSong.getAlbumArt())
-                .transform(new BlurTransformation(getContext(), 30))
-                .into(largeAlbumArt);
+        songName.setFactory(new ViewSwitcher.ViewFactory() {
 
+            public View makeView() {
+                // create a TextView
+                TextView t = new TextView(getContext());
 
-        songName.setText(currentSong.getSongname());
-        songName.setSelected(true);
-        songName.setHorizontallyScrolling(true);
+                t.setTextColor(getResources().getColor(R.color.pastel_rose));
+//                t.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/exo_medium.ttf"));
+                t.setTextSize(26);
+                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                t.setGravity(Gravity.CENTER);
+                return t;
+            }
+        });
 
-        artistName.setText(currentSong.getArtistname());
+        artistName.setFactory(new ViewSwitcher.ViewFactory() {
 
-//        if( mediaPlayer.isPlaying() ){
-//            playButton.setSelected(true);
-//        } else {
-//            playButton.setSelected(false);
-//        }
+            public View makeView() {
+                // create a TextView
+                TextView t = new TextView(getContext());
 
-        int maxPos = SPMainActivity.mPlayerService.getMediaPlayer().getDuration();
-        int currPos = SPMainActivity.mPlayerService.getMediaPlayer().getCurrentPosition();
+                t.setTextColor(Color.WHITE);
+//                t.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/comfortaa_light.xml"));
+                t.setTextSize(14);
+                t.setAllCaps(true);
+                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                t.setGravity(Gravity.CENTER);
+                return t;
+            }
+        });
 
-        seekBar.setMax(maxPos);
-        seekBar.setProgress(currPos);
-
-
-        progressCount.setText(milliToTime(currPos));
-        duration.setText(milliToTime(maxPos));
-
+        // set the animation type to TextSwitcher
+        songName.setInAnimation(inL);
+        songName.setOutAnimation(outR);
+        artistName.setInAnimation(inL);
+        artistName.setOutAnimation(outR);
 
         updateTimeRunnable = new Runnable() {
             @Override
@@ -165,7 +191,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
                     SPMainActivity.mPlayerService.pause();
                     playButton.setSelected(false);
                 } else {
-                    SPMainActivity.mPlayerService.playSong(currentSong);
+                    SPMainActivity.mPlayerService.resume();
                     playButton.setSelected(true);
                 }
             }
@@ -177,6 +203,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 collapseView();
             }
         });
+
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -201,21 +228,6 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 mHandler.postDelayed(updateTimeRunnable, 1000);
             }
         });
-
-//        favoriteGhostRunnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                favoriteGhost.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_in));
-//                favoriteGhost.animate().alpha(1.0f).start();
-//
-//                try{ wait(1000); } catch ( InterruptedException e) { e.printStackTrace(); }
-//                favoriteGhost.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_out));
-//
-//            }
-//        };
-
-        favoriteButton.setSelected(currentSong.isFavorited());
-
 
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,6 +260,11 @@ public class NowPlaying extends Fragment implements SongEventListener {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                songName.setInAnimation(inL);
+                songName.setOutAnimation(outR);
+                artistName.setInAnimation(inL);
+                artistName.setOutAnimation(outR);
+
                 SPMainActivity.mPlayerService.playNextSong();
             }
         });
@@ -255,12 +272,76 @@ public class NowPlaying extends Fragment implements SongEventListener {
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                songName.setInAnimation(inL);
+                songName.setOutAnimation(outR);
+                artistName.setInAnimation(inL);
+                artistName.setOutAnimation(outR);
+
                 SPMainActivity.mPlayerService.playPreviousSong();
             }
         });
 
+
+        shuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shuffleButton.setSelected(!shuffleButton.isSelected());
+                SPMainActivity.mPlayerService.setShuffle(shuffleButton.isSelected());
+                if(shuffleButton.isSelected()){
+                    shuffleButton.setColorFilter(R.color.pastel_rose, PorterDuff.Mode.SRC_ATOP);
+                } else {
+                    shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                }
+            }
+        });
+
+        updateNowPlaying();
+
         // After a second start updating the progress bar
         mHandler.postDelayed(updateTimeRunnable, 1000);
+    }
+
+    private void updateNowPlaying(){
+
+        //Load large album image
+        Picasso.with(getContext())
+                .load(currentSong.getAlbumArt())
+                .transform(new BlurTransformation(getContext(), 30))
+                .error(R.drawable.temp_album_art)
+                .into(largeAlbumArt);
+
+
+        songName.setText(currentSong.getSongname());
+        songName.setSelected(true);
+
+        artistName.setText(currentSong.getArtistname());
+
+
+        int maxPos = SPMainActivity.mPlayerService.getMediaPlayer().getDuration();
+        int currPos = SPMainActivity.mPlayerService.getMediaPlayer().getCurrentPosition();
+
+        seekBar.setMax(maxPos);
+        seekBar.setProgress(currPos);
+        seekBar.setDrawingCacheBackgroundColor(getResources().getColor(R.color.pastel_rose));
+//        seekBar.setBackgroundColor(getResources().getColor(R.color.pastel_rose));
+
+
+        progressCount.setText(milliToTime(currPos));
+        duration.setText(milliToTime(maxPos));
+
+
+        favoriteButton.setSelected(currentSong.isFavorited());
+
+
+        shuffleButton.setSelected(SPMainActivity.mPlayerService.isShuffleOn());
+        if(shuffleButton.isSelected()){
+            shuffleButton.setColorFilter(R.color.pastel_rose, PorterDuff.Mode.SRC_ATOP);
+        } else {
+            shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        }
+//
+//        // After a second start updating the progress bar
+//        mHandler.postDelayed(updateTimeRunnable, 1000);
 
     }
 
@@ -322,7 +403,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
     }
 
     public void update(){
-        setUpNowPlaying(null);
+        updateNowPlaying();
     }
 
     @Override
@@ -415,14 +496,14 @@ public class NowPlaying extends Fragment implements SongEventListener {
     @Override
     public void onSongChangeEvent(SongEvent e) {
         currentSong = e.getSource();
-        setUpNowPlaying(null);
+        updateNowPlaying();
         setUpAlbumArt(null, e.getSource());
     }
 
     @Override
     public void onSongStopEvent(SongEvent e) {
         currentSong = null;
-        setUpNowPlaying(null);
+        updateNowPlaying();
         setUpAlbumArt(null, null);
     }
 

@@ -107,6 +107,14 @@ public class Library extends Fragment implements SongEventListener {
         SPMainActivity.getSongEventHandler().removeSongEventListener(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(SPMainActivity.mPlayerService != null) {
+            updateNowPlayingBar(SPMainActivity.mPlayerService.getCurrentSong());
+        }
+    }
+
     private void initPlayingBar(View mainView){
         nowPlayingBar = mainView.findViewById(R.id.includedNowPlayingLayout);
         nowPlayingSongName = (TextView) mainView.findViewById(R.id.now_playing_small_songName);
@@ -162,7 +170,7 @@ public class Library extends Fragment implements SongEventListener {
                 enterTransitionSet.setDuration(1000);
 //                enterTransitionSet.setStartDelay(FADE_DEFAULT_TIME);
                 nowPlayingFrag.setSharedElementEnterTransition(enterTransitionSet);
-                nowPlayingFrag.setSharedElementReturnTransition(enterTransitionSet);
+//                nowPlayingFrag.setSharedElementReturnTransition(enterTransitionSet);
 
 
                 nowPlayingFrag.setEnterTransition(new Slide(Gravity.BOTTOM).setDuration(1000));
@@ -267,9 +275,9 @@ public class Library extends Fragment implements SongEventListener {
                     .into(nowPlayingAlbumArt);
 
             if(SPMainActivity.mPlayerService.isSongPlaying()){
-                nowPlayingActionButton.setSelected(false);
-            } else {
                 nowPlayingActionButton.setSelected(true);
+            } else {
+                nowPlayingActionButton.setSelected(false);
             }
         }
 //        toggleNowPlayingBar();
