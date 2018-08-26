@@ -10,12 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.wnafee.vector.MorphButton;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by holle on 7/15/2018.
@@ -26,7 +25,7 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
     /**
      * ArrayList of all songs
      * */
-    private ArrayList<SongInfo> _songs = new ArrayList<>();
+    private ArrayList<Song> _songs;
     /**
      * Context is used to get an inflater to inflate the views in getView method.
      * An Inflater instantiates a layout XML file into its corresponding View objects
@@ -47,13 +46,13 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
      * @param context context
      * @param songs list of songs
      */
-    public SongDefaultAdapter(Context context, ArrayList<SongInfo> songs, Typeface typeface, Typeface aTypeface) {
+    public SongDefaultAdapter(Context context, ArrayList<Song> songs, Typeface typeface, Typeface aTypeface) {
         this.context = context;
         this._songs = songs;
     }
 
     public interface OnItemClickListener {
-        void onItemClick(MorphButton b, View view, SongInfo obj, int position, ArrayList<SongInfo> songs, int i);
+        void onItemClick(MorphButton b, View view, Song obj, int position, ArrayList<Song> songs, int i);
     }
 
     /**
@@ -122,9 +121,9 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
      */
     @Override
     public void onBindViewHolder(final SongDefaultHolder songDefaultHolder, final int i) {
-        final SongInfo s = _songs.get(i);
+        final Song s = _songs.get(i);
         this.songDefaultHolder = songDefaultHolder;
-        songDefaultHolder.tvSongName.setText(_songs.get(i).getSongname());
+        songDefaultHolder.tvSongName.setText(_songs.get(i).getSongName());
         songDefaultHolder.tvSongName.setTypeface(Typeface.createFromAsset(
                                                             context.getAssets(),
                                                             context.getString(R.string.raleway_regular_font)));
@@ -140,7 +139,7 @@ public class SongDefaultAdapter extends RecyclerView.Adapter<SongDefaultAdapter.
             }
         });
 
-        if(!_songs.get(i).getSelected()){
+        if(!_songs.get(i).isSelected()){
             // Not playing
             songDefaultHolder.tvSongName.setTextColor(Color.BLACK);
             songDefaultHolder.tvSongName.setHorizontallyScrolling(false);

@@ -1,7 +1,6 @@
 package com.smartmusic.android.smartmusicplayer;
 
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
-
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import java.util.EventObject;
 
 /**
@@ -12,7 +11,7 @@ public class SongEvent extends EventObject{
 
     private int songIndex;
     private Type type;
-    private SongInfo song;
+    private Song song;
 
 
     /**
@@ -21,7 +20,7 @@ public class SongEvent extends EventObject{
      * @param songIndex the song index being changed to
      * @param type the type of song event
      */
-    public SongEvent(SongInfo source, int songIndex, Type type){
+    public SongEvent(Song source, int songIndex, Type type){
         super(source);
         this.song = source;
         this.songIndex = songIndex;
@@ -42,7 +41,7 @@ public class SongEvent extends EventObject{
         return this.type;
     }
 
-    public SongInfo getSource(){
+    public Song getSource(){
         return this.song;
     }
 }

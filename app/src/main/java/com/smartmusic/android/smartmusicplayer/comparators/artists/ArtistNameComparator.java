@@ -1,6 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.comparators.artists;
 
-import com.smartmusic.android.smartmusicplayer.model.ArtistInfo;
+import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 
 import java.util.Comparator;
 
@@ -10,12 +10,12 @@ import java.util.Comparator;
  * Created by holle on 7/29/2018.
  */
 
-public class ArtistNameComparator implements Comparator<ArtistInfo> {
+public class ArtistNameComparator implements Comparator<Artist> {
 
     public ArtistNameComparator(){}
 
     @Override
-    public int compare(ArtistInfo o1, ArtistInfo o2) {
-        return o1.getArtistname().compareTo(o2.getArtistname());
+    public int compare(Artist o1, Artist o2) {
+        return o1.getArtistName().compareTo(o2.getArtistName());
     }
 }

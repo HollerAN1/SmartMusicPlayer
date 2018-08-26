@@ -1,8 +1,8 @@
 package com.smartmusic.android.smartmusicplayer.library;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,19 +10,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.smartmusic.android.smartmusicplayer.model.AlbumInfo;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.database.entities.Album;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder> {
 
     /**
      * ArrayList of all songs
      * */
-    private ArrayList<AlbumInfo> _albums = new ArrayList<>();
+    private List<Album> _albums;
     /**
      * Context is used to get an inflater to inflate the views in getView method.
      * An Inflater instantiates a layout XML file into its corresponding View objects
@@ -43,13 +46,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
      * @param context context
      * @param albums list of albums
      */
-    public AlbumAdapter(Context context, ArrayList<AlbumInfo> albums) {
+    public AlbumAdapter(Context context, List<Album> albums) {
         this.context = context;
-        this._albums= albums;
+        this._albums = albums;
     }
 
     public interface OnItemClickListener {
-        void onItemClick(ImageView b, View view, AlbumInfo obj, int position, ArrayList<AlbumInfo> albums, int i);
+        void onItemClick(ImageView b, View view, Album obj, int position, List<Album> albums, int i);
     }
 
     /**
@@ -118,10 +121,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
      */
     @Override
     public void onBindViewHolder(final AlbumHolder albumHolder, final int i) {
-        final AlbumInfo al = _albums.get(i);
+        final Album al = _albums.get(i);
         this.albumHolder = albumHolder;
         albumHolder.tvAlbumName.setText(al.getAlbumName());
-        albumHolder.tvArtistName.setText(al.getArtistname());
+        albumHolder.tvArtistName.setText(al.getArtistName());
 //        albumHolder.tvAlbumName.setTypeface(Typeface.createFromAsset(
 //                                                    context.getAssets(),
 //                                                    context.getString(R.string.raleway_regular_font)));
@@ -163,9 +166,17 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
      */
     @Override
     public int getItemCount() {
-        return _albums.size();
+        if(_albums != null) {
+            return _albums.size();
+        }
+        return 0;
     }
 
+
+    public void setAlbums(List<Album> albums){
+        this._albums = albums;
+        notifyDataSetChanged();
+    }
 
     /**
      * A ViewHolder describes an item view and metadata about its place

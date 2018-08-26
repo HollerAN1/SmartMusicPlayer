@@ -1,8 +1,11 @@
 package com.smartmusic.android.smartmusicplayer.library;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,22 +13,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.SongPlayerService;
 import com.smartmusic.android.smartmusicplayer.comparators.songs.SongNameComparator;
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
+import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.database.view_models.SongsViewModel;
 import com.wnafee.vector.MorphButton;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
@@ -38,7 +38,7 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class SongListFragment extends Fragment implements SongEventListener {
 
-    private ArrayList<SongInfo> _songs = null;
+    private List<Song> _songs = null;
 
     /*Views*/
     private static RecyclerView recyclerView;
@@ -56,7 +56,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
     /*Stores information about the last selected song*/
     Boolean prevExists = false;
-    Integer prevPosition;
+    Song prevSong;
 
 
     /**
@@ -71,30 +71,10 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
     private boolean playBarShowing = false;
 
-    /*
-      A Handler allows you to send and process Message and Runnable
-      objects associated with a thread's MessageQueue. Each Handler
-      instance is associated with a single thread and that thread's
-      message queue. When you create a new Handler, it is bound to
-      the thread / message queue of the thread that is creating it
-      -- from that point on, it will deliver messages and runnables
-      to that message queue and execute them as they come out of the
-      message queue.
-
-       There are two main uses for a Handler: (1) to schedule messages
-       and runnables to be executed as some point in the future; and
-       (2) to enqueue an action to be performed on a different thread
-       than your own.
-     */
-    private Handler myHandler = new Handler();
+    private SongsViewModel mModel;
 
     public SongListFragment() {
         // Required empty public constructor
-    }
-
-
-    private void initData(){
-        this._songs = SPMainActivity.mDatabaseService.getSongs(new SongNameComparator());
     }
 
     @Override
@@ -103,9 +83,10 @@ public class SongListFragment extends Fragment implements SongEventListener {
         setRetainInstance(true);
 
         if( mainView == null ) { // Setup view
+
             // Inflate the layout for this fragment
             mainView = inflater.inflate(R.layout.recycler_view_layout, container, false);
-            initData();
+            setUpModel();
             setUpRecyclerView(mainView);
 
             SlideInLeftAnimator animator = new SlideInLeftAnimator();
@@ -123,6 +104,27 @@ public class SongListFragment extends Fragment implements SongEventListener {
         return mainView;
     }
 
+    private void setUpModel(){
+        // Get the ViewModel.
+        mModel = ViewModelProviders.of(this).get(SongsViewModel.class);
+
+        // Create the observer which updates the UI.
+        final Observer<List<Song>> songObserver = new Observer<List<Song>>() {
+            @Override
+            public void onChanged(@Nullable final List<Song> newSonglist) {
+                // Update the UI
+                if(recyclerView != null) {
+                    // Updating the songList will refresh the view
+                    _songs = newSonglist;
+                    SPMainActivity.mPlayerService.setSongList(newSonglist);
+                    ((SongAdapter)recyclerView.getAdapter()).setSongs(newSonglist);
+            }
+            }
+        };
+
+        mModel.getAllSongs().observe(this, songObserver);
+    }
+
     private void setUpRecyclerView(final View fragView){
 
         /*Links objects on XML to javadoc*/
@@ -136,7 +138,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
                         getString(R.string.high_tea_font));
 
         recyclerView = fragView.findViewById(R.id.recyclerView);
-        songAdapter = new SongAdapter(getContext(), _songs);
+        songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue());
 
         recyclerView.setAdapter(songAdapter);
 
@@ -151,7 +153,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
         songAdapter.setOnItemClickListener(new SongAdapter.OnItemClickListener() {
             /*Implements interface method onItemClick*/
             @Override
-            public void onItemClick(final MorphButton b, final View view, final SongInfo obj, final int position, final ArrayList<SongInfo> songs, final int i) {
+            public void onItemClick(final MorphButton b, final View view, final Song obj, final int position, final List<Song> songs, final int i) {
                 // Play the selected song
                 if(!b.isSelected()){
                     SPMainActivity.mPlayerService.playSong(obj);
@@ -162,26 +164,20 @@ public class SongListFragment extends Fragment implements SongEventListener {
                 }
             }
         });
-
-
-        //Handles background clicks
-//        songAdapter.setBackOnItemClickListener(new SongAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(ImageButton b, View view, SongInfo obj, int position, ArrayList<SongInfo> songs, int i) {
-//
-//
-//            }
-//        });
     }
 
-    public void setRecyclerViewNormalTheme(int index){
-        _songs.get(index).setSelected(false);
-        songAdapter.notifyItemChanged(index);
+    public void setRecyclerViewNormalTheme(Song song){
+        song.setSelected(false);
+        if(_songs != null) {
+            recyclerView.getAdapter().notifyItemChanged(_songs.indexOf(song));
+        }
     }
 
-    public void setRecyclerViewPlayingTheme(int index){
-        _songs.get(index).setSelected(true);
-        songAdapter.notifyItemChanged(index);
+    public void setRecyclerViewPlayingTheme(Song song){
+        song.setSelected(true);
+        if(_songs != null) {
+            recyclerView.getAdapter().notifyItemChanged(_songs.indexOf(song));
+        }
     }
 
     @Override
@@ -192,27 +188,29 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
     @Override
     public synchronized void onSongChangeEvent(SongEvent e) {
+        Song songPlaying = e.getSource();
+
         // Reset the last song's view
         if(prevExists) {
-            setRecyclerViewNormalTheme(prevPosition);
+            setRecyclerViewNormalTheme(prevSong);
             prevExists = false;
         }
 
 
         if (!prevExists) {
             prevExists = true;
-            prevPosition = e.getSongIndex();
+            prevSong = songPlaying;
         }
 
         // Update the currently playing song
-        setRecyclerViewPlayingTheme(e.getSongIndex());
+        setRecyclerViewPlayingTheme(songPlaying);
     }
 
     @Override
     public void onSongStopEvent(SongEvent e) {
         // If a song was playing, reset the view
         if(prevExists){
-            setRecyclerViewNormalTheme(prevPosition);
+            setRecyclerViewNormalTheme(prevSong);
             prevExists = false;
         }
     }

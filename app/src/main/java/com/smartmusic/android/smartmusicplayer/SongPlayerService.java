@@ -1,6 +1,9 @@
 package com.smartmusic.android.smartmusicplayer;
 
 import android.app.Service;
+import android.arch.lifecycle.LifecycleService;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -8,11 +11,18 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
+import com.smartmusic.android.smartmusicplayer.database.SPDatabase;
+import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
+import com.smartmusic.android.smartmusicplayer.database.view_models.SongsViewModel;
+import com.smartmusic.android.smartmusicplayer.library.Library;
+import com.smartmusic.android.smartmusicplayer.library.SongAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -24,14 +34,14 @@ import java.util.Random;
  */
 
 public class SongPlayerService
-        extends Service
+        extends LifecycleService
         implements MediaPlayer.OnPreparedListener,
                    MediaPlayer.OnErrorListener,
                    MediaPlayer.OnCompletionListener
 {
 
     private Handler myHandler = new Handler();
-    private SongInfo songInfo;
+    private Song songModel;
     private static MediaPlayer mediaPlayer;
     private Random random = new Random();
 
@@ -41,7 +51,7 @@ public class SongPlayerService
     private final IBinder mBinder = new SongPlayerBinder();
 
     //The list of songs to play from
-    private ArrayList<SongInfo> songs;
+    private List<Song> songs;
     //The position of the current song
     private int pos = 0;
     private boolean shuffleOn = false;
@@ -70,6 +80,7 @@ public class SongPlayerService
 
     @Override
     public IBinder onBind(Intent intent) {
+        super.onBind(intent);
         Log.i(getString(R.string.APP_LOGGER),
                 intent.getStringExtra(getString(R.string.EXTRA_SENDER)) + " bound to SongPlayerService");
         mBound = true;
@@ -119,7 +130,7 @@ public class SongPlayerService
      * media player of list changes.
      * @param songList the list of songs.
      */
-    public void setSongList(ArrayList<SongInfo> songList){
+    public void setSongList(List<Song> songList){
         this.songs = songList;
     }
 
@@ -140,7 +151,7 @@ public class SongPlayerService
      * of the song in the list.
      * @param s song to play.
      */
-    public void playSong(final SongInfo s){
+    public void playSong(final Song s){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -150,9 +161,9 @@ public class SongPlayerService
                     }
 
                     mediaPlayer.setDataSource(s.getSongUrl());
-                    songInfo = s;
+                    songModel = s;
 
-                    if( songs.contains(s) ){
+                    if( songs != null && songs.contains(s) ){
                         pos = songs.indexOf(s);
                     } else {
                         // If this is the case we will still play the
@@ -191,13 +202,13 @@ public class SongPlayerService
     public void stop(){
         mediaPlayer.stop();
         mediaPlayer.reset();
-        SPMainActivity.getSongEventHandler().dispatchEvent(getSongStopEvent(songInfo));
+        SPMainActivity.getSongEventHandler().dispatchEvent(getSongStopEvent(songModel));
 
-        songInfo = null;
+        songModel = null;
     }
 
-    public SongInfo getCurrentSong(){
-        return this.songInfo;
+    public Song getCurrentSong(){
+        return this.songModel;
     }
 
     public MediaPlayer getMediaPlayer(){
@@ -223,15 +234,15 @@ public class SongPlayerService
         mediaPlayer.reset();
 
         if( !shuffleOn ) {
-            songInfo = songs.get((pos != songs.size() - 1)
+            songModel = songs.get((pos != songs.size() - 1)
                     ? (pos + 1) // Get song after
                     : 0); // Loop around to beginning of list
         } else {
-            songInfo = getRandomSong();
+            songModel = getRandomSong();
         }
 
-        if(songInfo != null){
-            playSong(songInfo);
+        if(songModel != null){
+            playSong(songModel);
         } else {
             stop();
         }
@@ -248,15 +259,15 @@ public class SongPlayerService
         mediaPlayer.reset();
 
         if( !shuffleOn ) {
-            songInfo = songs.get((pos != 0)
+            songModel = songs.get((pos != 0)
                     ? (pos - 1)  // Get song before
                     : songs.size() - 1); // Loop around to end of list
         } else {
-            songInfo = getRandomSong();
+            songModel = getRandomSong();
         }
 
-        if(songInfo != null){
-            playSong(songInfo);
+        if(songModel != null){
+            playSong(songModel);
         } else {
             stop();
         }
@@ -267,10 +278,10 @@ public class SongPlayerService
      * from the list.
      * @return the random song.
      */
-    private SongInfo getRandomSong(){
+    private Song getRandomSong(){
         // TODO: Implement a weighted random algorithm to more likely
         // choose those songs the user most listens to.
-        SongInfo randSong = songs.get(random.nextInt(songs.size() - 1));
+        Song randSong = songs.get(random.nextInt(songs.size() - 1));
         return randSong;
     }
 
@@ -280,7 +291,7 @@ public class SongPlayerService
      * @param info the song the media player has changed to
      * @return An event that describes the song change.
      */
-    private SongEvent getSongChangeEvent(SongInfo info){
+    private SongEvent getSongChangeEvent(Song info){
         SongEvent event = new SongEvent(info, songs.indexOf(info), SongEvent.Type.SONG_CHANGED);
         return event;
     }
@@ -291,7 +302,7 @@ public class SongPlayerService
      * @param info The song that was stopped
      * @return An event that describes the stopped song.
      */
-    private SongEvent getSongStopEvent(SongInfo info) {
+    private SongEvent getSongStopEvent(Song info) {
         SongEvent event = new SongEvent(info, songs.indexOf(info), SongEvent.Type.SONG_STOPPED);
         return event;
     }
@@ -311,7 +322,7 @@ public class SongPlayerService
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        SPMainActivity.getSongEventHandler().dispatchEvent(getSongChangeEvent(songInfo));
+        SPMainActivity.getSongEventHandler().dispatchEvent(getSongChangeEvent(songModel));
         mediaPlayer.start();
     }
 } // end SongPlayerService

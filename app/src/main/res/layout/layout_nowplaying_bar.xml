@@ -71,7 +71,9 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/album_cover_card"
-        android:layout_toLeftOf="@id/small_button_items">
+        android:layout_toLeftOf="@id/small_button_items"
+        android:layout_alignTop="@id/album_cover_card"
+        android:layout_alignBottom="@id/album_cover_card">
 
         <TextView
             android:layout_width="wrap_content"

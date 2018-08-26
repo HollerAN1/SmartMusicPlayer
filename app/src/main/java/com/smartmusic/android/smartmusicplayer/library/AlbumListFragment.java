@@ -1,24 +1,24 @@
 package com.smartmusic.android.smartmusicplayer.library;
 
-import android.content.Intent;
-import android.graphics.Typeface;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.smartmusic.android.smartmusicplayer.SPMainActivity;
-import com.smartmusic.android.smartmusicplayer.album.AlbumActivity;
-import com.smartmusic.android.smartmusicplayer.comparators.albums.AlbumNameComparator;
-import com.smartmusic.android.smartmusicplayer.model.AlbumInfo;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.database.entities.Album;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
+import com.smartmusic.android.smartmusicplayer.database.view_models.AlbumsViewModel;
+import com.smartmusic.android.smartmusicplayer.database.view_models.SongsViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by holle on 3/7/2018.
@@ -26,10 +26,12 @@ import java.util.ArrayList;
 
 public class AlbumListFragment extends Fragment {
 
-    private ArrayList<AlbumInfo> _albums = null;
+    private List<Album> _albums = null;
 
     private RecyclerView recyclerView = null;
     private AlbumAdapter albumAdapter = null;
+
+    private AlbumsViewModel mModel;
 
     View rootView = null;
 
@@ -38,7 +40,7 @@ public class AlbumListFragment extends Fragment {
     }
 
     private void initData(){
-        this._albums = SPMainActivity.mDatabaseService.getAlbums(new AlbumNameComparator());
+//        this._albums = SPMainActivity.mDatabaseService.getAlbums(new AlbumNameComparator());
     }
 
     @Override
@@ -47,11 +49,31 @@ public class AlbumListFragment extends Fragment {
 
         if( rootView == null ) {
             rootView = inflater.inflate(R.layout.recycler_view_layout, container, false);
-            initData();
+            setUpModel();
             setUpRecyclerView(rootView);
         }
 
         return rootView;
+    }
+
+    private void setUpModel(){
+        // Get the ViewModel.
+        mModel = ViewModelProviders.of(this).get(AlbumsViewModel.class);
+
+        // Create the observer which updates the UI.
+        final Observer<List<Album>> albumObserver = new Observer<List<Album>>() {
+            @Override
+            public void onChanged(@Nullable final List<Album> newAlbumlist) {
+                // Update the UI
+                if(recyclerView != null) {
+                    // Updating the songList will refresh the view
+                    _albums = newAlbumlist;
+                    ((AlbumAdapter)recyclerView.getAdapter()).setAlbums(newAlbumlist);
+                }
+            }
+        };
+
+        mModel.getAllAlbums().observe(this, albumObserver);
     }
 
     private void setUpRecyclerView(View fragView){
@@ -70,10 +92,10 @@ public class AlbumListFragment extends Fragment {
 
 //        albumAdapter.setOnItemClickListener(new AlbumAdapter.OnItemClickListener() {
 //            @Override
-//            public void onItemClick(ImageView b, View view, AlbumInfo obj, int position, ArrayList<AlbumInfo> albums, int i) {
+//            public void onItemClick(ImageView b, View view, Album obj, int position, ArrayList<Album> albums, int i) {
 //                Intent intent = new Intent(getContext(), AlbumActivity.class);
 //                intent.putExtra("EXTRA_ALBUM_NAME", obj.getAlbumName());
-//                intent.putExtra("EXTRA_ALBUM_ARTIST", obj.getArtistname());
+//                intent.putExtra("EXTRA_ALBUM_ARTIST", obj.getArtistName());
 //                intent.putExtra("EXTRA_ALBUM_ART", obj.getAlbumArt().toString());
 //                intent.putExtra("EXTRA_ALBUM_SONGLIST", obj.getSongs());
 //

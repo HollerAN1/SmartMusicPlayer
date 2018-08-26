@@ -23,7 +23,8 @@ import android.widget.TextView;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
+import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
@@ -68,8 +69,6 @@ public class Library extends Fragment implements SongEventListener {
                              Bundle savedInstanceState) {
         getActivity().setTitle(getString(R.string.LIBRARY));
         setRetainInstance(true);
-
-        System.out.println("CREATING LIBRARY");
 
         if( mainView == null ) {
             // Inflate the layout for this fragment
@@ -261,10 +260,10 @@ public class Library extends Fragment implements SongEventListener {
         }
     }
 
-    public void updateNowPlayingBar(SongInfo s){
+    public void updateNowPlayingBar(Song s){
         if(s != null && nowPlayingBar != null) {
-            nowPlayingSongName.setText(s.getSongname());
-            nowPlayingArtistName.setText(s.getArtistname());
+            nowPlayingSongName.setText(s.getSongName());
+            nowPlayingArtistName.setText(s.getArtistName());
 
 
             Uri uri = s.getAlbumArt();
@@ -343,7 +342,7 @@ public class Library extends Fragment implements SongEventListener {
 //                    Uri albumArt = ContentUris.withAppendedId(albumArtUri, cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
 //
 //
-//                    SongInfo s = new SongInfo(name,artist, album, url, albumArt);
+//                    Song s = new Song(name,artist, album, url, albumArt);
 //                    _songs.add(s);
 //
 //
@@ -376,20 +375,20 @@ public class Library extends Fragment implements SongEventListener {
         }
     }
 
-//    private void updateArtists(SongInfo s){
-//        for(ArtistInfo a : _artists){
-//            if(a.getArtistname().equals(s.getArtistname())){
+//    private void updateArtists(Song s){
+//        for(ArtistModel a : _artists){
+//            if(a.getArtistName().equals(s.getArtistName())){
 //                a.addSong(s);
 //                return;
 //            }
 //        }
-//        ArtistInfo artist = new ArtistInfo(s.getArtistname());
+//        ArtistModel artist = new ArtistModel(s.getArtistName());
 //        artist.addSong(s);
 //        _artists.add(artist);
 //    }
 
-//    private void updateAlbums(SongInfo s){
-//        for(AlbumInfo a : _albums){
+//    private void updateAlbums(Song s){
+//        for(AlbumModel a : _albums){
 //            if(a.getAlbumName().equals(s.getAlbumname())){
 //                a.addSong(s);
 //                return;
@@ -399,9 +398,9 @@ public class Library extends Fragment implements SongEventListener {
 //        if(s.getAlbumname().equals("<unknown>")){
 //            artistname = "<unknown>";
 //        } else {
-//            artistname = s.getArtistname();
+//            artistname = s.getArtistName();
 //        }
-//        AlbumInfo al = new AlbumInfo(artistname, s.getAlbumname(), s.getAlbumArt());
+//        AlbumModel al = new AlbumModel(artistname, s.getAlbumname(), s.getAlbumArt());
 //        al.addSong(s);
 //        _albums.add(al);
 //    }

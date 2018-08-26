@@ -1,22 +1,25 @@
 package com.smartmusic.android.smartmusicplayer;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
-
-import java.util.concurrent.TimeoutException;
-
-import timber.log.Timber;
+import com.smartmusic.android.smartmusicplayer.database.SPDatabase;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 
 /**
  * Created by holle on 12/14/2017.
@@ -30,31 +33,12 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
 //        startActivity(intent);
 //        finish();
 //    }
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.i(getString(R.string.APP_LOGGER), SplashActivity.this.getLocalClassName() + " disconnected from SPDatabaseService");
-            mServiceBound = false;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i(getString(R.string.APP_LOGGER), SplashActivity.this.getLocalClassName() + " connected to SPDatabaseService");
-            SPDatabaseService.SPDatabaseBinder mBinder = (SPDatabaseService.SPDatabaseBinder) service;
-            mService = mBinder.getService();
-            mServiceBound = true;
-
-            startLoadingDatabase();
-        }
-    };
 
     private SongEventHandler mHandler = new SongEventHandler();
 
     private ProgressBar mProgress;
     private TextView mProgressDescription;
     private boolean mServiceBound = false;
-    private SPDatabaseService mService;
     private int maxSongs = 0;
     private Handler mProcessHandler;
 
@@ -68,17 +52,6 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
         setContentView(R.layout.splash_screen);
         mProgress = (ProgressBar) findViewById(R.id.splash_screen_progress_bar);
         mProgressDescription = (TextView) findViewById(R.id.splash_screen_progress_description);
-
-        // Start lengthy operation in a background thread
-//        new Thread(new Runnable() {
-//            public void run() {
-//                doWork();
-//                startApp();
-//                finish();
-//            }
-//        }).start();
-//        mProgress.setMax(100);
-//        mProgress.setProgress(0);
     }
 
     private void doWork() {
@@ -88,7 +61,7 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
                 mProgress.setProgress(progress);
             } catch (Exception e) {
                 e.printStackTrace();
-                Timber.e(e.getMessage());
+//                Timber.e(e.getMessage());
             }
         }
     }
@@ -102,47 +75,69 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
     @Override
     protected void onStart() {
         super.onStart();
-//        bindServices();
+        checkUserPermission();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        bindServices();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unbindServices();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        unbindServices();
     }
 
-    private void startLoadingDatabase(){
-        maxSongs = mService.getTotalSongCount();
-        mProgress.setMax(maxSongs);
-        mProgress.setProgress(0);
-
-        mService.loadDatabase();
+    private void checkUserPermission(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){ // SDK 23
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},123);
+                return;
+            } else if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 456);
+            }
+        }
+//        new SPRepository(this);
+        initalizeDatabase();
     }
 
-    private void bindServices(){
-        // Bind to SPDatabaseService
-        Intent intent = new Intent(this, SPDatabaseService.class);
-        intent.putExtra(getString(R.string.EXTRA_SENDER), this.getLocalClassName());
-        startService(intent);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(grantResults.length == 0) {
+            return;
+        }
+        switch (requestCode){
+            case 123:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+//                    new SPRepository(this);
+                    initalizeDatabase();
+                }else{
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                    checkUserPermission();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        }
+
     }
 
-    private void unbindServices(){
-        if (mServiceBound) {
-            unbindService(mServiceConnection);
-            mServiceBound = false;
+    private void initalizeDatabase(){
+        SPDatabase db = SPDatabase.getDatabase(this);
+        if(SPDatabase.doesDatabaseExist(this, SPDatabase.DATABASE_NAME)){
+            startApp();
+        } else {
+            maxSongs = SPDatabase.getTotalSongCount(this);
+            mProgress.setMax(maxSongs);
+            mProgress.setProgress(0);
         }
     }
 
@@ -160,11 +155,11 @@ public class SplashActivity extends AppCompatActivity implements SongEventListen
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                SongInfo s = e.getSource();
+                Song s = e.getSource();
                 mProgress.incrementProgressBy(1);
 
                 if(s != null) {
-                    mProgressDescription.setText(s.getSongname());
+                    mProgressDescription.setText(s.getSongName());
                 }
 
                 if( mProgress.getProgress() == maxSongs ) {

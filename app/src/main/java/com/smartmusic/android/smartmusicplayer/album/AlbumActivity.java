@@ -17,8 +17,8 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.library.SongDefaultAdapter;
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
 
@@ -33,7 +33,7 @@ public class AlbumActivity extends AppCompatActivity {
     private String albumName;
     private String artistName;
     private Uri albumArt;
-    private ArrayList<SongInfo> _albumSongs;
+    private ArrayList<Song> _albumSongs;
 
     public AlbumActivity() {
         // Required empty public constructor
@@ -52,7 +52,7 @@ public class AlbumActivity extends AppCompatActivity {
         albumName = getIntent().getStringExtra("EXTRA_ALBUM_NAME");
         artistName = getIntent().getStringExtra("EXTRA_ALBUM_ARTIST");
         albumArt = Uri.parse(getIntent().getStringExtra("EXTRA_ALBUM_ART"));
-        _albumSongs = (ArrayList<SongInfo>) getIntent().getSerializableExtra("EXTRA_ALBUM_SONGLIST");
+        _albumSongs = (ArrayList<Song>) getIntent().getSerializableExtra("EXTRA_ALBUM_SONGLIST");
     }
 
     private void setupAlbumActivity(){

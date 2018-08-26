@@ -75,11 +75,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Artist Name"
-                android:textColor="@android:color/black"
+                android:textColor="@color/pastel_rose"
                 android:layout_marginLeft="10dp"
                 android:textSize="18dp"
                 android:layout_toRightOf="@id/album_gmailitem_letter"
                 android:transitionName="@string/artist_name_transition_name"
+                android:fontFamily="@font/exo_medium"
                 />
             <TextView
                 android:id="@+id/album_song_count"
@@ -87,8 +88,9 @@
                 android:layout_height="wrap_content"
                 android:text="4 songs"
                 android:layout_below="@id/album_artist_name"
-                android:paddingLeft="10dp"
-                android:layout_toRightOf="@id/album_gmailitem_letter"/>
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/album_gmailitem_letter"
+                android:fontFamily="@font/comfortaa_light"/>
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

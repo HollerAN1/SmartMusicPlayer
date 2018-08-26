@@ -18,15 +18,16 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.smartmusic.android.smartmusicplayer.comparators.songs.SongNameComparator;
+import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.database.entities.Album;
+import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.library.Library;
-import com.smartmusic.android.smartmusicplayer.model.AlbumInfo;
-import com.smartmusic.android.smartmusicplayer.model.ArtistInfo;
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
 import com.smartmusic.android.smartmusicplayer.playlists.Playlists;
 import com.smartmusic.android.smartmusicplayer.settings.Settings;
@@ -40,40 +41,18 @@ public class SPMainActivity
 
 
     /* Local copy of database lists */
-    public static ArrayList<SongInfo> _songs = new ArrayList<>();
-    public static ArrayList<ArtistInfo> _artists = new ArrayList<>();
-    public static ArrayList<AlbumInfo> _albums = new ArrayList<>();
+    public static ArrayList<Song> _songs = new ArrayList<>();
+    public static ArrayList<Artist> _artists = new ArrayList<>();
+    public static ArrayList<Album> _albums = new ArrayList<>();
 
     private static SongEventHandler songEventHandler = new SongEventHandler();
-
-    /*
-      A Handler allows you to send and process Message and Runnable
-      objects associated with a thread's MessageQueue. Each Handler
-      instance is associated with a single thread and that thread's
-      message queue. When you create a new Handler, it is bound to
-      the thread / message queue of the thread that is creating it
-      -- from that point on, it will deliver messages and runnables
-      to that message queue and execute them as they come out of the
-      message queue.
-
-       There are two main uses for a Handler: (1) to schedule messages
-       and runnables to be executed as some point in the future; and
-       (2) to enqueue an action to be performed on a different thread
-       than your own.
-     */
-    private Handler myHandler = new Handler();
-
-
 
     /* SongPlayerService */
     public static SongPlayerService mPlayerService;
     private Intent musicIntent;
     private boolean mMusicBound = false;
 
-    /* SPDatabase Service */
-    public static SPDatabaseService mDatabaseService;
-    private Intent databaseIntent;
-    private boolean mDatabaseBound = false;
+    public static SPRepository repository;
 
 
     /* Service connection for SongPlayerService */
@@ -89,10 +68,6 @@ public class SPMainActivity
 //            mPlayerService.setSongList(_songs);
             mMusicBound = true;
 
-            if( mDatabaseService != null ){
-                mPlayerService.setSongList(mDatabaseService.getSongs(new SongNameComparator()));
-            }
-
         }
 
         @Override
@@ -101,26 +76,6 @@ public class SPMainActivity
             mMusicBound = false;
         }
     };
-
-    /* Service connection for SPDatabaseService */
-    private ServiceConnection mDatabaseConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i(getString(R.string.APP_LOGGER), SPMainActivity.this.getLocalClassName() + " connected to SPDatabaseService");
-            // We've bound to SPDatabaseService, cast the IBinder and get Service instance
-            SPDatabaseService.SPDatabaseBinder binder = (SPDatabaseService.SPDatabaseBinder) service;
-            mDatabaseService = binder.getService();
-            mDatabaseBound = true;
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.i(getString(R.string.APP_LOGGER), SPMainActivity.this.getLocalClassName() + " disconnected from SPDatabaseService");
-            mDatabaseBound = false;
-        }
-    };
-
 
     /* ----------- UI Fields ------------ */
     LinearLayout mFragmentContainer;
@@ -143,6 +98,17 @@ public class SPMainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smmain);
+
+        repository = new SPRepository(this);
+
+        //Initializes the custom action bar layout
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        View mCustomView = mInflater.inflate(R.layout.smart_player_action_bar, null);
+        getSupportActionBar().setCustomView(mCustomView);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
+        TextView tv = mCustomView.findViewById(R.id.title_text);
+        tv.setText("Library");
 
         songEventHandler.addSongEventListener(this);
 
@@ -230,28 +196,16 @@ public class SPMainActivity
 
     private void bindServices(){
         Log.i(getString(R.string.APP_LOGGER), this.getLocalClassName() + " is binding services");
-        // Bind to SPDatabaseService
-        if( databaseIntent == null ) {
-            databaseIntent = new Intent(this, SPDatabaseService.class);
-            databaseIntent.putExtra(getString(R.string.EXTRA_SENDER), this.getLocalClassName());
-            bindService(databaseIntent, mDatabaseConnection, Context.BIND_AUTO_CREATE);
-//            startService(databaseIntent); // Service started in SplashActivity
-        }
-
         // Bind to SongPlayerService
 //        if( musicIntent == null ){
             musicIntent = new Intent(this, SongPlayerService.class);
             musicIntent.putExtra(getString(R.string.EXTRA_SENDER), this.getLocalClassName());
             startService(musicIntent);
             bindService(musicIntent, musicConnection, Context.BIND_AUTO_CREATE);
-//            startService(musicIntent);
 //        }
     }
 
     private void unbindServices(){
-        unbindService(mDatabaseConnection);
-        mDatabaseBound = false;
-
         unbindService(musicConnection);
         mMusicBound = false;
     }
@@ -265,15 +219,15 @@ public class SPMainActivity
     }
 
 
-    public static ArrayList<SongInfo> getSongs(){
+    public static ArrayList<Song> getSongs(){
         return _songs;
     }
 
-    public static ArrayList<AlbumInfo> getAlbums(){
+    public static ArrayList<Album> getAlbums(){
         return _albums;
     }
 
-    public static ArrayList<ArtistInfo> getArtists(){
+    public static ArrayList<Artist> getArtists(){
         return _artists;
     }
 
@@ -379,7 +333,7 @@ public class SPMainActivity
     @Override
     public void onSongChangeEvent(SongEvent e) {
 
-        SongInfo tmpSong = e.getSource();
+        Song tmpSong = e.getSource();
 
         if(tmpSong == null) { return; }
 
@@ -403,8 +357,8 @@ public class SPMainActivity
                 .error(R.drawable.temp_album_art)
                 .into(navAlbumArt);
 
-        navArtist.setText(tmpSong.getArtistname());
-        navName.setText(tmpSong.getSongname());
+        navArtist.setText(tmpSong.getArtistName());
+        navName.setText(tmpSong.getSongName());
     }
 
     @Override

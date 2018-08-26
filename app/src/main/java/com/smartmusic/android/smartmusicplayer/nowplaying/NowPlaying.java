@@ -2,7 +2,6 @@ package com.smartmusic.android.smartmusicplayer.nowplaying;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +23,10 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
+import com.smartmusic.android.smartmusicplayer.SPUtils;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
 
@@ -62,7 +62,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
     private Handler mHandler = new Handler();
 
-    private SongInfo currentSong;
+    private Song currentSong;
 
     // Declare in and out animations and load them using AnimationUtils class
     private Animation inL;
@@ -174,8 +174,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 int new_currPos = SPMainActivity.mPlayerService.getMediaPlayer().getCurrentPosition();
                 int new_maxPos = SPMainActivity.mPlayerService.getMediaPlayer().getDuration();
 
-                progressCount.setText(milliToTime(new_currPos));
-                duration.setText(milliToTime(new_maxPos));
+                progressCount.setText(SPUtils.milliToTime(new_currPos));
+                duration.setText(SPUtils.milliToTime(new_maxPos));
                 seekBar.setProgress(new_currPos);
 
 
@@ -211,7 +211,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 if( SPMainActivity.mPlayerService.isMediaPlayerSet() && fromUser){
                     SPMainActivity.mPlayerService.getMediaPlayer().seekTo(progress);
                     seekBar.setProgress(progress);
-                    progressCount.setText(milliToTime(progress));
+                    progressCount.setText(SPUtils.milliToTime(progress));
                 }
             }
 
@@ -232,7 +232,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentSong.toggleFavorite();
+                currentSong.getStats().setFavorited(!currentSong.getStats().isFavorited());
 
                 favoriteGhost.setVisibility(View.VISIBLE);
                 if(favoriteGhost.isSelected()){
@@ -311,10 +311,10 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 .into(largeAlbumArt);
 
 
-        songName.setText(currentSong.getSongname());
+        songName.setText(currentSong.getSongName());
         songName.setSelected(true);
 
-        artistName.setText(currentSong.getArtistname());
+        artistName.setText(currentSong.getArtistName());
 
 
         int maxPos = SPMainActivity.mPlayerService.getMediaPlayer().getDuration();
@@ -326,11 +326,11 @@ public class NowPlaying extends Fragment implements SongEventListener {
 //        seekBar.setBackgroundColor(getResources().getColor(R.color.pastel_rose));
 
 
-        progressCount.setText(milliToTime(currPos));
-        duration.setText(milliToTime(maxPos));
+        progressCount.setText(SPUtils.milliToTime(currPos));
+        duration.setText(SPUtils.milliToTime(maxPos));
 
 
-        favoriteButton.setSelected(currentSong.isFavorited());
+        favoriteButton.setSelected(currentSong.getStats().isFavorited());
 
 
         shuffleButton.setSelected(SPMainActivity.mPlayerService.isShuffleOn());
@@ -349,37 +349,6 @@ public class NowPlaying extends Fragment implements SongEventListener {
     public void onDestroy() {
         super.onDestroy();
         SPMainActivity.getSongEventHandler().removeSongEventListener(this);
-    }
-
-    /**
-     * Converts millisecond time to minutes:seconds
-     * @param milliseconds the number of milliseconds
-     * @return
-     */
-    private String milliToTime(int milliseconds) {
-        String finalTimerString = "";
-        String secondsString = "";
-
-        // Convert total duration into time
-        int hours = (int) (milliseconds / (1000 * 60 * 60));
-        int minutes = (int) (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
-        int seconds = (int) ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
-        // Add hours if there
-        if (hours > 0) {
-            finalTimerString = hours + ":";
-        }
-
-        // Prepending 0 to seconds if it is one digit
-        if (seconds < 10) {
-            secondsString = "0" + seconds;
-        } else {
-            secondsString = "" + seconds;
-        }
-
-        finalTimerString = finalTimerString + minutes + ":" + secondsString;
-
-        // return timer string
-        return finalTimerString;
     }
 
     public void collapseView(){
@@ -412,7 +381,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
         mHandler.removeCallbacks(updateTimeRunnable);
     }
 
-    private void setUpAlbumArt(View view, final SongInfo song){
+    private void setUpAlbumArt(View view, final Song song){
 
         if( view != null ) {
             albumArt = (ImageView) view.findViewById(R.id.now_playing_album_art);
@@ -441,9 +410,9 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
                     if(song == null) {
-                        ((NowPlaying) getParentFragment()).getSongInfo().toggleFavorite();
+                        ((NowPlaying) getParentFragment()).getSongInfo().getStats().setFavorited(!song.getStats().isFavorited());
                     } else {
-                        song.toggleFavorite();
+                        song.getStats().setFavorited(!song.getStats().isFavorited());
                     }
 //                        ImageView favoriteButton = ((NowPlaying)getParentFragment()).favoriteButton;
 
@@ -481,12 +450,12 @@ public class NowPlaying extends Fragment implements SongEventListener {
         });
 
         favoriteGhost.setSelected(
-                song == null ? ((NowPlaying)getParentFragment()).getSongInfo().isFavorited()
-                        : song.isFavorited() );
+                song == null ? ((NowPlaying)getParentFragment()).getSongInfo().getStats().isFavorited()
+                        : song.getStats().isFavorited() );
 
     }
 
-    public SongInfo getSongInfo(){
+    public Song getSongInfo(){
         return this.currentSong;
     }
     public ImageView getFavoriteButton(){

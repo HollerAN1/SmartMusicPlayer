@@ -1,6 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.comparators.playlists;
 
-import com.smartmusic.android.smartmusicplayer.model.PlaylistInfo;
+import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
 
 import java.util.Comparator;
 
@@ -10,12 +10,13 @@ import java.util.Comparator;
  * Created by holle on 7/29/2018.
  */
 
-public class PlaylistDateComparator implements Comparator<PlaylistInfo> {
+public class PlaylistDateComparator implements Comparator<Playlist> {
 
     public PlaylistDateComparator(){}
 
     @Override
-    public int compare(PlaylistInfo o1, PlaylistInfo o2) {
-        return o1.getDateCreated().compareTo(o2.getDateCreated());
+    public int compare(Playlist o1, Playlist o2) {
+//        return o1.getDateCreated().compareTo(o2.getDateCreated());
+        return 0;
     }
 }

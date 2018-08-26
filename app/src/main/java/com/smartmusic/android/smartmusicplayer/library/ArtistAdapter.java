@@ -1,7 +1,7 @@
 package com.smartmusic.android.smartmusicplayer.library;
 
 import android.content.Context;
-import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +12,22 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.smartmusic.android.smartmusicplayer.model.ArtistInfo;
-import com.smartmusic.android.smartmusicplayer.model.SongInfo;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHolder> {
 
     /**
      * ArrayList of all songs
      * */
-    private ArrayList<ArtistInfo> _artists = new ArrayList<>();
+    private List<Artist> _artists;
+
     /**
      * Context is used to get an inflater to inflate the views in getView method.
      * An Inflater instantiates a layout XML file into its corresponding View objects
@@ -45,13 +48,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
      * @param context context
      * @param artists list of artists
      */
-    public ArtistAdapter(Context context, ArrayList<ArtistInfo> artists) {
+    public ArtistAdapter(Context context, List<Artist> artists) {
         this.context = context;
         this._artists = artists;
     }
 
     public interface OnItemClickListener {
-        void onItemClick(ImageButton b, View view, SongInfo obj, int position, ArrayList<SongInfo> songs, int i);
+        void onItemClick(ImageButton b, View view, Song obj, int position, ArrayList<Song> songs, int i);
     }
 
     /**
@@ -120,10 +123,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
      */
     @Override
     public void onBindViewHolder(final ArtistHolder artistHolder, final int i) {
-        final ArtistInfo a = _artists.get(i);
+        final Artist a = _artists.get(i);
         this.artistHolder = artistHolder;
-        artistHolder.tvArtistName.setText(a.getArtistname());
-        artistHolder.tvSongCount.setText(a.getSongCount() + " songs");
+        artistHolder.tvArtistName.setText(a.getArtistName());
+//        artistHolder.tvSongCount.setText(a.getSongCount() + " songs");
 //        artistHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
 //                                                        context.getAssets(),
 //                                                        context.getString(R.string.raleway_regular_font)));
@@ -131,7 +134,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
 //                                                        context.getAssets(),
 //                                                        context.getString(R.string.high_tea_font)));
 
-        String letter = String.valueOf(a.getArtistname().charAt(0));
+        String letter = String.valueOf(a.getArtistName().charAt(0));
 
         TextDrawable drawable = TextDrawable.builder()
                 .buildRound(letter, ColorGenerator.MATERIAL.getRandomColor());
@@ -155,9 +158,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
      */
     @Override
     public int getItemCount() {
-        return _artists.size();
+        if(_artists != null) {
+            return _artists.size();
+        }
+        return 0;
     }
 
+
+    public void setArtists(List<Artist> artists){
+        this._artists = artists;
+        notifyDataSetChanged();
+    }
 
     /**
      * A ViewHolder describes an item view and metadata about its place
