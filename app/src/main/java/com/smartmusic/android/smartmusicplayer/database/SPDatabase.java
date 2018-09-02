@@ -28,7 +28,7 @@ import com.smartmusic.android.smartmusicplayer.database.entities.Stat;
 import java.io.File;
 import java.util.List;
 
-@Database(entities = {Song.class, Playlist.class, Artist.class, Album.class, Stat.class, SongPlaylistJoin.class}, version = 1)
+@Database(entities = {Song.class, Playlist.class, Artist.class, Album.class, Stat.class, SongPlaylistJoin.class}, version = 2)
 @TypeConverters({Converters.class})
 public abstract class SPDatabase extends RoomDatabase {
     public abstract SongDao songDao();
@@ -37,7 +37,7 @@ public abstract class SPDatabase extends RoomDatabase {
     public abstract AlbumDao albumDao();
     public abstract SongPlaylistJoinDao songPlaylistJoinDao();
 
-    public static final String DATABASE_NAME = "SmartPlayerDatabase";
+    public static final String DATABASE_NAME = "SmartPlayerDatabase2";
     private static SPDatabase INSTANCE; // singleton to prevent having multiple instances of the database opened at the same time.
 
     private static SongEventHandler mEventHandler = new SongEventHandler();
@@ -147,7 +147,14 @@ public abstract class SPDatabase extends RoomDatabase {
                         Uri albumArt = ContentUris.withAppendedId(albumArtUri, cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
 
 
-                        Song s = new Song(name,artist, album, url, albumArt.toString(), track, duration, year, null, size, displayName);
+                        Song s = new Song(name,
+                                artist,
+                                album,
+                                url,
+                                albumArt.toString(),
+                                track, duration, year,
+                                null,
+                                size, displayName);
 
                         addSongToArtist(s);
                         addSongToAlbum(s);
@@ -179,7 +186,7 @@ public abstract class SPDatabase extends RoomDatabase {
                 return;
             }
 
-            Album al = new Album(s.getArtistName(), s.getAlbumName(), s.getAlbumArt().toString());
+            Album al = new Album(s.getAlbumName(), s.getArtistName(), s.getAlbumArt().toString());
             s.setAlbumUID(al.getAlbumUID());
             al.setNumSongs(al.getNumSongs() + 1);
             db.albumDao().insert(al);
@@ -213,8 +220,10 @@ public abstract class SPDatabase extends RoomDatabase {
             List<Album> allAlbums = db.albumDao().getAllAlbumsStatic();
             for(Album album : allAlbums){
                 Artist artist = db.artistDao().findArtistByName(album.getArtistName());
-                artist.setNumAlbums(artist.getNumAlbums() + 1);
-                db.artistDao().insert(artist);
+                if(artist != null) {
+                    artist.setNumAlbums(artist.getNumAlbums() + 1);
+                    db.artistDao().insert(artist);
+                }
             }
         }
     } // end AsyncTask

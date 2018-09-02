@@ -1,5 +1,7 @@
 package com.smartmusic.android.smartmusicplayer;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +19,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
@@ -98,16 +103,9 @@ public class SPMainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smmain);
 
-        repository = new SPRepository(this);
+        handleIntent(getIntent());
 
-//        //Initializes the custom action bar layout
-//        LayoutInflater mInflater = LayoutInflater.from(this);
-//        View mCustomView = mInflater.inflate(R.layout.smart_player_action_bar, null);
-//        getSupportActionBar().setCustomView(mCustomView);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-//
-//        TextView tv = mCustomView.findViewById(R.id.title_text);
-//        tv.setText("Library");
+        repository = new SPRepository(this);
 
         getSupportActionBar().setTitle(R.string.LIBRARY);
 
@@ -159,6 +157,7 @@ public class SPMainActivity
             transaction.add(R.id.fragment_container, library, getResources().getString(R.string.LIBRARY_TAG));
             transaction.commit();
         }
+
     }
     /*-------------------------------------- ON CREATE METHOD ENDS -----------------------------------------*/
 
@@ -233,19 +232,24 @@ public class SPMainActivity
     }
 
 
-    //Create 3 dot options menu in corner
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.navigation_menu, menu);
-//        return true;
-//
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_menu, menu);
+
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //Causes 'hamburger' button to open menu
-        //This hook is called whenever an item in your options menu is selected.
         if(mToggle.onOptionsItemSelected(item)){
             return true;
         }
@@ -329,6 +333,19 @@ public class SPMainActivity
                 return true;
         }
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+//            doMySearch(query);
+        }
     }
 
     @Override

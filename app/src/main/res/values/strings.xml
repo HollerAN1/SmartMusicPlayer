@@ -3,6 +3,10 @@
     <string name="APP_LOGGER">SmartPlayerLogger</string>
 
 
+    <string name="search_hint">Search here...</string>
+    <string name="search_label">Search</string>
+
+
     <string name="open">Open</string>
     <string name="close">Close</string>
 
