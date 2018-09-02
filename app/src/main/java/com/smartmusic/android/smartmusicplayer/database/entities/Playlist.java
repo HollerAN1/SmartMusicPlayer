@@ -2,17 +2,19 @@ package com.smartmusic.android.smartmusicplayer.database.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(tableName = "playlist_table")
 public class Playlist implements Comparable<Playlist> {
     @PrimaryKey
     @NonNull
-    private String uid;
+    private String playlistUID;
 
     @ColumnInfo(name = "name")
     private String name;
@@ -26,8 +28,11 @@ public class Playlist implements Comparable<Playlist> {
 //    @ColumnInfo(name = "date_created")
 //    private Date dateCreated;
 
+    @Ignore
+    private List<Song> songs;
+
     public Playlist(String name, String description, boolean userCreated) {
-        this.uid = UUID.randomUUID().toString();
+        this.playlistUID = UUID.randomUUID().toString();
         this.name = name;
         this.description = description != null ? description : "";
         this.userCreated = userCreated;
@@ -35,8 +40,8 @@ public class Playlist implements Comparable<Playlist> {
     }
 
     // Getter/Setter methods
-    public String getUid() {
-        return uid;
+    public String getPlaylistUID() {
+        return playlistUID;
     }
 
     public String getName() {
@@ -47,12 +52,28 @@ public class Playlist implements Comparable<Playlist> {
         this.name = name;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setPlaylistUID(String playlistUID) {
+        this.playlistUID = playlistUID;
     }
 
     public String getDescription() {
         return description;
+    }
+
+//    public Date getDateCreated() {
+//        return dateCreated;
+//    }
+//
+//    public void setDateCreated(Date dateCreated) {
+//        this.dateCreated = dateCreated;
+//    }
+
+    public List<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
     }
 
     public boolean isUserCreated() {
@@ -66,14 +87,6 @@ public class Playlist implements Comparable<Playlist> {
     public void setDescription(String description) {
         this.description = description;
     }
-
-//    public Date getDateCreated() {
-//        return dateCreated;
-//    }
-//
-//    public void setDateCreated(Date dateCreated) {
-//        this.dateCreated = dateCreated;
-//    }
 
     @Override
     public int compareTo(Playlist playlist) {

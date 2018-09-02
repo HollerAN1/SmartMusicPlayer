@@ -126,13 +126,21 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
         final Artist a = _artists.get(i);
         this.artistHolder = artistHolder;
         artistHolder.tvArtistName.setText(a.getArtistName());
-//        artistHolder.tvSongCount.setText(a.getSongCount() + " songs");
-//        artistHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
-//                                                        context.getAssets(),
-//                                                        context.getString(R.string.raleway_regular_font)));
-//        artistHolder.tvSongCount.setTypeface(Typeface.createFromAsset(
-//                                                        context.getAssets(),
-//                                                        context.getString(R.string.high_tea_font)));
+
+        String songCountString = a.getNumSongs() + "";
+        if(a.getNumSongs() == 1){
+            songCountString = songCountString + " song";
+        } else {
+            songCountString = songCountString + " songs";
+        }
+
+        if(a.getNumAlbums() == 1){
+            songCountString = songCountString + " | " + a.getNumAlbums() + " album";
+        } else {
+            songCountString = songCountString + " | " + a.getNumAlbums() + " albums";
+        }
+
+        artistHolder.tvSongCount.setText(songCountString);
 
         String letter = String.valueOf(a.getArtistName().charAt(0));
 

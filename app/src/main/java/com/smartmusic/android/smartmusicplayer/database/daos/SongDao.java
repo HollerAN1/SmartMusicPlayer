@@ -14,6 +14,9 @@ import java.util.List;
 @Dao
 public abstract class SongDao {
     @Query("SELECT * FROM song_table")
+    public abstract List<Song> getAllSongsStatic();
+
+    @Query("SELECT * FROM song_table")
     public abstract LiveData<List<Song>> getAllUnsorted(); // LiveData ensures data is updated on database changes
 
     @Query("SELECT * FROM song_table ORDER BY song_name")
@@ -28,7 +31,7 @@ public abstract class SongDao {
     @Query("SELECT * FROM song_table WHERE song_name LIKE :name")
     public abstract Song findSongByName(String name);
 
-    @Query("SELECT * FROM song_table WHERE uid LIKE :uid")
+    @Query("SELECT * FROM song_table WHERE songUID LIKE :uid")
     public abstract Song findSongByUID(String uid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -6,7 +6,6 @@ import android.arch.lifecycle.LiveData;
 
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
-import com.smartmusic.android.smartmusicplayer.database.entities.PlaylistWithSongs;
 
 import java.util.List;
 

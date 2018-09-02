@@ -64,8 +64,7 @@ public class SPMainActivity
             SongPlayerService.SongPlayerBinder binder = (SongPlayerService.SongPlayerBinder) service;
             //get service
             mPlayerService = binder.getService();
-            //pass list
-//            mPlayerService.setSongList(_songs);
+
             mMusicBound = true;
 
         }
@@ -101,14 +100,16 @@ public class SPMainActivity
 
         repository = new SPRepository(this);
 
-        //Initializes the custom action bar layout
-        LayoutInflater mInflater = LayoutInflater.from(this);
-        View mCustomView = mInflater.inflate(R.layout.smart_player_action_bar, null);
-        getSupportActionBar().setCustomView(mCustomView);
+//        //Initializes the custom action bar layout
+//        LayoutInflater mInflater = LayoutInflater.from(this);
+//        View mCustomView = mInflater.inflate(R.layout.smart_player_action_bar, null);
+//        getSupportActionBar().setCustomView(mCustomView);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
+//
+//        TextView tv = mCustomView.findViewById(R.id.title_text);
+//        tv.setText("Library");
 
-        TextView tv = mCustomView.findViewById(R.id.title_text);
-        tv.setText("Library");
+        getSupportActionBar().setTitle(R.string.LIBRARY);
 
         songEventHandler.addSongEventListener(this);
 

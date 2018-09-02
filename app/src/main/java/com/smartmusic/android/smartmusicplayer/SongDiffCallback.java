@@ -34,7 +34,7 @@ public class SongDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return mOldList.get(oldItemPosition).getUid().equals(mNewList.get(newItemPosition).getUid());
+        return mOldList.get(oldItemPosition).getSongUID().equals(mNewList.get(newItemPosition).getSongUID());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SongDiffCallback extends DiffUtil.Callback {
         return (oldSong.getSongName().equals(newSong.getSongName())) &&
                 (oldSong.getArtistName().equals(newSong.getArtistName())) &&
                 (oldSong.getAlbumName().equals(newSong.getAlbumName())) &&
-                (oldSong.getUid().equals(newSong.getUid())) &&
+                (oldSong.getSongUID().equals(newSong.getSongUID())) &&
                 (oldSong.isSelected() == newSong.isSelected());
     }
 }

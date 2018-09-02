@@ -1,9 +1,9 @@
 package com.smartmusic.android.smartmusicplayer.database;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -17,22 +17,25 @@ import com.smartmusic.android.smartmusicplayer.database.daos.AlbumDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.ArtistDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.PlaylistDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.SongDao;
+import com.smartmusic.android.smartmusicplayer.database.daos.SongPlaylistJoinDao;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
+import com.smartmusic.android.smartmusicplayer.database.entities.SongPlaylistJoin;
 import com.smartmusic.android.smartmusicplayer.database.entities.Stat;
 
 import java.io.File;
-import java.util.Date;
 import java.util.List;
 
-@Database(entities = {Song.class, Playlist.class, Artist.class, Album.class, Stat.class}, version = 1)
+@Database(entities = {Song.class, Playlist.class, Artist.class, Album.class, Stat.class, SongPlaylistJoin.class}, version = 1)
+@TypeConverters({Converters.class})
 public abstract class SPDatabase extends RoomDatabase {
     public abstract SongDao songDao();
     public abstract PlaylistDao playlistDao();
     public abstract ArtistDao artistDao();
     public abstract AlbumDao albumDao();
+    public abstract SongPlaylistJoinDao songPlaylistJoinDao();
 
     public static final String DATABASE_NAME = "SmartPlayerDatabase";
     private static SPDatabase INSTANCE; // singleton to prevent having multiple instances of the database opened at the same time.
@@ -56,6 +59,17 @@ public abstract class SPDatabase extends RoomDatabase {
                         new PopulateDbAsync(INSTANCE, ctx).execute();
                     }
                 }
+            }
+        }
+        return INSTANCE;
+    }
+
+    public static SPDatabase getTestDatabase(final Context ctx) {
+        if (INSTANCE == null) {
+            synchronized (SPDatabase.class) {
+                INSTANCE = Room.inMemoryDatabaseBuilder(ctx.getApplicationContext(),
+                        SPDatabase.class)
+                        .build();
             }
         }
         return INSTANCE;
@@ -101,6 +115,7 @@ public abstract class SPDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(final Void... params) {
             loadSongsFromDevice();
+            addAlbumsToArtists();
             return null;
         }
 
@@ -158,12 +173,15 @@ public abstract class SPDatabase extends RoomDatabase {
         private void addSongToAlbum(Song s){
             Album existingAlbum = db.albumDao().findAlbumByName(s.getAlbumName());
             if( existingAlbum != null ){
-                s.setAlbumUID(existingAlbum.getUid());
+                s.setAlbumUID(existingAlbum.getAlbumUID());
+                existingAlbum.setNumSongs(existingAlbum.getNumSongs() + 1);
+                db.albumDao().insert(existingAlbum);
                 return;
             }
 
             Album al = new Album(s.getArtistName(), s.getAlbumName(), s.getAlbumArt().toString());
-            s.setAlbumUID(al.getUid());
+            s.setAlbumUID(al.getAlbumUID());
+            al.setNumSongs(al.getNumSongs() + 1);
             db.albumDao().insert(al);
             return;
         }
@@ -178,14 +196,26 @@ public abstract class SPDatabase extends RoomDatabase {
         private void addSongToArtist(Song s){
             Artist existingArtist = db.artistDao().findArtistByName(s.getArtistName());
             if( existingArtist != null ){
-                s.setArtistUID(existingArtist.getUid());
+                s.setArtistUID(existingArtist.getArtistUID());
+                existingArtist.setNumSongs(existingArtist.getNumSongs() + 1);
+                db.artistDao().insert(existingArtist);
                 return;
             }
 
             Artist artist = new Artist(s.getArtistName());
-            s.setArtistUID(artist.getUid());
+            s.setArtistUID(artist.getArtistUID());
+            artist.setNumSongs(artist.getNumSongs() + 1);
             db.artistDao().insert(artist);
             return;
+        }
+
+        private void addAlbumsToArtists(){
+            List<Album> allAlbums = db.albumDao().getAllAlbumsStatic();
+            for(Album album : allAlbums){
+                Artist artist = db.artistDao().findArtistByName(album.getArtistName());
+                artist.setNumAlbums(artist.getNumAlbums() + 1);
+                db.artistDao().insert(artist);
+            }
         }
     } // end AsyncTask
 }

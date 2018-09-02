@@ -25,7 +25,7 @@ public abstract class PlaylistDao {
     @Query("SELECT * FROM playlist_table WHERE name LIKE :name")
     public abstract Playlist findPlaylistByName(String name);
 
-    @Query("SELECT * FROM playlist_table WHERE uid LIKE :uid")
+    @Query("SELECT * FROM playlist_table WHERE playlistUID LIKE :uid")
     public abstract Playlist findPlaylistByUID(String uid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

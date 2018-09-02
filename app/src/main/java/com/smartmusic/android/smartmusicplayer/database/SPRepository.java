@@ -1,8 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.database;
 
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -10,13 +8,12 @@ import com.smartmusic.android.smartmusicplayer.database.daos.AlbumDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.ArtistDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.PlaylistDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.SongDao;
+import com.smartmusic.android.smartmusicplayer.database.daos.SongPlaylistJoinDao;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
-import com.smartmusic.android.smartmusicplayer.database.entities.AlbumWithSongs;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
-import com.smartmusic.android.smartmusicplayer.database.entities.ArtistWithSongs;
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
-import com.smartmusic.android.smartmusicplayer.database.entities.PlaylistWithSongs;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
+import com.smartmusic.android.smartmusicplayer.database.entities.SongPlaylistJoin;
 
 import java.util.List;
 
@@ -33,6 +30,7 @@ public class SPRepository {
     private AlbumDao mAlbumDao;
     private ArtistDao mArtistDao;
     private PlaylistDao mPlaylistDao;
+    private SongPlaylistJoinDao mSongPlaylistJoinDao;
 
     public SPRepository(Context context) {
         SPDatabase db = SPDatabase.getDatabase(context);
@@ -40,29 +38,87 @@ public class SPRepository {
         mAlbumDao = db.albumDao();
         mArtistDao = db.artistDao();
         mPlaylistDao = db.playlistDao();
+        mSongPlaylistJoinDao = db.songPlaylistJoinDao();
     }
 
 
-    // Get all objects.
+    // Get all objects without relations.
     public LiveData<List<Song>> getAllSongsUnsorted() {
         return mSongDao.getAllUnsorted();
     }
+    public LiveData<List<Song>> getAllSongsNameSort() { return mSongDao.getAllNameSort(); }
+    public LiveData<List<Song>> getAllSongsArtistSort() { return mSongDao.getAllArtistSort(); }
+    public LiveData<List<Song>> getAllSongsAlbumSort() { return mSongDao.getAllAlbumSort(); }
 
-    public LiveData<List<Artist>> getAllArtists() {
-        return mArtistDao.getAll();
+    public LiveData<List<Artist>> getAllArtistsUnsorted() {
+        return mArtistDao.getAllUnsorted();
     }
+    public LiveData<List<Artist>> getAllArtistsNameSort() { return mArtistDao.getAllNameSort(); }
+    public LiveData<List<Artist>> getAllArtistsSongCountSort() { return  mArtistDao.getAllSongCountSort(); }
 
-    public LiveData<List<Album>> getAllAlbums() {
-        return mAlbumDao.getAll();
+    public LiveData<List<Album>> getAllAlbumsUnsorted() {
+        return mAlbumDao.getAllUnsorted();
     }
+    public LiveData<List<Album>> getAllAlbumsNameSort() { return mAlbumDao.getAllNameSort(); }
+    public LiveData<List<Album>> getAllAlbumsArtistSort() { return  mAlbumDao.getAllArtistSort(); }
+    public LiveData<List<Album>> getAllAlbumsSongCountSort() { return  mAlbumDao.getAllSongCountSort(); }
 
     public LiveData<List<Playlist>> getAllPlaylists() {
         return mPlaylistDao.getAll();
     }
 
-    public LiveData<List<Song>> getAllSongsNameSort() { return mSongDao.getAllNameSort(); }
-    public LiveData<List<Song>> getAllSongsArtistSort() { return mSongDao.getAllArtistSort(); }
-    public LiveData<List<Song>> getAllSongsAlbumSort() { return mSongDao.getAllAlbumSort(); }
+    public int getTotalSongCount(){
+        List<Song> songs = mSongDao.getAllSongsStatic();
+        return songs != null ? songs.size() : 0;
+    }
+
+    public int getTotalAlbumCount(){
+        List<Album> albums = mAlbumDao.getAllAlbumsStatic();
+        return albums != null ? albums.size() : 0;
+    }
+
+    public int getTotalArtistCount(){
+        List<Artist> artists = mArtistDao.getAllArtistsStatic();
+        return artists != null ? artists.size() : 0;
+    }
+
+    public Artist getArtistFull(String artistUID){
+        Artist artist = mArtistDao.findArtistByUID(artistUID);
+        List<Song> songs = mArtistDao.getSongsForArtist(artistUID);
+        List<Album> albums = mArtistDao.getAlbumsForArtist(artistUID);
+        artist.setSongs(songs);
+        artist.setAlbums(albums);
+        return artist;
+    }
+
+    public Album getAlbumFull(String albumUID){
+        Album album = mAlbumDao.findAlbumByUID(albumUID);
+        List<Song> songs = mAlbumDao.getSongsForAlbum(albumUID);
+        album.setSongs(songs);
+        return album;
+    }
+
+    /**
+     * Adds song to playlist in database.
+     *
+     * Pre-condition: The song and the playlist must already exist
+     * in the database!!!
+     *
+     * @param playlist the playlist
+     * @param song the song to add to the playlist
+     */
+    public void addSongToPlaylist(Playlist playlist, Song song){
+        mSongPlaylistJoinDao.insert(new SongPlaylistJoin(song.getSongUID(), playlist.getPlaylistUID()));
+    }
+
+    public Playlist getPlaylistFull(String playlistUID){
+        Playlist playlist = mPlaylistDao.findPlaylistByUID(playlistUID);
+        List<Song> songs = mSongPlaylistJoinDao.getSongsForPlaylist(playlistUID);
+        playlist.setSongs(songs);
+        return playlist;
+    }
+
+
 
     // Insert new objects.
     public void insert (Song song) {

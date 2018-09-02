@@ -38,38 +38,16 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class SongListFragment extends Fragment implements SongEventListener {
 
-    private List<Song> _songs = null;
+    private List<Song> _songs;
 
-    /*Views*/
     private static RecyclerView recyclerView;
-
-    /*Resources*/
-    private static SongAdapter songAdapter;
-
-    /*Fonts*/
-    Typeface tvSongNameFont;
-    Typeface tvArtistNameFont;
-    Typeface nowPlayingFont;
-
-    private static boolean eventHandled = false;
 
 
     /*Stores information about the last selected song*/
     Boolean prevExists = false;
     Song prevSong;
 
-
-    /**
-     * Listeners
-     */
-    View.OnClickListener mOnClickListener;
-    SongAdapter.OnItemClickListener mOnItemClickLListener;
-
-    private SongEventListener songEventListener;
-
     View mainView = null;
-
-    private boolean playBarShowing = false;
 
     private SongsViewModel mModel;
 
@@ -126,19 +104,8 @@ public class SongListFragment extends Fragment implements SongEventListener {
     }
 
     private void setUpRecyclerView(final View fragView){
-
-        /*Links objects on XML to javadoc*/
-        tvSongNameFont
-                = Typeface.createFromAsset(
-                        getActivity().getAssets(),
-                        getString(R.string.raleway_regular_font));
-        tvArtistNameFont
-                = Typeface.createFromAsset(
-                        getActivity().getAssets(),
-                        getString(R.string.high_tea_font));
-
         recyclerView = fragView.findViewById(R.id.recyclerView);
-        songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue());
+        SongAdapter songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue());
 
         recyclerView.setAdapter(songAdapter);
 

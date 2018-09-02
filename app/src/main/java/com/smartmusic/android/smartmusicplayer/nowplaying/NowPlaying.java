@@ -2,6 +2,7 @@ package com.smartmusic.android.smartmusicplayer.nowplaying;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +58,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
     private ImageView favoriteButton;
     private ImageView shuffleButton;
 
+    /* Runnable that updates the current time in the song */
     private Runnable updateTimeRunnable;
     private Runnable favoriteGhostRunnable;
 
@@ -79,18 +81,12 @@ public class NowPlaying extends Fragment implements SongEventListener {
         View v =  inflater.inflate(R.layout.fragment_now_playing, container, false);
         setRetainInstance(true);
 
-        getActivity().setTitle("Now Playing");
+        getActivity().setTitle(R.string.NOW_PLAYING);
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         SPMainActivity.getSongEventHandler().addSongEventListener(this);
         currentSong = SPMainActivity.mPlayerService.getCurrentSong();
-
-        inL = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_left);
-        outR = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_right);
-//        inR = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_right);
-//        outL = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_left);
-
 
         initNowPlaying(v);
         return v;
@@ -102,7 +98,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
             return;
         }
 
-        // initialize views
+        // Initialize views
         if( v != null ) {
             largeAlbumArt = (ImageView) v.findViewById(R.id.now_playing_large_album_art);
             songName = (TextSwitcher) v.findViewById(R.id.now_playing_songName_textSwitcher);
@@ -119,9 +115,11 @@ public class NowPlaying extends Fragment implements SongEventListener {
             setUpAlbumArt(v, currentSong);
         }
 
+        inL = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_left);
+        outR = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_right);
 
+        // Setup song title view
         songName.setFactory(new ViewSwitcher.ViewFactory() {
-
             public View makeView() {
                 // create a TextView
                 TextView t = new TextView(getContext());
@@ -135,8 +133,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
             }
         });
 
+        // Setup song artist view
         artistName.setFactory(new ViewSwitcher.ViewFactory() {
-
             public View makeView() {
                 // create a TextView
                 TextView t = new TextView(getContext());
@@ -156,6 +154,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
         songName.setOutAnimation(outR);
         artistName.setInAnimation(inL);
         artistName.setOutAnimation(outR);
+
 
         updateTimeRunnable = new Runnable() {
             @Override
@@ -307,7 +306,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
         Picasso.with(getContext())
                 .load(currentSong.getAlbumArt())
                 .transform(new BlurTransformation(getContext(), 30))
-                .error(R.drawable.temp_album_art)
+                .error(R.drawable.galaxy)
                 .into(largeAlbumArt);
 
 

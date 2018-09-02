@@ -7,8 +7,6 @@ import android.arch.lifecycle.LiveData;
 import com.smartmusic.android.smartmusicplayer.comparators.artists.ArtistNameComparator;
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
-import com.smartmusic.android.smartmusicplayer.database.entities.ArtistWithSongs;
-import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +19,7 @@ public class ArtistsViewModel extends AndroidViewModel {
     public ArtistsViewModel(Application application) {
         super(application);
         mRepository = new SPRepository(application);
-        mAllArtists = mRepository.getAllArtists();
+        mAllArtists = mRepository.getAllArtistsNameSort();
         this.sort = new ArtistNameComparator();
     }
 

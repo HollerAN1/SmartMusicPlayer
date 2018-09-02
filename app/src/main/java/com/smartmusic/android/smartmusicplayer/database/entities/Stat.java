@@ -5,14 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.sql.Date;
 import java.util.UUID;
 
 @Entity(tableName = "stat_table")
 public class Stat {
     @PrimaryKey
     @NonNull
-    public String suid;
+    public String statUID;
 
     @ColumnInfo(name = "is_favorited")
     private boolean isFavorited;
@@ -30,7 +29,7 @@ public class Stat {
 //    private Date dateAdded;
 
     public Stat(){
-        this.suid = UUID.randomUUID().toString();
+        this.statUID = UUID.randomUUID().toString();
         this.timesManuallyPlayed = 0;
         this.timesSkipped = 0;
         this.timesPlayed = 0;

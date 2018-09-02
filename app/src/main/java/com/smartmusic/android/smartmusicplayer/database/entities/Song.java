@@ -9,14 +9,13 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.UUID;
 
 @Entity(tableName = "song_table")
 public class Song implements Comparable<Song>, Serializable {
     @PrimaryKey
     @NonNull
-    private String uid;
+    private String songUID;
 
     @ColumnInfo(name = "song_name")
     private String songName;
@@ -64,7 +63,7 @@ public class Song implements Comparable<Song>, Serializable {
     private Stat stats;
 
     public Song(String songName, String artistName, String albumName, String songUrl, String albumArtUri, int track, long duration, String year, String dateAdded, long size, String displayName) {
-        this.uid = UUID.randomUUID().toString();
+        this.songUID = UUID.randomUUID().toString();
         this.songName = songName;
         this.artistName = artistName;
         this.albumName = albumName;
@@ -81,8 +80,8 @@ public class Song implements Comparable<Song>, Serializable {
     }
 
     // Getter/Setter methods
-    public String getUid() {
-        return uid;
+    public String getSongUID() {
+        return songUID;
     }
 
     public int getTrack() {
@@ -138,8 +137,8 @@ public class Song implements Comparable<Song>, Serializable {
         this.stats = stats;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setSongUID(String songUID) {
+        this.songUID = songUID;
     }
 
     public String getSongName() {
