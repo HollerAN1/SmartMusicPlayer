@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
@@ -79,8 +80,11 @@ public class ArtistListFragment extends Fragment {
     private void setUpRecyclerView(View fragView){
         recyclerView = fragView.findViewById(R.id.recyclerView);
         artistAdapter = new ArtistAdapter(getContext(), _artists);
+        FastScroller fastScroller = (FastScroller) fragView.findViewById(R.id.fastscroll);
 
         recyclerView.setAdapter(artistAdapter);
+        fastScroller.setRecyclerView(recyclerView);
+        fastScroller.setBubbleColor(getResources().getColor(R.color.pastel_rose));
 
         /*LLM extends Recycler view and specifies the layout*/
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/galaxy"
-    >
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.smartmusic.android.smartmusicplayer.SPMainActivity">
 
     <android.support.v7.widget.RecyclerView
     android:layout_weight="1"
@@ -17,5 +21,12 @@
     android:smoothScrollbar="true"
     android:scrollingCache="false"
     android:animationCache="false" />
+
+    <com.futuremind.recyclerviewfastscroll.FastScroller
+        android:id="@+id/fastscroll"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"/>
     
-</LinearLayout>
+</RelativeLayout>

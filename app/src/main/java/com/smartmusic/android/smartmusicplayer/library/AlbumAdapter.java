@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
@@ -24,7 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder> {
+public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder> implements SectionTitleProvider {
 
     /**
      * ArrayList of all songs
@@ -73,6 +74,15 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
 
     public AlbumHolder getArtistHolder(){
         return this.albumHolder;
+    }
+
+    @Override
+    public String getSectionTitle(int position) {
+        //this String will be shown in a bubble for specified position
+        if(_albums != null) {
+            return _albums.get(position).getAlbumName().substring(0, 1);
+        }
+        return "";
     }
 
     /**

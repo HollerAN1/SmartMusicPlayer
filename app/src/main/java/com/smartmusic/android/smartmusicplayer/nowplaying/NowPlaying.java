@@ -303,7 +303,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 shuffleButton.setSelected(!shuffleButton.isSelected());
                 SPMainActivity.mPlayerService.setShuffle(shuffleButton.isSelected());
                 if(shuffleButton.isSelected()){
-                    shuffleButton.setColorFilter(R.color.pastel_rose, PorterDuff.Mode.SRC_ATOP);
+                    shuffleButton.setColorFilter(getResources().getColor(R.color.pastel_rose));
                 } else {
                     shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                 }
@@ -349,14 +349,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
 
         favoriteButton.setSelected(currentSong.getStats().isFavorited());
-
-
         shuffleButton.setSelected(SPMainActivity.mPlayerService.isShuffleOn());
-        if(shuffleButton.isSelected()){
-            shuffleButton.setColorFilter(R.color.pastel_rose, PorterDuff.Mode.SRC_ATOP);
-        } else {
-            shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        }
 //
 //        // After a second start updating the progress bar
 //        mHandler.postDelayed(updateTimeRunnable, 1000);

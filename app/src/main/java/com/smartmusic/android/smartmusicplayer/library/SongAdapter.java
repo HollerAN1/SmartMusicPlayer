@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.SongDiffCallback;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
@@ -27,7 +28,7 @@ import java.util.List;
  * THIS HANDLES DATA COLLECTION AND BINDS IT TO THE VIEW
  */
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> implements SectionTitleProvider {
 
     /**
      * ArrayList of all songs
@@ -61,6 +62,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
     public interface OnItemClickListener {
         void onItemClick(MorphButton b, View view, Song obj, int position, List<Song> songs, int i);
+    }
+
+    @Override
+    public String getSectionTitle(int position) {
+        //this String will be shown in a bubble for specified position
+        if(_songs != null) {
+            return _songs.get(position).getSongName().substring(0, 1);
+        }
+        return "";
     }
 
     /**

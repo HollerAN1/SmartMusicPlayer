@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.chibde:audiovisualizer:2.0.1'
 //    implementation 'se.emilsjolander:stickylistheaders:2.3.0'
     implementation 'com.github.mtotschnig:StickyListHeaders:2.7.1'
+    implementation 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
 
 
     // ------------------ Room - SQL Database ----------------------------

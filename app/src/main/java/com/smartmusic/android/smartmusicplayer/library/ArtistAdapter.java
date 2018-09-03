@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.ArtistDiffCallback;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
@@ -20,7 +21,7 @@ import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHolder> {
+public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHolder> implements SectionTitleProvider {
 
     /**
      * ArrayList of all songs
@@ -70,6 +71,16 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
 
     public ArtistHolder getArtistHolder(){
         return this.artistHolder;
+    }
+
+
+    @Override
+    public String getSectionTitle(int position) {
+        //this String will be shown in a bubble for specified position
+        if(_artists != null) {
+            return _artists.get(position).getArtistName().substring(0, 1);
+        }
+        return "";
     }
 
     /**

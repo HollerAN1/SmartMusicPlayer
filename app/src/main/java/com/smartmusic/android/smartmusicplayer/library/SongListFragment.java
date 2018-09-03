@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 
+import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SongEvent;
 import com.smartmusic.android.smartmusicplayer.SongEventListener;
@@ -108,8 +109,12 @@ public class SongListFragment extends Fragment implements SongEventListener {
     private void setUpRecyclerView(final View fragView){
         recyclerView = fragView.findViewById(R.id.recyclerView);
         SongAdapter songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue());
+        FastScroller fastScroller = (FastScroller) fragView.findViewById(R.id.fastscroll);
 
         recyclerView.setAdapter(songAdapter);
+
+        fastScroller.setRecyclerView(recyclerView);
+        fastScroller.setBubbleColor(getResources().getColor(R.color.pastel_rose));
 
 
         /*LLM extends Recycler view and specifies the layout*/
