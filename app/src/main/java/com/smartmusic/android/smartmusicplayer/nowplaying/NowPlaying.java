@@ -15,12 +15,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 import android.widget.ViewSwitcher;
 
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
@@ -43,9 +43,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
     private TextSwitcher artistName;
     private ImageView playButton;
     private SeekBar seekBar;
-    private TextView progressCount;
-    private TextView duration;
-    private ImageView collapseButton;
+    private TextSwitcher progressCount;
+    private TextSwitcher duration;
     private ImageView prevButton;
     private ImageView nextButton;
 
@@ -66,12 +65,6 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
     private Song currentSong;
 
-    // Declare in and out animations and load them using AnimationUtils class
-    private Animation inL;
-//    private Animation outL;
-//    private Animation inR;
-    private Animation outR;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,6 +77,9 @@ public class NowPlaying extends Fragment implements SongEventListener {
         getActivity().setTitle(R.string.NOW_PLAYING);
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+//        Toolbar toolbar = getActivity().findViewById(R.id.smart_player_toolbar);
+//        toolbar.setBackgroundColor(Color.TRANSPARENT);
 
         SPMainActivity.getSongEventHandler().addSongEventListener(this);
         currentSong = SPMainActivity.mPlayerService.getCurrentSong();
@@ -105,18 +101,14 @@ public class NowPlaying extends Fragment implements SongEventListener {
             artistName = (TextSwitcher) v.findViewById(R.id.now_playing_artistName_textSwitcher);
             playButton = (ImageView) v.findViewById(R.id.now_playing_play_button);
             seekBar = (SeekBar) v.findViewById(R.id.now_playing_seekBar);
-            progressCount = (TextView) v.findViewById(R.id.now_playing_progress);
-            duration = (TextView) v.findViewById(R.id.now_playing_duration);
-            collapseButton = (ImageView) v.findViewById(R.id.now_playing_collapse);
+            progressCount = (TextSwitcher) v.findViewById(R.id.now_playing_progress);
+            duration = (TextSwitcher) v.findViewById(R.id.now_playing_duration);
             favoriteButton = (ImageView) v.findViewById(R.id.now_playing_favorite);
             prevButton = (ImageView) v.findViewById(R.id.now_playing_previous_button);
             nextButton = (ImageView) v.findViewById(R.id.now_playing_next_button);
             shuffleButton = (ImageView) v.findViewById(R.id.now_playing_shuffle);
             setUpAlbumArt(v, currentSong);
         }
-
-        inL = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_left);
-        outR = AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_right);
 
         // Setup song title view
         songName.setFactory(new ViewSwitcher.ViewFactory() {
@@ -125,7 +117,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 TextView t = new TextView(getContext());
 
                 t.setTextColor(getResources().getColor(R.color.pastel_rose));
-//                t.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/exo_medium.ttf"));
+                t.setTypeface(SPUtils.getHeaderTypeface(getContext()));
                 t.setTextSize(26);
                 t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 t.setGravity(Gravity.CENTER);
@@ -140,7 +132,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 TextView t = new TextView(getContext());
 
                 t.setTextColor(Color.WHITE);
-//                t.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/comfortaa_light.xml"));
+                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
                 t.setTextSize(14);
                 t.setAllCaps(true);
                 t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
@@ -150,11 +142,42 @@ public class NowPlaying extends Fragment implements SongEventListener {
         });
 
         // set the animation type to TextSwitcher
-        songName.setInAnimation(inL);
-        songName.setOutAnimation(outR);
-        artistName.setInAnimation(inL);
-        artistName.setOutAnimation(outR);
+        songName.setInAnimation(SPUtils.getSlideInLeftAnimation(getContext()));
+        songName.setOutAnimation(SPUtils.getSlideOutRightAnimation(getContext()));
+        artistName.setInAnimation(SPUtils.getSlideInLeftAnimation(getContext()));
+        artistName.setOutAnimation(SPUtils.getSlideOutRightAnimation(getContext()));
 
+
+        progressCount.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                // create a TextView
+                TextView t = new TextView(getContext());
+
+                t.setTextColor(Color.WHITE);
+                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
+                t.setTextSize(18);
+                return t;
+            }
+        });
+
+        duration.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                // create a TextView
+                TextView t = new TextView(getContext());
+
+                t.setTextColor(Color.WHITE);
+                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
+                t.setTextSize(18);
+                return t;
+            }
+        });
+
+        progressCount.setInAnimation(SPUtils.getFadeInAnimation(getContext()));
+        progressCount.setOutAnimation(SPUtils.getFadeOutAnimation(getContext()));
+        duration.setInAnimation(SPUtils.getFadeInAnimation(getContext()));
+        duration.setOutAnimation(SPUtils.getFadeOutAnimation(getContext()));
 
         updateTimeRunnable = new Runnable() {
             @Override
@@ -193,13 +216,6 @@ public class NowPlaying extends Fragment implements SongEventListener {
                     SPMainActivity.mPlayerService.resume();
                     playButton.setSelected(true);
                 }
-            }
-        });
-
-        collapseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                collapseView();
             }
         });
 
@@ -259,10 +275,10 @@ public class NowPlaying extends Fragment implements SongEventListener {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                songName.setInAnimation(inL);
-                songName.setOutAnimation(outR);
-                artistName.setInAnimation(inL);
-                artistName.setOutAnimation(outR);
+//                songName.setInAnimation(inL);
+//                songName.setOutAnimation(outR);
+//                artistName.setInAnimation(inL);
+//                artistName.setOutAnimation(outR);
 
                 SPMainActivity.mPlayerService.playNextSong();
             }
@@ -271,10 +287,10 @@ public class NowPlaying extends Fragment implements SongEventListener {
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                songName.setInAnimation(inL);
-                songName.setOutAnimation(outR);
-                artistName.setInAnimation(inL);
-                artistName.setOutAnimation(outR);
+//                songName.setInAnimation(inL);
+//                songName.setOutAnimation(outR);
+//                artistName.setInAnimation(inL);
+//                artistName.setOutAnimation(outR);
 
                 SPMainActivity.mPlayerService.playPreviousSong();
             }
@@ -301,6 +317,9 @@ public class NowPlaying extends Fragment implements SongEventListener {
     }
 
     private void updateNowPlaying(){
+        if(currentSong == null){
+            return;
+        }
 
         //Load large album image
         Picasso.with(getContext())

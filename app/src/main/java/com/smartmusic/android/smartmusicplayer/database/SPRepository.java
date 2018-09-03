@@ -15,6 +15,7 @@ import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.database.entities.SongPlaylistJoin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -119,19 +120,31 @@ public class SPRepository {
     }
 
     public List<Song> searchSongs(String query){
-        return mSongDao.searchSongs(query);
+        if(!query.equals("")) {
+            return mSongDao.searchSongs(query);
+        }
+        return new ArrayList<>();
     }
 
     public List<Artist> searchArtists(String query){
-        return  mArtistDao.searchArtists(query);
+        if(!query.equals("")) {
+            return mArtistDao.searchArtists(query);
+        }
+        return new ArrayList<>();
     }
 
     public List<Album> searchAlbums(String query){
-        return mAlbumDao.searchAlbums(query);
+        if(!query.equals("")) {
+            return mAlbumDao.searchAlbums(query);
+        }
+        return new ArrayList<>();
     }
 
     public List<Playlist> searchPlaylists(String query){
-        return mPlaylistDao.searchPlaylists(query);
+        if(!query.equals("")) {
+            return mPlaylistDao.searchPlaylists(query);
+        }
+        return new ArrayList<>();
     }
 
 

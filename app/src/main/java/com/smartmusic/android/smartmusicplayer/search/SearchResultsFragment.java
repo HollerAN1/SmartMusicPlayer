@@ -6,9 +6,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.SPUtils;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
@@ -28,6 +30,16 @@ public class SearchResultsFragment extends android.support.v4.app.Fragment {
 
             SearchResultsAdapter searchAdapter = new SearchResultsAdapter(getActivity());
             listView.setAdapter(searchAdapter);
+            listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView absListView, int i) {
+                    SPUtils.closeKeyboard(getContext(), absListView); // Hide keyboard when user starts scrolling.
+                }
+
+                @Override
+                public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                }
+            });
 
         }
         return mainView;

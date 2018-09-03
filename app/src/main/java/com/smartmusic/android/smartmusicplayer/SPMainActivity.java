@@ -270,7 +270,6 @@ public class SPMainActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-//                doMySearch(s);
                 return false;
             }
 

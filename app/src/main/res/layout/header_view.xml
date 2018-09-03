@@ -10,13 +10,13 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
         android:textColor="@color/pastel_rose"
-        android:fontFamily="@font/krona_one"
+        android:fontFamily="@font/armata"
+        android:textSize="16dp"
         android:text="Sample Text"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="2dp"
         android:background="@color/pastel_rose"/>
 
 

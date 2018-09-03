@@ -27,6 +27,13 @@
         <item name="android:windowEnterTransition">@transition/change_image_transform</item>
         <item name="android:windowExitTransition">@transition/change_image_transform</item>
 
+
+        <item name="android:actionBarStyle">@style/ThemeActionBar</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/ThemeActionBar</item>
+        <item name="windowActionBarOverlay">true</item>
+
     </style>
 
     <style name="ThemeActionBar"

@@ -16,6 +16,6 @@
     android:layoutAnimation="@anim/layout_animation_fall_down"
     android:smoothScrollbar="true"
     android:scrollingCache="false"
-    android:animationCache="false"/>
+    android:animationCache="false" />
     
 </LinearLayout>

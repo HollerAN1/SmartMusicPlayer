@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="2dp">
+    android:layout_marginBottom="2dp"
+    android:background="@color/light_midnight_blue">
     <ImageView
         android:id="@+id/search_item_image"
         android:layout_width="50dp"
@@ -15,9 +16,16 @@
         android:layout_toRightOf="@id/search_item_image"
         android:layout_alignParentRight="true"
         android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:textSize="18dp"
         android:textColor="@color/pastel_rose"
         android:fontFamily="@font/exo_medium"
+        android:singleLine="true"
+        android:scrollHorizontally="true"
+        android:marqueeRepeatLimit ="marquee_forever"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:text="Item Name"/>
     <TextView
         android:id="@+id/search_item_additional_info"
@@ -27,7 +35,9 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/search_item_name"
         android:paddingLeft="15dp"
-        android:textSize="15dp"
+        android:paddingRight="15dp"
+        android:textSize="12dp"
+        android:singleLine="true"
         android:layout_alignBottom="@id/search_item_image"
         android:fontFamily="@font/comfortaa_light"
         android:textColor="@android:color/white"

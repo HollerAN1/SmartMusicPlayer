@@ -185,6 +185,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         songHolder.btnAction.setSelected(true);
         songHolder.btnAction.setForegroundColorFilter(Color.WHITE,
                 PorterDuff.Mode.SRC_ATOP);
+        songHolder.tvSongName.setSelected(true);
+        songHolder.tvSongArtist.setSelected(true);
     }
 
     /**

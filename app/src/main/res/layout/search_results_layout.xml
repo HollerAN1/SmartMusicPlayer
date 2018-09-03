@@ -3,9 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/smart_player_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary" />
     <se.emilsjolander.stickylistheaders.StickyListHeadersListView
         android:id="@+id/search_results_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/smart_player_toolbar"/>
 
 </RelativeLayout>

@@ -94,7 +94,9 @@ public class SongListFragment extends Fragment implements SongEventListener {
                 if(recyclerView != null) {
                     // Updating the songList will refresh the view
                     _songs = newSonglist;
-                    SPMainActivity.mPlayerService.setSongList(newSonglist);
+                    if(SPMainActivity.mPlayerService != null) {
+                        SPMainActivity.mPlayerService.setSongList(newSonglist);
+                    }
                     ((SongAdapter)recyclerView.getAdapter()).setSongs(newSonglist);
             }
             }
