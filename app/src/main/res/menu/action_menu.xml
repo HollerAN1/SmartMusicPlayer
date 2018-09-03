@@ -5,7 +5,7 @@
     tools:context="com.javarticles.android.SearchableActivity">
     <item
         android:id="@+id/search"
-        app:actionViewClass="android.widget.SearchView"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_search_black_24dp"
         android:iconTint="@android:color/white"
         app:showAsAction="ifRoom|collapseActionView"

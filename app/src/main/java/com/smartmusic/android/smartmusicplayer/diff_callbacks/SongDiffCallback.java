@@ -1,4 +1,4 @@
-package com.smartmusic.android.smartmusicplayer;
+package com.smartmusic.android.smartmusicplayer.diff_callbacks;
 
 import android.support.v7.util.DiffUtil;
 

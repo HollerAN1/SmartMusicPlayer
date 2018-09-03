@@ -118,6 +118,22 @@ public class SPRepository {
         return playlist;
     }
 
+    public List<Song> searchSongs(String query){
+        return mSongDao.searchSongs(query);
+    }
+
+    public List<Artist> searchArtists(String query){
+        return  mArtistDao.searchArtists(query);
+    }
+
+    public List<Album> searchAlbums(String query){
+        return mAlbumDao.searchAlbums(query);
+    }
+
+    public List<Playlist> searchPlaylists(String query){
+        return mPlaylistDao.searchPlaylists(query);
+    }
+
 
 
     // Insert new objects.

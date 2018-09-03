@@ -8,6 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public abstract class PlaylistDao {
 
     @Query("SELECT * FROM playlist_table WHERE playlistUID LIKE :uid")
     public abstract Playlist findPlaylistByUID(String uid);
+
+    @Query("SELECT * FROM playlist_table WHERE name LIKE '%' || :query || '%' ORDER BY name")
+    public abstract List<Playlist> searchPlaylists(String query);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertAll(Playlist... playlists);

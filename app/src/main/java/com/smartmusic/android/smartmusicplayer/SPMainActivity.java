@@ -1,21 +1,31 @@
 package com.smartmusic.android.smartmusicplayer;
 
+import android.animation.LayoutTransition;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,9 +33,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
@@ -35,10 +47,14 @@ import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.library.Library;
 import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
 import com.smartmusic.android.smartmusicplayer.playlists.Playlists;
+import com.smartmusic.android.smartmusicplayer.search.SearchResultsAdapter;
+import com.smartmusic.android.smartmusicplayer.search.SearchResultsFragment;
 import com.smartmusic.android.smartmusicplayer.settings.Settings;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SPMainActivity
         extends AppCompatActivity
@@ -154,8 +170,10 @@ public class SPMainActivity
             /*Instantiates library as first fragment*/
             Library library = new Library();
 
-            transaction.add(R.id.fragment_container, library, getResources().getString(R.string.LIBRARY_TAG));
-            transaction.commit();
+            transaction
+                    .add(R.id.fragment_container, library, getResources().getString(R.string.LIBRARY_TAG))
+                    .addToBackStack(null)
+                    .commit();
         }
 
     }
@@ -233,9 +251,13 @@ public class SPMainActivity
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_menu, menu);
+
+        /* ------------------- Search icon functionality ----------------------- */
+        final Drawable searchIcon = menu.getItem(0).getIcon();
+        setMenuIconColor(searchIcon);
 
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -244,12 +266,48 @@ public class SPMainActivity
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.setLayoutTransition(new LayoutTransition());
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+//                doMySearch(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                doMySearch(s);
+                return false;
+            }
+        });
+
+        // Close the keyboard and SearchView at same time when the back button is pressed
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if (!queryTextFocused) {
+                    MenuItemCompat.collapseActionView(menu.getItem(0));
+                }
+            }
+        });
+
         return true;
 
     }
 
+
+    private void setMenuIconColor(Drawable icon){
+        icon.mutate();
+        icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.search:
+                transitionToSearchFragment();
+                return true;
+        }
         if(mToggle.onOptionsItemSelected(item)){
             return true;
         }
@@ -260,11 +318,6 @@ public class SPMainActivity
     //Navigation Drawer items
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-
-//        LinearLayout mainLayout = (LinearLayout)findViewById(R.id.fragment_container);
-        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         switch (item.getItemId()) {
             //------------------------------------LIBRARY-----------------------------------------//
             case R.id.library:
@@ -344,8 +397,59 @@ public class SPMainActivity
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-//            doMySearch(query);
+            doMySearch(query);
         }
+    }
+
+    private void transitionToSearchFragment(){
+        SearchResultsFragment searchFrag = (SearchResultsFragment) getSupportFragmentManager()
+                .findFragmentByTag(getResources().getString(R.string.SEARCH_TAG));
+
+        if(searchFrag == null){
+            searchFrag = new SearchResultsFragment();
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, searchFrag, getResources().getString(R.string.SEARCH_TAG))
+                .addToBackStack(null)
+                .commit();
+
+    }
+
+    private void doMySearch(final String query) {
+        Fragment searchFrag = getSupportFragmentManager()
+                .findFragmentByTag(getString(R.string.SEARCH_TAG));
+        if(searchFrag != null) {
+            final StickyListHeadersListView list = searchFrag
+                    .getView().findViewById(R.id.search_results_list_view);
+            if (list != null) {
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        final SearchResultsAdapter adapter = (SearchResultsAdapter) list.getAdapter();
+                        adapter.setSongsResult(repository.searchSongs(query));
+                        adapter.setArtistsResult(repository.searchArtists(query));
+                        adapter.setAlbumsResult(repository.searchAlbums(query));
+                        adapter.setPlaylistsResult(repository.searchPlaylists(query));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+
+//        SQLiteHelper sqLiteHelper = ((SPMainActivity)getApplication()).getDbHelper();
+//        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery("SELECT " + DatabaseConstants.COL_LANG_ID + ", " +
+//                DatabaseConstants.COL_LANG_NAME + " FROM " + DatabaseConstants.TABLE_LANG +
+//                " WHERE upper(" + DatabaseConstants.COL_LANG_NAME + ") like '%" + query.toUpperCase() + "%'", null);
+//        setListAdapter(new SimpleCursorAdapter(this, R.layout.container_list_item_view, cursor,
+//                new String[] {DatabaseConstants.COL_LANG_NAME }, new int[]{R.id.list_item}));
     }
 
     @Override

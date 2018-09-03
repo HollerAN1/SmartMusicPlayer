@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp">
+    <ImageView
+        android:id="@+id/search_item_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/temp_album_art"/>
+    <TextView
+        android:id="@+id/search_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/search_item_image"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="15dp"
+        android:textSize="18dp"
+        android:textColor="@color/pastel_rose"
+        android:fontFamily="@font/exo_medium"
+        android:text="Item Name"/>
+    <TextView
+        android:id="@+id/search_item_additional_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/search_item_image"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/search_item_name"
+        android:paddingLeft="15dp"
+        android:textSize="15dp"
+        android:layout_alignBottom="@id/search_item_image"
+        android:fontFamily="@font/comfortaa_light"
+        android:textColor="@android:color/white"
+        android:text="Additional Info"/>
+
+</RelativeLayout>

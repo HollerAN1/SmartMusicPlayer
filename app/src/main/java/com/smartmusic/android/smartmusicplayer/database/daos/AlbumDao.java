@@ -39,6 +39,9 @@ public abstract class AlbumDao {
     @Query("SELECT * FROM album_table WHERE albumUID LIKE :uid")
     public abstract Album findAlbumByUID(String uid);
 
+    @Query("SELECT * FROM album_table WHERE album_name LIKE '%' || :query || '%' ORDER BY album_name")
+    public abstract List<Album> searchAlbums(String query);
+
 
     // Get songs for album
     @Query("SELECT * FROM song_table WHERE album_uid LIKE :albumUID")

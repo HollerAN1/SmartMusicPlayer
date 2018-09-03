@@ -1,5 +1,9 @@
 package com.smartmusic.android.smartmusicplayer;
 
+import android.content.Context;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -41,5 +45,24 @@ public class SPUtils {
 
         // return timer string
         return finalTimerString;
+    }
+
+
+    /**
+     * Open the soft keyboard
+     */
+    public static void openKeyboard(Context context) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,
+                InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    /**
+     * Closes the soft keyboard
+     */
+    public static void closeKeyboard(Context context, View v) {
+        InputMethodManager imm =
+                (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }

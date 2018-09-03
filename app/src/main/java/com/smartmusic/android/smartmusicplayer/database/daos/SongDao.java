@@ -31,6 +31,9 @@ public abstract class SongDao {
     @Query("SELECT * FROM song_table WHERE song_name LIKE :name")
     public abstract Song findSongByName(String name);
 
+    @Query("SELECT * FROM song_table WHERE song_name LIKE '%' || :query || '%' ORDER BY song_name")
+    public abstract List<Song> searchSongs(String query);
+
     @Query("SELECT * FROM song_table WHERE songUID LIKE :uid")
     public abstract Song findSongByUID(String uid);
 

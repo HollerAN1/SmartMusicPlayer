@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
@@ -24,6 +25,9 @@ public class Playlist implements Comparable<Playlist> {
 
     @ColumnInfo(name = "user_created")
     private boolean userCreated;
+
+    @ColumnInfo(name = "album_art_uri")
+    private String albumArtString;
 
 //    @ColumnInfo(name = "date_created")
 //    private Date dateCreated;
@@ -63,6 +67,19 @@ public class Playlist implements Comparable<Playlist> {
 //    public Date getDateCreated() {
 //        return dateCreated;
 //    }
+
+    public String getAlbumArtString() {
+        return albumArtString;
+    }
+
+    public void setAlbumArtString(String albumArtString) {
+        this.albumArtString = albumArtString;
+    }
+
+    public Uri getAlbumArt(){
+       return Uri.parse(albumArtString);
+    }
+
 //
 //    public void setDateCreated(Date dateCreated) {
 //        this.dateCreated = dateCreated;

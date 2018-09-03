@@ -37,6 +37,9 @@ public abstract class ArtistDao {
     @Query("SELECT * FROM artist_table WHERE artistUID LIKE :uid")
     public abstract Artist findArtistByUID(String uid);
 
+    @Query("SELECT * FROM artist_table WHERE artist_name LIKE '%' || :query || '%' ORDER BY artist_name")
+    public abstract List<Artist> searchArtists(String query);
+
 
     // Get songs for artist
     @Query("SELECT * FROM song_table WHERE artist_uid LIKE :artistUID")
