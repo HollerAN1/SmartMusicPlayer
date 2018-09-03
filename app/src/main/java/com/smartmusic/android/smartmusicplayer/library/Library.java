@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -61,7 +62,7 @@ public class Library extends Fragment implements SongEventListener {
     private TextView nowPlayingSongName;
     private TextView nowPlayingArtistName;
     private ImageView nowPlayingAlbumArt;
-    private ImageView nowPlayingActionButton;
+    private FloatingActionButton nowPlayingActionButton;
 
 
     @Override
@@ -119,7 +120,7 @@ public class Library extends Fragment implements SongEventListener {
         nowPlayingSongName = (TextView) mainView.findViewById(R.id.now_playing_small_songName);
         nowPlayingArtistName = (TextView) mainView.findViewById(R.id.now_playing_small_artistName);
         nowPlayingAlbumArt = (ImageView) mainView.findViewById(R.id.image_album_art);
-        nowPlayingActionButton = (ImageView) mainView.findViewById(R.id.now_playing_small_play_button);
+        nowPlayingActionButton = (FloatingActionButton) mainView.findViewById(R.id.now_playing_small_play_button);
 
 
 
@@ -145,7 +146,7 @@ public class Library extends Fragment implements SongEventListener {
                 final TextView smallName = (TextView)getView().findViewById(R.id.now_playing_small_songName);
                 final TextView smallArtist = (TextView)getView().findViewById(R.id.now_playing_small_artistName);
                 final ImageView smallAlbumArt = (ImageView)getView().findViewById(R.id.image_album_art);
-                final ImageView smallPlayButton = (ImageView)getView().findViewById(R.id.now_playing_small_play_button);
+                final ImageView smallPlayButton = (FloatingActionButton)getView().findViewById(R.id.now_playing_small_play_button);
 
                 NowPlaying nowPlayingFrag = (NowPlaying)getActivity().getSupportFragmentManager().findFragmentByTag(getString(R.string.NOW_PLAYING_TAG));
 

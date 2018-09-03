@@ -29,6 +29,7 @@
 
     <color name="midnight_purple">#261b31</color>
     <color name="midnight_blue">#1B2631</color>
+    <color name="extra_light_midnight_blue">#364c62</color>
     <color name="light_midnight_blue">#283747</color>
     <color name="light_blue">#0059b3</color>
 
@@ -36,5 +37,9 @@
     <color name="pastel_pink">#ffd1dc</color>
     <color name="pastel_orange">#ffb347</color>
     <color name="pastel_rose">#ff8747</color>
+
+
+    <color name="header_color">@color/pastel_rose</color>
+    <color name="subtitle_color">@android:color/white</color>
 
 </resources>

@@ -2,6 +2,7 @@ package com.smartmusic.android.smartmusicplayer.library;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -85,6 +86,7 @@ public class ArtistListFragment extends Fragment {
         recyclerView.setAdapter(artistAdapter);
         fastScroller.setRecyclerView(recyclerView);
         fastScroller.setBubbleColor(getResources().getColor(R.color.pastel_rose));
+        fastScroller.setHandleColor(Color.WHITE);
 
         /*LLM extends Recycler view and specifies the layout*/
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

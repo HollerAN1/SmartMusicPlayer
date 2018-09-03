@@ -2,6 +2,7 @@ package com.smartmusic.android.smartmusicplayer;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
@@ -110,5 +111,4 @@ public class SPUtils {
         outAnim.setDuration(200);
         return outAnim;
     }
-
 }

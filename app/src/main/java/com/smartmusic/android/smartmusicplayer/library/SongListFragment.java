@@ -2,6 +2,7 @@ package com.smartmusic.android.smartmusicplayer.library;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -115,6 +116,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
 
         fastScroller.setRecyclerView(recyclerView);
         fastScroller.setBubbleColor(getResources().getColor(R.color.pastel_rose));
+        fastScroller.setHandleColor(Color.WHITE);
 
 
         /*LLM extends Recycler view and specifies the layout*/

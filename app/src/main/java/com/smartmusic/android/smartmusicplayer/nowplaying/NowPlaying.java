@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -41,7 +42,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
     private ImageView largeAlbumArt;
     private TextSwitcher songName;
     private TextSwitcher artistName;
-    private ImageView playButton;
+    private FloatingActionButton playButton;
     private SeekBar seekBar;
     private TextSwitcher progressCount;
     private TextSwitcher duration;
@@ -99,7 +100,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
             largeAlbumArt = (ImageView) v.findViewById(R.id.now_playing_large_album_art);
             songName = (TextSwitcher) v.findViewById(R.id.now_playing_songName_textSwitcher);
             artistName = (TextSwitcher) v.findViewById(R.id.now_playing_artistName_textSwitcher);
-            playButton = (ImageView) v.findViewById(R.id.now_playing_play_button);
+            playButton = (FloatingActionButton) v.findViewById(R.id.now_playing_play_button);
             seekBar = (SeekBar) v.findViewById(R.id.now_playing_seekBar);
             progressCount = (TextSwitcher) v.findViewById(R.id.now_playing_progress);
             duration = (TextSwitcher) v.findViewById(R.id.now_playing_duration);

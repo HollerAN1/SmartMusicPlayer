@@ -82,7 +82,7 @@
                 android:fadingEdge="horizontal"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:text="Shape of you"
-                android:textColor="@color/pastel_rose"
+                android:textColor="@color/header_color"
                 android:textSize="13dp"
                 android:transitionName="@string/album_name_transition_name"
                 android:fontFamily="@font/exo_medium"/>
@@ -96,7 +96,7 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:text="Ed Sheeran"
                 android:textSize="11dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/subtitle_color"
                 android:fontFamily="@font/comfortaa_light"
                 android:transitionName="@string/artist_name_transition_name"/>
         </LinearLayout>

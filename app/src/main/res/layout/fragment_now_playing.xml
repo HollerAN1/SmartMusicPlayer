@@ -83,16 +83,29 @@
             android:layout_alignParentStart="true"
             android:padding="5dp">
 
-            <ImageView
+            <android.support.design.widget.FloatingActionButton
+                app:fabCustomSize="70dp"
+                app:elevation="5dp"
                 android:id="@+id/now_playing_play_button"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/small_play_button"
+                android:transitionName="@string/play_button_transition_name"
+                android:scaleType="centerCrop"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/small_play_button"
-                android:tint="@color/pastel_rose"
-                android:transitionName="@string/play_button_transition_name" />
+                android:layout_margin="5dp"
+                />
+            <!--<ImageView-->
+                <!--android:id="@+id/now_playing_play_button"-->
+                <!--android:layout_width="90dp"-->
+                <!--android:layout_height="90dp"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:scaleType="centerCrop"-->
+                <!--android:src="@drawable/small_play_button"-->
+                <!--android:tint="@color/pastel_rose"-->
+                <!--android:transitionName="@string/play_button_transition_name" />-->
 
             <ImageView
                 android:id="@+id/now_playing_previous_button"

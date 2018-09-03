@@ -113,7 +113,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
     public SongHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.row_song_modern,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.row_song,viewGroup,false);
         return new SongHolder(myView);
     }
 
