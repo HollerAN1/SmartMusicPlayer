@@ -52,6 +52,7 @@ dependencies {
 //    implementation 'se.emilsjolander:stickylistheaders:2.3.0'
     implementation 'com.github.mtotschnig:StickyListHeaders:2.7.1'
     implementation 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
+    implementation 'com.github.timrijckaert:FloatingMusicActionButton:v2.0.4'
 
 
     // ------------------ Room - SQL Database ----------------------------

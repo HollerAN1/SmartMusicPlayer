@@ -30,6 +30,8 @@ import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
 
+import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
+
 
 public class Library extends Fragment implements SongEventListener {
 
@@ -62,7 +64,7 @@ public class Library extends Fragment implements SongEventListener {
     private TextView nowPlayingSongName;
     private TextView nowPlayingArtistName;
     private ImageView nowPlayingAlbumArt;
-    private FloatingActionButton nowPlayingActionButton;
+    private FloatingMusicActionButton nowPlayingActionButton;
 
 
     @Override
@@ -120,7 +122,7 @@ public class Library extends Fragment implements SongEventListener {
         nowPlayingSongName = (TextView) mainView.findViewById(R.id.now_playing_small_songName);
         nowPlayingArtistName = (TextView) mainView.findViewById(R.id.now_playing_small_artistName);
         nowPlayingAlbumArt = (ImageView) mainView.findViewById(R.id.image_album_art);
-        nowPlayingActionButton = (FloatingActionButton) mainView.findViewById(R.id.now_playing_small_play_button);
+        nowPlayingActionButton = (FloatingMusicActionButton) mainView.findViewById(R.id.now_playing_small_play_button);
 
 
 
@@ -368,10 +370,12 @@ public class Library extends Fragment implements SongEventListener {
             if(v.isSelected()){
                 SPMainActivity.mPlayerService.pause();
                 v.setSelected(false);
+                nowPlayingActionButton.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_PAUSE);
             }
             else{
                 SPMainActivity.mPlayerService.resume();
                 v.setSelected(true);
+                nowPlayingActionButton.changeMode(FloatingMusicActionButton.Mode.PAUSE_TO_PLAY);
             }
         }
     }
@@ -410,6 +414,7 @@ public class Library extends Fragment implements SongEventListener {
     public void onSongChangeEvent(SongEvent e) {
         updateNowPlayingBar(e.getSource());
         showNowPlayingBar();
+        nowPlayingActionButton.changeMode(FloatingMusicActionButton.Mode.PAUSE_TO_PLAY);
     }
 
     @Override

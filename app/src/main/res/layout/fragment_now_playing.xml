@@ -83,19 +83,34 @@
             android:layout_alignParentStart="true"
             android:padding="5dp">
 
-            <android.support.design.widget.FloatingActionButton
-                app:fabCustomSize="70dp"
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--app:fabCustomSize="70dp"-->
+                <!--app:elevation="5dp"-->
+                <!--android:id="@+id/now_playing_play_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/small_play_button"-->
+                <!--android:transitionName="@string/play_button_transition_name"-->
+                <!--android:scaleType="centerCrop"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_margin="5dp"-->
+                <!--/>-->
+
+            <be.rijckaert.tim.animatedvector.FloatingMusicActionButton
+                app:fabSize="normal"
                 app:elevation="5dp"
                 android:id="@+id/now_playing_play_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/small_play_button"
+                app:backgroundTint="@color/pastel_rose"
+                android:layout_gravity="center"
+                app:mode="playToPause"
                 android:transitionName="@string/play_button_transition_name"
                 android:scaleType="centerCrop"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="5dp"
-                />
+                android:layout_margin="5dp"/>
             <!--<ImageView-->
                 <!--android:id="@+id/now_playing_play_button"-->
                 <!--android:layout_width="90dp"-->

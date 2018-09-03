@@ -32,6 +32,7 @@ import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
 
+import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 
@@ -42,7 +43,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
     private ImageView largeAlbumArt;
     private TextSwitcher songName;
     private TextSwitcher artistName;
-    private FloatingActionButton playButton;
+    private FloatingMusicActionButton playButton;
     private SeekBar seekBar;
     private TextSwitcher progressCount;
     private TextSwitcher duration;
@@ -75,12 +76,9 @@ public class NowPlaying extends Fragment implements SongEventListener {
         View v =  inflater.inflate(R.layout.fragment_now_playing, container, false);
         setRetainInstance(true);
 
-        getActivity().setTitle(R.string.NOW_PLAYING);
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-//        Toolbar toolbar = getActivity().findViewById(R.id.smart_player_toolbar);
-//        toolbar.setBackgroundColor(Color.TRANSPARENT);
+        getActivity().setTitle(R.string.NOW_PLAYING);
 
         SPMainActivity.getSongEventHandler().addSongEventListener(this);
         currentSong = SPMainActivity.mPlayerService.getCurrentSong();
@@ -100,7 +98,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
             largeAlbumArt = (ImageView) v.findViewById(R.id.now_playing_large_album_art);
             songName = (TextSwitcher) v.findViewById(R.id.now_playing_songName_textSwitcher);
             artistName = (TextSwitcher) v.findViewById(R.id.now_playing_artistName_textSwitcher);
-            playButton = (FloatingActionButton) v.findViewById(R.id.now_playing_play_button);
+            playButton = (FloatingMusicActionButton) v.findViewById(R.id.now_playing_play_button);
             seekBar = (SeekBar) v.findViewById(R.id.now_playing_seekBar);
             progressCount = (TextSwitcher) v.findViewById(R.id.now_playing_progress);
             duration = (TextSwitcher) v.findViewById(R.id.now_playing_duration);
@@ -190,8 +188,10 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
                 if(SPMainActivity.mPlayerService.isSongPlaying()){
                     playButton.setSelected(true);
+                    playButton.changeMode(FloatingMusicActionButton.Mode.PAUSE_TO_PLAY);
                 } else {
                     playButton.setSelected(false);
+                    playButton.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_PAUSE);
                 }
 
                 int new_currPos = SPMainActivity.mPlayerService.getMediaPlayer().getCurrentPosition();
@@ -213,9 +213,11 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 if(SPMainActivity.mPlayerService.isSongPlaying()) {
                     SPMainActivity.mPlayerService.pause();
                     playButton.setSelected(false);
+                    playButton.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_PAUSE);
                 } else {
                     SPMainActivity.mPlayerService.resume();
                     playButton.setSelected(true);
+                    playButton.changeMode(FloatingMusicActionButton.Mode.PAUSE_TO_PLAY);
                 }
             }
         });
