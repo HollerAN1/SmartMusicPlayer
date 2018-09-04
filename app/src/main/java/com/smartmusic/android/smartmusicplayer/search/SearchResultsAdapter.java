@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.SPUtils;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
@@ -155,7 +156,8 @@ public class SearchResultsAdapter extends BaseAdapter implements StickyListHeade
         } else if (item instanceof Artist){
             Artist artist = (Artist)item;
             holder.itemName.setText(artist.getArtistName());
-            holder.additionalInfo.setText("");
+            holder.additionalInfo.setText(SPUtils.getFormattedSongsAndAlbumsForArtist(artist));
+            //TODO: Change holder.image from default album art to something more representative of the artist
         } else if (item instanceof Album) {
             Album album = (Album)item;
             holder.itemName.setText(album.getAlbumName());

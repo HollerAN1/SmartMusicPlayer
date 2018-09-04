@@ -55,7 +55,7 @@
             <!--android:layout_centerHorizontal="true"-->
             <!--android:layout_centerVertical="true"-->
             <!--android:layout_margin="0dp"-->
-            <!--android:onClick="onPlayBtnClick"-->
+            <!--android:onClick="onMediaButtonPress"-->
             <!--android:transitionName="@string/play_button_transition_name"/>-->
 
         <be.rijckaert.tim.animatedvector.FloatingMusicActionButton
@@ -83,7 +83,7 @@
             <!--android:layout_centerHorizontal="true"-->
             <!--android:layout_centerVertical="true"-->
             <!--android:layout_margin="0dp"-->
-            <!--android:onClick="onPlayBtnClick"-->
+            <!--android:onClick="onMediaButtonPress"-->
             <!--android:transitionName="@string/play_button_transition_name"-->
             <!--/>-->
 

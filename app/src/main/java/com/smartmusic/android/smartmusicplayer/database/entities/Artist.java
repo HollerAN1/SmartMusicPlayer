@@ -91,4 +91,9 @@ public class Artist implements Comparable<Artist> {
         }
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "Artist: " + this.artistName;
+    }
 }

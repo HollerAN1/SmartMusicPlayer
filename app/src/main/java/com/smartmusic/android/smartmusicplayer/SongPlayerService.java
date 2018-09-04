@@ -114,6 +114,7 @@ public class SongPlayerService
      * the media player.
      */
     private void initPlayer(){
+        Log.i(getString(R.string.APP_LOGGER), "Initializing media player");
         mediaPlayer.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -131,6 +132,7 @@ public class SongPlayerService
      * @param songList the list of songs.
      */
     public void setSongList(List<Song> songList){
+        Log.i(getString(R.string.APP_LOGGER), "SongPlayer song list updated");
         this.songs = songList;
     }
 
@@ -139,6 +141,7 @@ public class SongPlayerService
      * @param on whether or not shuffle is on
      */
     public void setShuffle(boolean on){
+        Log.i(getString(R.string.APP_LOGGER), "Shuffle " + ( on ? "on" : "off"));
         this.shuffleOn = on;
     }
 
@@ -152,6 +155,7 @@ public class SongPlayerService
      * @param s song to play.
      */
     public void playSong(final Song s){
+        Log.i(getString(R.string.APP_LOGGER), "Playing " + s.toString());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -187,10 +191,12 @@ public class SongPlayerService
 
 
     public void pause(){
+        Log.i(getString(R.string.APP_LOGGER), "SmartPlayer paused.");
         mediaPlayer.pause();
     }
 
     public void resume(){
+        Log.i(getString(R.string.APP_LOGGER), "SmartPlayer resumed.");
         mediaPlayer.start();
     }
 
@@ -200,6 +206,7 @@ public class SongPlayerService
      * the app of this action.
      */
     public void stop(){
+        Log.i(getString(R.string.APP_LOGGER), "SmartPlayer stopped.");
         mediaPlayer.stop();
         mediaPlayer.reset();
         SPMainActivity.getSongEventHandler().dispatchEvent(getSongStopEvent(songModel));
@@ -230,6 +237,7 @@ public class SongPlayerService
      * If shuffle is on, plays a random song.
      */
     public void playNextSong(){
+        Log.i(getString(R.string.APP_LOGGER), "Preparing next song.");
         mediaPlayer.stop();
         mediaPlayer.reset();
 
@@ -255,6 +263,7 @@ public class SongPlayerService
      * If shuffle is on, plays a random song.
      */
     public void playPreviousSong(){
+        Log.i(getString(R.string.APP_LOGGER), "Preparing previous song.");
         mediaPlayer.stop();
         mediaPlayer.reset();
 

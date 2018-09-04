@@ -10,6 +10,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 
+import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -51,6 +53,23 @@ public class SPUtils {
 
         // return timer string
         return finalTimerString;
+    }
+
+    public static String getFormattedSongsAndAlbumsForArtist(Artist a){
+        String songCountString = a.getNumSongs() + "";
+        if(a.getNumSongs() == 1){
+            songCountString = songCountString + " song";
+        } else {
+            songCountString = songCountString + " songs";
+        }
+
+        if(a.getNumAlbums() == 1){
+            songCountString = songCountString + " | " + a.getNumAlbums() + " album";
+        } else {
+            songCountString = songCountString + " | " + a.getNumAlbums() + " albums";
+        }
+
+        return songCountString;
     }
 
 

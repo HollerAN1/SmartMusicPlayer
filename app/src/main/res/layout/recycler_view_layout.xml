@@ -13,14 +13,9 @@
     android:layout_weight="1"
     android:id="@+id/recyclerView"
     android:layout_width="match_parent"
-    android:scrollbars="vertical"
-    android:fadeScrollbars="true"
-    android:scrollbarStyle="outsideInset"
     android:layout_height="match_parent"
     android:layoutAnimation="@anim/layout_animation_fall_down"
-    android:smoothScrollbar="true"
-    android:scrollingCache="false"
-    android:animationCache="false" />
+    android:smoothScrollbar="true" />
 
     <com.futuremind.recyclerviewfastscroll.FastScroller
         android:id="@+id/fastscroll"

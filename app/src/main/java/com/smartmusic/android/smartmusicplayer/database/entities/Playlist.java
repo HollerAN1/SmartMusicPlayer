@@ -112,4 +112,9 @@ public class Playlist implements Comparable<Playlist> {
         }
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "Playlist: " + this.name;
+    }
 }

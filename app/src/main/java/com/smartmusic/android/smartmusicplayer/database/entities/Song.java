@@ -220,4 +220,9 @@ public class Song implements Comparable<Song>, Serializable {
         }
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "Song: " + this.songName + " by " + this.artistName;
+    }
 }

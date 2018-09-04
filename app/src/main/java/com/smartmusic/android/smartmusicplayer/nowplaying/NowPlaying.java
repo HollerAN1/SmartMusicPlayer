@@ -207,10 +207,16 @@ public class NowPlaying extends Fragment implements SongEventListener {
         };
 
 
+        if(!SPMainActivity.mPlayerService.isSongPlaying()){
+            playButton.changeMode(FloatingMusicActionButton.Mode.PAUSE_TO_PLAY);
+        } else {
+            playButton.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_PAUSE);
+        }
+
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(SPMainActivity.mPlayerService.isSongPlaying()) {
+                if(playButton.getCurrentMode() == FloatingMusicActionButton.Mode.PAUSE_TO_PLAY) {
                     SPMainActivity.mPlayerService.pause();
                     playButton.setSelected(false);
                     playButton.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_PAUSE);

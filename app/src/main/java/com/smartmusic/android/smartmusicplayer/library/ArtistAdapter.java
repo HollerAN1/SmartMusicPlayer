@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
+import com.smartmusic.android.smartmusicplayer.SPUtils;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.ArtistDiffCallback;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
@@ -137,20 +138,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
         this.artistHolder = artistHolder;
         artistHolder.tvArtistName.setText(a.getArtistName());
 
-        String songCountString = a.getNumSongs() + "";
-        if(a.getNumSongs() == 1){
-            songCountString = songCountString + " song";
-        } else {
-            songCountString = songCountString + " songs";
-        }
-
-        if(a.getNumAlbums() == 1){
-            songCountString = songCountString + " | " + a.getNumAlbums() + " album";
-        } else {
-            songCountString = songCountString + " | " + a.getNumAlbums() + " albums";
-        }
-
-        artistHolder.tvSongCount.setText(songCountString);
+        artistHolder.tvSongCount.setText(SPUtils.getFormattedSongsAndAlbumsForArtist(a));
 
         String letter = String.valueOf(a.getArtistName().charAt(0));
 

@@ -110,4 +110,9 @@ public class Album implements Comparable<Album> {
         }
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "Album: " + this.albumName + " by " + this.artistName;
+    }
 }
