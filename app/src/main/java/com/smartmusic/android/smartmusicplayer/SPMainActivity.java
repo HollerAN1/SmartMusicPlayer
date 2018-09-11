@@ -2,17 +2,14 @@ package com.smartmusic.android.smartmusicplayer;
 
 import android.animation.LayoutTransition;
 import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -25,25 +22,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
-import com.smartmusic.android.smartmusicplayer.database.entities.Album;
-import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.library.Library;
 import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
 import com.smartmusic.android.smartmusicplayer.playlists.Playlists;
@@ -52,28 +44,18 @@ import com.smartmusic.android.smartmusicplayer.search.SearchResultsFragment;
 import com.smartmusic.android.smartmusicplayer.settings.Settings;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SPMainActivity
         extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SongEventListener{
+        implements NavigationView.OnNavigationItemSelectedListener, SongPlaybackEventListener {
 
-
-    /* Local copy of database lists */
-    public static ArrayList<Song> _songs = new ArrayList<>();
-    public static ArrayList<Artist> _artists = new ArrayList<>();
-    public static ArrayList<Album> _albums = new ArrayList<>();
 
     private static SongEventHandler songEventHandler = new SongEventHandler();
-
-    /* SongPlayerService */
     public static SongPlayerService mPlayerService;
     private Intent musicIntent;
     private boolean mMusicBound = false;
-
-    public static SPRepository repository;
+    public static SPRepository repository; // Database
 
 
     /* Service connection for SongPlayerService */
@@ -97,12 +79,9 @@ public class SPMainActivity
         }
     };
 
-    /* ----------- UI Fields ------------ */
-    LinearLayout mFragmentContainer;
 
-    /*Fragments*/
-    FragmentManager fragmentManager;
-    FragmentTransaction transaction;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction transaction;
 
     /* Navigation Header */
     private TextView navName = null;
@@ -121,33 +100,14 @@ public class SPMainActivity
 
         handleIntent(getIntent());
 
-        repository = new SPRepository(this);
-
         getSupportActionBar().setTitle(R.string.LIBRARY);
-
-        songEventHandler.addSongEventListener(this);
-
-        mFragmentContainer = (LinearLayout)findViewById(R.id.fragment_container);
-
-
-        /*Links Navigation Header*/
-        navName = (TextView)findViewById(R.id.navigation_header_songName);
-        navArtist = (TextView)findViewById(R.id.navigation_header_artistName);
-        navAlbumArt = (ImageView)findViewById(R.id.navigation_album_art);
-
-        /*------------------------ Setup Navigation Drawer---------------------------*/
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mToggle);
-
-        /*Synchronize the indicator with the state of the linked DrawerLayout after onRestoreInstanceState has occurred.*/
-        mToggle.syncState();
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        /*----------------------------------------------------------------------*/
 
+
+        repository = new SPRepository(this);
+        songEventHandler.addSongPlaybackEventListener(this);
+
+        setupNavigationDrawer();
 
         /*Initialize fragment manager*/
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -182,9 +142,6 @@ public class SPMainActivity
     @Override
     protected void onStart() {
         super.onStart();
-//        if( mDatabaseService == null && mPlayerService == null) {
-//            bindServices();
-//        }
     }
 
     @Override
@@ -202,13 +159,12 @@ public class SPMainActivity
     @Override
     protected void onStop() {
         super.onStop();
-//        unbindServices();/
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getSongEventHandler().removeSongEventListener(this);
+        getSongEventHandler().removeSongPlaybackEventListener(this);
     }
 
 
@@ -229,7 +185,7 @@ public class SPMainActivity
     }
 
     /**
-     * Returns handler that disptaches all song events
+     * Returns handler that dispatches all song events
      * @return SongEventHandler the handler
      */
     public static SongEventHandler getSongEventHandler(){
@@ -237,25 +193,44 @@ public class SPMainActivity
     }
 
 
-    public static ArrayList<Song> getSongs(){
-        return _songs;
-    }
-
-    public static ArrayList<Album> getAlbums(){
-        return _albums;
-    }
-
-    public static ArrayList<Artist> getArtists(){
-        return _artists;
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_menu, menu);
+        setupSearchIcon(menu);
 
-        /* ------------------- Search icon functionality ----------------------- */
+        return true;
+
+    }
+
+    /**
+     * Sets up all items associated with the
+     * navigation drawer.
+     */
+    private void setupNavigationDrawer(){
+        /*Link Navigation Header Items*/
+        navName = (TextView)findViewById(R.id.navigation_header_songName);
+        navArtist = (TextView)findViewById(R.id.navigation_header_artistName);
+        navAlbumArt = (ImageView)findViewById(R.id.navigation_album_art);
+
+        /*Setup Navigation Drawer*/
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+        mDrawerLayout.addDrawerListener(mToggle);
+
+        /*Synchronize the indicator with the state of the linked DrawerLayout after onRestoreInstanceState has occurred.*/
+        mToggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    /**
+     * Sets up the functionality for the search icon
+     * located in the options menu.
+     * @param menu the options menu
+     */
+    private void setupSearchIcon(final Menu menu){
         final Drawable searchIcon = menu.getItem(0).getIcon();
         setMenuIconColor(searchIcon);
 
@@ -269,13 +244,11 @@ public class SPMainActivity
         searchView.setLayoutTransition(new LayoutTransition());
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
+            public boolean onQueryTextSubmit(String s) {return false;}
 
             @Override
             public boolean onQueryTextChange(String s) {
-                doMySearch(s);
+                doSearch(s);
                 return false;
             }
         });
@@ -289,16 +262,17 @@ public class SPMainActivity
                 }
             }
         });
-
-        return true;
-
     }
 
-
+    /**
+     * Sets the color of a menu icon
+     * @param icon the drawable for the menu icon.
+     */
     private void setMenuIconColor(Drawable icon){
         icon.mutate();
         icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -381,7 +355,6 @@ public class SPMainActivity
                         .addToBackStack(null)
                         .commit();
 
-
                 return true;
         }
         return true;
@@ -393,10 +366,14 @@ public class SPMainActivity
         handleIntent(intent);
     }
 
+    /**
+     * Handles intents passed to Activity.
+     * @param intent the intent
+     */
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            doMySearch(query);
+            doSearch(query);
         }
     }
 
@@ -416,7 +393,11 @@ public class SPMainActivity
 
     }
 
-    private void doMySearch(final String query) {
+    /**
+     * Searches through the database for the given query.
+     * @param query the user's search query.
+     */
+    private void doSearch(final String query) {
         Fragment searchFrag = getSupportFragmentManager()
                 .findFragmentByTag(getString(R.string.SEARCH_TAG));
         if(searchFrag != null) {
@@ -503,20 +484,4 @@ public class SPMainActivity
         navArtist.setText("Select a song.");
         navName.setText("");
     }
-
-    @Override
-    public void onSongAddedEvent(SongEvent e) {
-
-    }
-
-    @Override
-    public void onSongRemovedEvent(SongEvent e) {
-
-    }
-
-    @Override
-    public void onShuffleOnEvent(SongEvent e) {}
-
-    @Override
-    public void onShuffleOffEvent(SongEvent e) {}
 }
