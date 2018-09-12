@@ -9,6 +9,8 @@ import com.smartmusic.android.smartmusicplayer.R;
 
 /**
  * Handles switching between different fragments
+ * {Songs, Artists, Albums} in Library.
+ *
  * Created by holle on 3/7/2018.
  */
 

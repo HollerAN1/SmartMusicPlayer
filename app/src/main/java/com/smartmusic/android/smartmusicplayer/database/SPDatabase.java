@@ -11,8 +11,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
-import com.smartmusic.android.smartmusicplayer.SongEvent;
-import com.smartmusic.android.smartmusicplayer.SongEventHandler;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
 import com.smartmusic.android.smartmusicplayer.database.daos.AlbumDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.ArtistDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.PlaylistDao;

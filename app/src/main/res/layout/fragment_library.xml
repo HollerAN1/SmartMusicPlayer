@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,72 +11,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:id="@+id/app_bar_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
-
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--app:layout_scrollFlags="scroll|enterAlways"-->
-        <!--app:popupTheme="@style/Theme.AppCompat.Light" />-->
-
-        <!--<android.support.design.widget.TabLayout-->
-            <!--android:id="@+id/library_tab_layout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="top"-->
-        <!--app:tabMode="fixed"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--android:minHeight="?attr/actionBarSize"-->
-        <!--app:tabGravity="fill"-->
-        <!--app:tabTextColor="#FFF"-->
-        <!--app:tabSelectedTextColor="@color/colorAccent"-->
-        <!--/>-->
-    <!--</android.support.design.widget.AppBarLayout>-->
-
-    <!--<android.support.v4.view.ViewPager-->
-        <!--android:id="@+id/library_view_pager"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_below="@id/app_bar_layout"/>-->
-
     <android.support.design.widget.AppBarLayout
         style="@style/Theme.AppCompat.DayNight.DarkActionBar"
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="0dp">
-            <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
         <android.support.v7.widget.Toolbar
             android:id="@+id/smart_player_toolbar"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"/>
         <android.support.design.widget.TabLayout
             android:id="@+id/library_tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             app:tabMode="fixed"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             app:tabGravity="fill"
             app:tabTextColor="#FFF"
             app:tabSelectedTextColor="#FFF"
-            app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Button"
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_margin="5dp"
             />
     </android.support.design.widget.AppBarLayout>
-
-    <!--<com.sothree.slidinguppanel.SlidingUpPanelLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:gravity="bottom">-->
-
     <android.support.v4.view.ViewPager
         android:id="@+id/library_view_pager"
         android:layout_width="match_parent"
@@ -90,7 +51,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
     />
-
-    <!--</com.sothree.slidinguppanel.SlidingUpPanelLayout>-->
     </RelativeLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

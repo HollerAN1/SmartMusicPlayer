@@ -9,16 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.squareup.picasso.Picasso;
 
 import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 
 /**
- * Class that contros the "Now Playing" bar found
+ * Class that controls the "Now Playing" bar found
  * in multiple screens. In order to use this class,
  * view/Activity must include it in their layout.
  */
-public class NowPlayingBar implements SongEventListener {
+public class NowPlayingBar implements SongPlaybackEventListener {
 
     private View nowPlayingBar; // Top level view
     private TextView songName;
@@ -37,7 +39,7 @@ public class NowPlayingBar implements SongEventListener {
         this.actionButton = (FloatingMusicActionButton) nowPlayingBar.findViewById(R.id.now_playing_small_play_button);
 
         initNowPlayingBar();
-        SPMainActivity.getSongEventHandler().addSongEventListener(this);
+        SPMainActivity.getSongEventHandler().addSongPlaybackEventListener(this);
     }
 
     /**
@@ -147,7 +149,7 @@ public class NowPlayingBar implements SongEventListener {
     }
 
     public void removeSongEventListener(){
-        SPMainActivity.getSongEventHandler().removeSongEventListener(this);
+        SPMainActivity.getSongEventHandler().removeSongPlaybackEventListener(this);
     }
 
     /**
@@ -167,13 +169,4 @@ public class NowPlayingBar implements SongEventListener {
     public void onSongStopEvent(SongEvent e) {
         hide();
     }
-
-    @Override
-    public void onShuffleOnEvent(SongEvent e) {}
-    @Override
-    public void onShuffleOffEvent(SongEvent e) {}
-    @Override
-    public void onSongAddedEvent(SongEvent e) {}
-    @Override
-    public void onSongRemovedEvent(SongEvent e) {}
 }

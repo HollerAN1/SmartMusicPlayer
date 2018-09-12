@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/list_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ripple_effect"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!--<ImageView-->
+    <!--android:id="@+id/list_albumArt"-->
+    <!--android:layout_width="72dp"-->
+    <!--android:layout_height="72dp"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:src="@drawable/temp_album_art" />-->
+
+
+    <!--<Button-->
+    <!--android:id="@+id/btnPlay"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="0"-->
+    <!--android:backgroundTint="#eee9e9"-->
+    <!--android:foreground="@drawable/ripple_effect"-->
+    <!--android:text="Play"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textSize="18dp"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_marginRight="5dp"/>-->
+
+    <ImageView
+        android:id="@+id/gmailitem_letter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp" />
+
+    <ImageButton
+        android:id="@+id/list_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_more_vert_black_24dp"
+        android:tint="@android:color/white"/>
+
+    <!--<ImageButton-->
+    <!--android:id="@+id/btnPlay"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:background="@color/transparent"-->
+    <!--android:src="@drawable/list_play_button"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_toLeftOf="@+id/list_options"-->
+    <!--android:layout_toStartOf="@+id/list_options" />-->
+
+    <LinearLayout
+        android:id="@+id/list_songInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:layout_toLeftOf="@id/list_options"
+        android:layout_toRightOf="@id/gmailitem_letter"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/row_artist_artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:text="Imagine Dragons"
+            android:textColor="@color/header_color"
+            android:fontFamily="@font/exo_medium"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/row_artist_song_count"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:fontFamily="@font/comfortaa_light"
+            android:textColor="@color/subtitle_color"
+            android:text="# Songs"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/midnight_blue"
+    android:background="@drawable/recycler_view_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.smartmusic.android.smartmusicplayer.SPMainActivity">
 
@@ -15,7 +15,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutAnimation="@anim/layout_animation_fall_down"
-    android:smoothScrollbar="true" />
+    android:smoothScrollbar="true"
+    android:nestedScrollingEnabled="true"/>
 
     <com.futuremind.recyclerviewfastscroll.FastScroller
         android:id="@+id/fastscroll"

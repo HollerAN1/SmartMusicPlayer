@@ -41,10 +41,6 @@ public class ArtistListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private void initData(){
-//        this._artists = SPMainActivity.mDatabaseService.getArtists(new ArtistNameComparator());
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setRetainInstance(true);

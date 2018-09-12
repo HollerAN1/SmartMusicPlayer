@@ -41,10 +41,6 @@ public class AlbumListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private void initData(){
-//        this._albums = SPMainActivity.mDatabaseService.getAlbums(new AlbumNameComparator());
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setRetainInstance(true);

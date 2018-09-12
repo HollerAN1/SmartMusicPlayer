@@ -24,25 +24,8 @@ import java.util.List;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHolder> implements SectionTitleProvider {
 
-    /**
-     * ArrayList of all songs
-     * */
     private List<Artist> _artists;
-
-    /**
-     * Context is used to get an inflater to inflate the views in getView method.
-     * An Inflater instantiates a layout XML file into its corresponding View objects
-     */
     private Context context;
-
-    /**
-     * Interface definition for a callback to be invoked when an item in this AdapterView has been clicked.
-     */
-    private OnItemClickListener mOnItemClickListener;
-
-    private OnItemClickListener backOnItemClickListener;
-
-    ArtistHolder artistHolder;
 
     /**
      * Constructor for SongAdapter
@@ -53,27 +36,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
         this.context = context;
         this._artists = artists;
     }
-
-    public interface OnItemClickListener {
-        void onItemClick(ImageButton b, View view, Song obj, int position, ArrayList<Song> songs, int i);
-    }
-
-    /**
-     * Setter Method for OnItemClickListener
-     * @param mItemClickListener the listener
-     */
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mOnItemClickListener = mItemClickListener;
-    }
-
-    public void setBackOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.backOnItemClickListener = mItemClickListener;
-    }
-
-    public ArtistHolder getArtistHolder(){
-        return this.artistHolder;
-    }
-
 
     @Override
     public String getSectionTitle(int position) {
@@ -108,7 +70,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
     public ArtistHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.row_artist_modern,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.row_artist_flat,viewGroup,false);
         return new ArtistHolder(myView);
     }
 
@@ -135,9 +97,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
     @Override
     public void onBindViewHolder(final ArtistHolder artistHolder, final int i) {
         final Artist a = _artists.get(i);
-        this.artistHolder = artistHolder;
         artistHolder.tvArtistName.setText(a.getArtistName());
-
         artistHolder.tvSongCount.setText(SPUtils.getFormattedSongsAndAlbumsForArtist(a));
 
         String letter = String.valueOf(a.getArtistName().charAt(0));
@@ -146,16 +106,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
                 .buildRound(letter, ColorGenerator.MATERIAL.getRandomColor());
 
         artistHolder.letter.setImageDrawable(drawable);
-
-
-//        artistHolder.background.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(backOnItemClickListener != null){
-//                    backOnItemClickListener.onItemClick(artistHolder.btnAction,v,s,artistHolder.getAdapterPosition(),_artists,i);
-//                }
-//            }
-//        });
     }
 
     /**
@@ -201,7 +151,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
      RecyclerView instances may hold strong references to extra off-screen
      item views for caching purposes
      */
-    public class ArtistHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ArtistHolder extends RecyclerView.ViewHolder{
         TextView tvArtistName,tvSongCount;
         View background;
         ImageView letter;
@@ -211,10 +161,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
             tvArtistName = (TextView) itemView.findViewById(R.id.row_artist_artist_name);
             tvSongCount = (TextView) itemView.findViewById(R.id.row_artist_song_count);
             letter = (ImageView) itemView.findViewById(R.id.gmailitem_letter);
-        }
-
-        public void onClick(View view){
-
         }
     }
 }

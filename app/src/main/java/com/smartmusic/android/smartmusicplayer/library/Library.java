@@ -1,10 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.library;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -23,22 +19,15 @@ import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.NowPlayingBar;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
-import com.smartmusic.android.smartmusicplayer.SongEvent;
-import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.database.SPRepository;
-import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
 import com.smartmusic.android.smartmusicplayer.R;
-import com.squareup.picasso.Picasso;
-
-import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 
 /**
  * Base class for entire "Library" view that is presented on
  * startup and when the user selects "Library" from the navigation
  * drawer. Contains a view pager to display Songs, Artists and Albums.
  */
-public class Library extends Fragment /*implements SongEventListener*/ {
+public class Library extends Fragment {
 
     View mainView = null;
 
@@ -59,16 +48,7 @@ public class Library extends Fragment /*implements SongEventListener*/ {
             // Inflate the layout for this fragment
             this.mainView = inflater.inflate(R.layout.fragment_library, container, false);
 
-            // ViewPager and its adapters use support library
-            // fragments, so use getSupportFragmentManager.
-            this.mlibraryPagerAdapter =
-                    new LibraryPagerAdapter(
-                            getFragmentManager(), getContext());
-
-            this.mViewPager = (ViewPager) mainView.findViewById(R.id.library_view_pager);
-            this.mTabLayout = (TabLayout) mainView.findViewById(R.id.library_tab_layout);
-            this.mTabLayout.setupWithViewPager(mViewPager, true);
-            this.mViewPager.setAdapter(mlibraryPagerAdapter);
+            setupTabs();
 
             this.nowPlayingBar = new NowPlayingBar(getContext(), mainView);
             this.nowPlayingBar.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +132,29 @@ public class Library extends Fragment /*implements SongEventListener*/ {
         if(SPMainActivity.mPlayerService != null) {
             nowPlayingBar.update(SPMainActivity.mPlayerService.getCurrentSong());
         }
+    }
+
+    /**
+     * Sets up the tab view at the top
+     * of the library fragment.
+     */
+    private void setupTabs(){
+        // ViewPager and its adapters use support library
+        // fragments, so use getSupportFragmentManager.
+        this.mlibraryPagerAdapter =
+                new LibraryPagerAdapter(
+                        getFragmentManager(), getContext());
+
+        this.mViewPager = (ViewPager) mainView.findViewById(R.id.library_view_pager);
+        this.mTabLayout = (TabLayout) mainView.findViewById(R.id.library_tab_layout);
+        this.mTabLayout.setupWithViewPager(mViewPager, true);
+        this.mViewPager.setAdapter(mlibraryPagerAdapter);
+        this.mTabLayout.setSelectedTabIndicatorHeight(0);
+
+        /* Set drawables for tab backgrounds */
+        ((ViewGroup)mTabLayout.getChildAt(0)).getChildAt(0).setBackground(getResources().getDrawable(R.drawable.tab_background_left));
+        ((ViewGroup)mTabLayout.getChildAt(0)).getChildAt(1).setBackground(getResources().getDrawable(R.drawable.tab_background_middle));
+        ((ViewGroup)mTabLayout.getChildAt(0)).getChildAt(2).setBackground(getResources().getDrawable(R.drawable.tab_background_right));
     }
 }
 

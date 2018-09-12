@@ -11,7 +11,14 @@
     <item android:id="@+id/now_playing"
         android:title="Now Playing"
         android:icon="@drawable/icon_play"/>
+    <item android:id="@+id/stats"
+        android:title="Stats"
+        android:icon="@drawable/ic_assessment_black_24dp"/>
     <item android:id="@+id/settings"
         android:title="Settings"
         android:icon="@drawable/icon_settings"/>
+    <item android:id="@+id/about"
+        android:title="About"
+        android:icon="@drawable/ic_info_outline_black_24dp"
+        />
 </menu>

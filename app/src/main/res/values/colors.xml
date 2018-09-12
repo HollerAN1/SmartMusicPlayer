@@ -29,9 +29,13 @@
 
     <color name="midnight_purple">#261b31</color>
     <color name="midnight_blue">#1B2631</color>
+    <color name="dark_blue">#182633</color>
     <color name="extra_light_midnight_blue">#364c62</color>
     <color name="light_midnight_blue">#283747</color>
     <color name="light_blue">#0059b3</color>
+    <color name="baby_blue">#88e3e8</color>
+
+    <color name="mint_green">#5BFFDA</color>
 
     <color name="light_purple">#D7BDE2</color>
     <color name="pastel_pink">#ffd1dc</color>
@@ -40,6 +44,11 @@
 
 
     <color name="header_color">@color/pastel_rose</color>
-    <color name="subtitle_color">@android:color/white</color>
+    <color name="subtitle_color">@android:color/darker_gray</color>
+
+    <color name="tab_background_color">#88a9a9a9</color>
+    <color name="tab_selected_background_color">@color/baby_blue</color>
+
+    <color name="light_grey">#D3D3D3</color>
 
 </resources>

@@ -1,9 +1,6 @@
 package com.smartmusic.android.smartmusicplayer;
 
-import android.app.Service;
 import android.arch.lifecycle.LifecycleService;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -11,17 +8,11 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.smartmusic.android.smartmusicplayer.database.SPDatabase;
-import com.smartmusic.android.smartmusicplayer.database.SPRepository;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.database.view_models.SongsViewModel;
-import com.smartmusic.android.smartmusicplayer.library.Library;
-import com.smartmusic.android.smartmusicplayer.library.SongAdapter;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -143,6 +134,7 @@ public class SongPlayerService
     public void setShuffle(boolean on){
         Log.i(getString(R.string.APP_LOGGER), "Shuffle " + ( on ? "on" : "off"));
         this.shuffleOn = on;
+        SPMainActivity.getSongEventHandler().dispatchEvent(getSongShuffleEvent(on));
     }
 
     public boolean isShuffleOn(){
@@ -316,6 +308,15 @@ public class SongPlayerService
         return event;
     }
 
+    private SongEvent getSongShuffleEvent(boolean shuffleOn){
+        // TODO: Create a unique shuffle event class.
+        SongEvent songEvent = new SongEvent(null, 0, shuffleOn
+                                                                    ? SongEvent.Type.SHUFFLE_ON
+                                                                    : SongEvent.Type.SHUFFLE_OFF);
+        return songEvent;
+
+    }
+
     /*------------------------------- END methods client can call --------------------------------*/
 
 
@@ -331,7 +332,9 @@ public class SongPlayerService
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        SPMainActivity.getSongEventHandler().dispatchEvent(getSongChangeEvent(songModel));
-        mediaPlayer.start();
+        if(songs != null) {
+            SPMainActivity.getSongEventHandler().dispatchEvent(getSongChangeEvent(songModel));
+            mediaPlayer.start();
+        }
     }
 } // end SongPlayerService

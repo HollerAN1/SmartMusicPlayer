@@ -52,7 +52,6 @@
         android:layout_marginLeft="10dp"
         android:ellipsize="end"
         android:fontFamily="@font/exo_medium"
-
         />
 
 </RelativeLayout>

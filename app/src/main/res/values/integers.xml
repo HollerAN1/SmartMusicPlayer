@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="PERMISSION_RECORD_AUDIO_REQUEST">100</integer>
+    <integer name="PERMISSION_WAKE_LOCK_REQUEST">101</integer>
+    <integer name="PERMISSION_WRITE_EXTERNAL_STORAGE_REQUEST">102</integer>
+    <integer name="PERMISSION_READ_EXTERNAL_STORAGE_REQUEST">103</integer>
+    <integer name="PERMISSION_INTERNET_REQUEST">104</integer>
+
+    <integer name="anim_duration_default">500</integer>
+</resources>

@@ -2,11 +2,9 @@ package com.smartmusic.android.smartmusicplayer.nowplaying;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -21,22 +19,24 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
 import android.widget.ViewSwitcher;
 
+//import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+import com.chibde.visualizer.BarVisualizer;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SPUtils;
-import com.smartmusic.android.smartmusicplayer.SongEvent;
-import com.smartmusic.android.smartmusicplayer.SongEventListener;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.events.SongShuffleEventListener;
 import com.squareup.picasso.Picasso;
 
 import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 
-public class NowPlaying extends Fragment implements SongEventListener {
+public class NowPlaying extends Fragment implements SongPlaybackEventListener, SongShuffleEventListener {
 
     /*Views*/
 //    private ImageView albumArt;
@@ -53,9 +53,6 @@ public class NowPlaying extends Fragment implements SongEventListener {
     // Album
     private ImageView albumArt;
     private ImageView favoriteGhost = null;
-//    private ImageView favoriteButton;
-
-//    private ImageView favoriteGhost;
     private ImageView favoriteButton;
     private ImageView shuffleButton;
 
@@ -66,6 +63,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
     private Handler mHandler = new Handler();
 
     private Song currentSong;
+    private BarVisualizer visualizer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,7 +78,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getActivity().setTitle(R.string.NOW_PLAYING);
 
-        SPMainActivity.getSongEventHandler().addSongEventListener(this);
+        SPMainActivity.getSongEventHandler().addSongPlaybackEventListener(this);
+        SPMainActivity.getSongEventHandler().addSongShuffleEventListener(this);
         currentSong = SPMainActivity.mPlayerService.getCurrentSong();
 
         initNowPlaying(v);
@@ -106,8 +105,12 @@ public class NowPlaying extends Fragment implements SongEventListener {
             prevButton = (ImageView) v.findViewById(R.id.now_playing_previous_button);
             nextButton = (ImageView) v.findViewById(R.id.now_playing_next_button);
             shuffleButton = (ImageView) v.findViewById(R.id.now_playing_shuffle);
+//            visualizer = (BarVisualizer) v.findViewById(R.id.visualizer);
             setUpAlbumArt(v, currentSong);
         }
+
+//        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.pastel_rose));
+//        visualizer.setDensity(70);
 
         // Setup song title view
         songName.setFactory(new ViewSwitcher.ViewFactory() {
@@ -309,13 +312,7 @@ public class NowPlaying extends Fragment implements SongEventListener {
         shuffleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shuffleButton.setSelected(!shuffleButton.isSelected());
                 SPMainActivity.mPlayerService.setShuffle(shuffleButton.isSelected());
-                if(shuffleButton.isSelected()){
-                    shuffleButton.setColorFilter(getResources().getColor(R.color.pastel_rose));
-                } else {
-                    shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-                }
             }
         });
 
@@ -359,6 +356,11 @@ public class NowPlaying extends Fragment implements SongEventListener {
 
         favoriteButton.setSelected(currentSong.getStats().isFavorited());
         shuffleButton.setSelected(SPMainActivity.mPlayerService.isShuffleOn());
+
+//        int sessionId = SPMainActivity.mPlayerService.getMediaPlayer().getAudioSessionId();
+//        if(sessionId != -1)
+////        visualizer.setAudioSessionId(sessionId);
+//        visualizer.setPlayer(sessionId);
 //
 //        // After a second start updating the progress bar
 //        mHandler.postDelayed(updateTimeRunnable, 1000);
@@ -368,7 +370,8 @@ public class NowPlaying extends Fragment implements SongEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SPMainActivity.getSongEventHandler().removeSongEventListener(this);
+        SPMainActivity.getSongEventHandler().removeSongPlaybackEventListener(this);
+        SPMainActivity.getSongEventHandler().removeSongShuffleEventListener(this);
     }
 
     public void collapseView(){
@@ -497,23 +500,15 @@ public class NowPlaying extends Fragment implements SongEventListener {
     }
 
     @Override
-    public void onSongAddedEvent(SongEvent e) {
-
-    }
-
-    @Override
-    public void onSongRemovedEvent(SongEvent e) {
-
-    }
-
-    @Override
     public void onShuffleOnEvent(SongEvent e) {
-
+        shuffleButton.setSelected(true);
+        shuffleButton.setColorFilter(getResources().getColor(R.color.pastel_rose));
     }
 
     @Override
     public void onShuffleOffEvent(SongEvent e) {
-
+        shuffleButton.setSelected(false);
+        shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
     }
 
 } //Now Playing Activity

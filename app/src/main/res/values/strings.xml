@@ -67,6 +67,7 @@
     <string name="PLAYLISTS_TAG">playlists_tag</string>
     <string name="SETTINGS_TAG">settings_tag</string>
     <string name="SEARCH_TAG">search_tag</string>
+    <string name="ABOUT_TAG">about_tag</string>
 
 
     <!--Font Directory-->

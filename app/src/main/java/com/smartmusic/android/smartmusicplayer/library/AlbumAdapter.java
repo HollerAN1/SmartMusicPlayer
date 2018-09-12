@@ -27,24 +27,8 @@ import java.util.List;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder> implements SectionTitleProvider {
 
-    /**
-     * ArrayList of all songs
-     * */
     private List<Album> _albums;
-    /**
-     * Context is used to get an inflater to inflate the views in getView method.
-     * An Inflater instantiates a layout XML file into its corresponding View objects
-     */
     private Context context;
-
-    /**
-     * Interface definition for a callback to be invoked when an item in this AdapterView has been clicked.
-     */
-    private OnItemClickListener mOnItemClickListener;
-
-    private OnItemClickListener backOnItemClickListener;
-
-    AlbumHolder albumHolder;
 
     /**
      * Constructor for SongAdapter
@@ -56,25 +40,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         this._albums = albums;
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(ImageView b, View view, Album obj, int position, List<Album> albums, int i);
-    }
-
-    /**
-     * Setter Method for OnItemClickListener
-     * @param mItemClickListener the listener
-     */
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mOnItemClickListener = mItemClickListener;
-    }
-
-    public void setBackOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.backOnItemClickListener = mItemClickListener;
-    }
-
-    public AlbumHolder getArtistHolder(){
-        return this.albumHolder;
-    }
 
     @Override
     public String getSectionTitle(int position) {
@@ -109,7 +74,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
     public AlbumHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.tile_album_modern,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.tile_album_flat,viewGroup,false);
         return new AlbumHolder(myView);
     }
 
@@ -136,15 +101,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
     @Override
     public void onBindViewHolder(final AlbumHolder albumHolder, final int i) {
         final Album al = _albums.get(i);
-        this.albumHolder = albumHolder;
         albumHolder.tvAlbumName.setText(al.getAlbumName());
         albumHolder.tvArtistName.setText(al.getArtistName());
-//        albumHolder.tvAlbumName.setTypeface(Typeface.createFromAsset(
-//                                                    context.getAssets(),
-//                                                    context.getString(R.string.raleway_regular_font)));
-//        albumHolder.tvArtistName.setTypeface(Typeface.createFromAsset(
-//                                                    context.getAssets(),
-//                                                    context.getString(R.string.high_tea_font)));
 
         Uri uri = _albums.get(i).getAlbumArt();
         Picasso.with(context)
@@ -152,26 +110,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                 .placeholder(R.drawable.temp_album_art)
                 .error(R.drawable.temp_album_art)
                 .into(albumHolder.tileAlbumArt);
-
-        albumHolder.background.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(null,v, _albums.get(i), albumHolder.getAdapterPosition(), _albums, i);
-
-                }
-
-            }
-        });
-
-//        artistHolder.background.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(backOnItemClickListener != null){
-//                    backOnItemClickListener.onItemClick(artistHolder.btnAction,v,s,artistHolder.getAdapterPosition(),_artists,i);
-//                }
-//            }
-//        });
     }
 
     /**
@@ -216,7 +154,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
      RecyclerView instances may hold strong references to extra off-screen
      item views for caching purposes
      */
-    public class AlbumHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class AlbumHolder extends RecyclerView.ViewHolder{
         TextView tvAlbumName, tvArtistName;
         ImageView tileAlbumArt;
         View background;
@@ -227,10 +165,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
             tvArtistName = (TextView) itemView.findViewById(R.id.tile_artist_name);
             tileAlbumArt = (ImageView) itemView.findViewById(R.id.tile_albumArt);
             background = (View) itemView.findViewById(R.id.tile_album_card);
-        }
-
-        public void onClick(View view){
-
         }
     }
 }

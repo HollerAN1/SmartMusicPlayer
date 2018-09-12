@@ -14,11 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
+import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.SongDiffCallback;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
-import com.wnafee.vector.MorphButton;
 
 import java.util.List;
 
@@ -30,25 +30,8 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> implements SectionTitleProvider {
 
-    /**
-     * ArrayList of all songs
-     * */
     private List<Song> _songs;
-
-    /**
-     * Context is used to get an inflater to inflate the views in getView method.
-     * An Inflater instantiates a layout XML file into its corresponding View objects
-     */
     private Context context;
-
-    /**
-     * Interface definition for a callback to be invoked when an item in this AdapterView has been clicked.
-     */
-    private OnItemClickListener mOnItemClickListener;
-
-    private OnItemClickListener backOnItemClickListener;
-
-    SongHolder songHolder;
 
     /**
      * Constructor for SongAdapter
@@ -60,10 +43,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
         this._songs = songs;
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(MorphButton b, View view, Song obj, int position, List<Song> songs, int i);
-    }
-
     @Override
     public String getSectionTitle(int position) {
         //this String will be shown in a bubble for specified position
@@ -71,22 +50,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
             return _songs.get(position).getSongName().substring(0, 1);
         }
         return "";
-    }
-
-    /**
-     * Setter Method for OnItemClickListener
-     * @param mItemClickListener the listener
-     */
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mOnItemClickListener = mItemClickListener;
-    }
-
-    public void setBackOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.backOnItemClickListener = mItemClickListener;
-    }
-
-    public SongHolder getSongHolder(){
-        return this.songHolder;
     }
 
     /**
@@ -113,7 +76,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
     public SongHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.row_song,viewGroup,false);
+        View myView = LayoutInflater.from(context).inflate(R.layout.row_song_flat,viewGroup,false);
         return new SongHolder(myView);
     }
 
@@ -140,39 +103,31 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
     @Override
     public void onBindViewHolder(final SongHolder songHolder, final int i) {
         final Song s = _songs.get(i);
-        this.songHolder = songHolder;
-        songHolder.tvSongName.setText(_songs.get(i).getSongName());
-        songHolder.tvSongArtist.setText(_songs.get(i).getArtistName());
+        songHolder.tvSongName.setText(s.getSongName());
+        songHolder.tvSongArtist.setText(s.getArtistName());
 
-        Uri uri = _songs.get(i).getAlbumArt();
+        Uri uri = s.getAlbumArt();
         Picasso.with(context)
                 .load(uri)
                 .placeholder(R.drawable.temp_album_art)
                 .error(R.drawable.temp_album_art)
                 .into(songHolder.tvAlbumArt);
 
-        songHolder.btnAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(songHolder.btnAction,v, s, songHolder.getAdapterPosition(), _songs, i);
-                }
-            }
-        });
-
-        if(!_songs.get(i).isSelected()){
-            // Not playing
+        if(!s.isSelected()){
             setSongNotPlayingView(songHolder);
         } else {
-            // Playing
             setSongPlayingView(songHolder);
         }
 
         songHolder.background.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(backOnItemClickListener != null){
-                    backOnItemClickListener.onItemClick(songHolder.btnAction,v,s,songHolder.getAdapterPosition(),_songs,i);
+            public void onClick(View view) {
+                if(!s.isSelected()){
+                    SPMainActivity.mPlayerService.playSong(s);
+                }
+                // Stop the selected song
+                if (s.isSelected() || (SPMainActivity.mPlayerService.isSongPlaying())) {
+                    SPMainActivity.mPlayerService.stop();
                 }
             }
         });
@@ -187,14 +142,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
         // Playing
         songHolder.tvSongName.setHorizontallyScrolling(true);
 //            songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.tintedBackground));
-        songHolder.background.setBackgroundResource(R.drawable.orange_glow_gradient);
+//        songHolder.background.setBackgroundResource(R.drawable.orange_glow_gradient);
+        songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.cardview_shadow_start_color));
 //            songHolder.tvSongName.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
-        if(songHolder.btnAction.getState() != MorphButton.MorphState.END) {
-            songHolder.btnAction.setState(MorphButton.MorphState.END, true);
-        }
-        songHolder.btnAction.setSelected(true);
-        songHolder.btnAction.setForegroundColorFilter(Color.WHITE,
-                PorterDuff.Mode.SRC_ATOP);
+//        if(songHolder.btnAction.getState() != MorphButton.MorphState.END) {
+//            songHolder.btnAction.setState(MorphButton.MorphState.END, true);
+//        }
+//        songHolder.btnAction.setSelected(true);
+//        songHolder.btnAction.setForegroundColorFilter(Color.WHITE,
+//                PorterDuff.Mode.SRC_ATOP);
         songHolder.tvSongName.setSelected(true);
         songHolder.tvSongArtist.setSelected(true);
     }
@@ -205,15 +161,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
      * @param songHolder
      */
     private void setSongNotPlayingView(SongHolder songHolder){
-        // Not playing
-//            songHolder.tvSongName.setTextColor(Color.WHITE);
         songHolder.tvSongName.setHorizontallyScrolling(false);
-        songHolder.background.setBackgroundResource(R.drawable.ripple_effect);
-        if(songHolder.btnAction.getState() != MorphButton.MorphState.START) {
-            songHolder.btnAction.setState(MorphButton.MorphState.START, true);
-        }
-        songHolder.btnAction.setForegroundColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        songHolder.btnAction.setSelected(false);
+        songHolder.background.setBackground(null);
+        songHolder.tvSongName.setSelected(false);
+        songHolder.tvSongArtist.setSelected(false);
     }
 
     /**
@@ -260,24 +211,17 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
      RecyclerView instances may hold strong references to extra off-screen
      item views for caching purposes
      */
-    public class SongHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class SongHolder extends RecyclerView.ViewHolder{
         TextView tvSongName,tvSongArtist;
         ImageView tvAlbumArt;
-        MorphButton btnAction;
         View background;
-        Boolean selected = false;
 
         public SongHolder(View itemView) {
             super(itemView);
             tvSongName = (TextView) itemView.findViewById(R.id.tvSongName);
             tvSongArtist = (TextView) itemView.findViewById(R.id.tvArtistName);
-            btnAction = (MorphButton) itemView.findViewById(R.id.btnPlay);
             background = (View)itemView.findViewById(R.id.list_background);
             tvAlbumArt = (ImageView)itemView.findViewById(R.id.list_albumArt);
-        }
-
-        public void onClick(View view){
-
         }
     }
 }

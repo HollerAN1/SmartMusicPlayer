@@ -3,9 +3,7 @@ package com.smartmusic.android.smartmusicplayer.library;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,16 +15,13 @@ import android.view.animation.OvershootInterpolator;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
-import com.smartmusic.android.smartmusicplayer.SongEvent;
-import com.smartmusic.android.smartmusicplayer.SongEventListener;
-import com.smartmusic.android.smartmusicplayer.comparators.songs.SongNameComparator;
-import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.view_models.SongsViewModel;
 import com.wnafee.vector.MorphButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
@@ -38,7 +33,7 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
  * Created by holle on 3/7/2018.
  */
 
-public class SongListFragment extends Fragment implements SongEventListener {
+public class SongListFragment extends Fragment implements SongPlaybackEventListener {
 
     private List<Song> _songs;
 
@@ -78,7 +73,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
             //recyclerView.setItemAnimator(animator);
 
 
-            SPMainActivity.getSongEventHandler().addSongEventListener(this);
+            SPMainActivity.getSongEventHandler().addSongPlaybackEventListener(this);
         }
 
         return mainView;
@@ -125,21 +120,21 @@ public class SongListFragment extends Fragment implements SongEventListener {
         /*Links layout and divider to recyclerView*/
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        //Handles Play/Stop button clicks
-        songAdapter.setOnItemClickListener(new SongAdapter.OnItemClickListener() {
-            /*Implements interface method onItemClick*/
-            @Override
-            public void onItemClick(final MorphButton b, final View view, final Song obj, final int position, final List<Song> songs, final int i) {
-                // Play the selected song
-                if(!b.isSelected()){
-                    SPMainActivity.mPlayerService.playSong(obj);
-                }
-                // Stop the selected song
-                if (b.isSelected() || (SPMainActivity.mPlayerService.isSongPlaying())) {
-                    SPMainActivity.mPlayerService.stop();
-                }
-            }
-        });
+
+//        songAdapter.setOnItemClickListener(new SongAdapter.OnItemClickListener() {
+//            /*Implements interface method onItemClick*/
+//            @Override
+//            public void onItemClick(final MorphButton b, final View view, final Song obj, final int position, final List<Song> songs, final int i) {
+//                // Play the selected song
+//                if(!b.isSelected()){
+//                    SPMainActivity.mPlayerService.playSong(obj);
+//                }
+//                // Stop the selected song
+//                if (b.isSelected() || (SPMainActivity.mPlayerService.isSongPlaying())) {
+//                    SPMainActivity.mPlayerService.stop();
+//                }
+//            }
+//        });
     }
 
     public void setRecyclerViewNormalTheme(Song song){
@@ -159,7 +154,7 @@ public class SongListFragment extends Fragment implements SongEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SPMainActivity.getSongEventHandler().removeSongEventListener(this);
+        SPMainActivity.getSongEventHandler().removeSongPlaybackEventListener(this);
     }
 
     @Override
@@ -190,14 +185,4 @@ public class SongListFragment extends Fragment implements SongEventListener {
             prevExists = false;
         }
     }
-
-    @Override
-    public void onSongAddedEvent(SongEvent e) {}
-    @Override
-    public void onSongRemovedEvent(SongEvent e) {}
-    @Override
-    public void onShuffleOnEvent(SongEvent e) {}
-    @Override
-    public void onShuffleOffEvent(SongEvent e) {}
-
 }
