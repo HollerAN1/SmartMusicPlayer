@@ -40,36 +40,46 @@ public class SongEventHandler {
         songPlaybackEventListenerList.remove(songEventListener);
     }
 
-    public void dispatchEvent(SongEvent songEvent){
-        switch(songEvent.getType()){
+    public void dispatchEvent(SongPlaybackEvent songPlaybackEvent){
+        switch(songPlaybackEvent.getType()){
             case SONG_CHANGED:
                 for(SongPlaybackEventListener listener : songPlaybackEventListenerList){
-                    listener.onSongChangeEvent(songEvent);
+                    listener.onSongChangeEvent(songPlaybackEvent);
                 }
                 break;
             case SONG_STOPPED:
                 for(SongPlaybackEventListener listener : songPlaybackEventListenerList){
-                    listener.onSongStopEvent(songEvent);
+                    listener.onSongStopEvent(songPlaybackEvent);
                 }
                 break;
-            case SHUFFLE_ON:
-                for(SongShuffleEventListener listener : songShuffleEventListenerList){
-                    listener.onShuffleOnEvent(songEvent);
-                }
-                break;
-            case SHUFFLE_OFF:
-                for(SongShuffleEventListener listener : songShuffleEventListenerList) {
-                    listener.onShuffleOffEvent(songEvent);
-                }
-                break;
+        }
+    }
+
+    public void dispatchEvent(SongDatabaseEvent event){
+        switch (event.getType()){
             case SONG_ADDED:
                 for(SongDatabaseChangedListener listener : songDatabaseChangedListenerList) {
-                    listener.onSongAddedEvent(songEvent);
+                    listener.onSongAddedEvent(event);
                 }
                 break;
             case SONG_REMOVED:
                 for(SongDatabaseChangedListener listener : songDatabaseChangedListenerList) {
-                    listener.onSongRemovedEvent(songEvent);
+                    listener.onSongRemovedEvent(event);
+                }
+                break;
+        }
+    }
+
+    public void dispatchEvent(SongShuffleEvent event){
+        switch (event.getType()){
+            case SHUFFLE_ON:
+                for(SongShuffleEventListener listener : songShuffleEventListenerList){
+                    listener.onShuffleOnEvent(event);
+                }
+                break;
+            case SHUFFLE_OFF:
+                for(SongShuffleEventListener listener : songShuffleEventListenerList) {
+                    listener.onShuffleOffEvent(event);
                 }
                 break;
         }

@@ -124,6 +124,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
             public void onClick(View view) {
                 if(!s.isSelected()){
                     SPMainActivity.mPlayerService.playSong(s);
+                    return;
                 }
                 // Stop the selected song
                 if (s.isSelected() || (SPMainActivity.mPlayerService.isSongPlaying())) {

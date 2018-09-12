@@ -8,6 +8,6 @@ import java.util.EventListener;
  */
 
 public interface SongPlaybackEventListener extends EventListener{
-    void onSongChangeEvent(SongEvent e);
-    void onSongStopEvent(SongEvent e);
+    void onSongChangeEvent(SongPlaybackEvent e);
+    void onSongStopEvent(SongPlaybackEvent e);
 }

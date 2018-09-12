@@ -15,7 +15,7 @@ import android.view.animation.OvershootInterpolator;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
@@ -158,7 +158,7 @@ public class SongListFragment extends Fragment implements SongPlaybackEventListe
     }
 
     @Override
-    public synchronized void onSongChangeEvent(SongEvent e) {
+    public synchronized void onSongChangeEvent(SongPlaybackEvent e) {
         Song songPlaying = e.getSource();
 
         // Reset the last song's view
@@ -178,7 +178,7 @@ public class SongListFragment extends Fragment implements SongPlaybackEventListe
     }
 
     @Override
-    public void onSongStopEvent(SongEvent e) {
+    public void onSongStopEvent(SongPlaybackEvent e) {
         // If a song was playing, reset the view
         if(prevExists){
             setRecyclerViewNormalTheme(prevSong);

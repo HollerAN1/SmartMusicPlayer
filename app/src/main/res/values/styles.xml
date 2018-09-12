@@ -27,7 +27,7 @@
         <!--<item name="android:windowEnterTransition">@transition/change_image_transform</item>-->
         <!--<item name="android:windowExitTransition">@transition/change_image_transform</item>-->
 
-        <item name="android:windowExitTransition">@transition/list_content_exit_transition</item>
+        <!--<item name="android:windowExitTransition">@transition/list_content_exit_transition</item>-->
         <item name="android:windowReenterTransition">@transition/list_content_reenter_transition</item>
 
 

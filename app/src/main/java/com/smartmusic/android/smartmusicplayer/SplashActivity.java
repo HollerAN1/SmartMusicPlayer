@@ -16,7 +16,8 @@ import android.widget.Toast;
 import com.smartmusic.android.smartmusicplayer.database.SPDatabase;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.events.SongDatabaseChangedListener;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongDatabaseEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
 
 /**
@@ -121,7 +122,7 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
     }
 
     @Override
-    public void onSongAddedEvent(final SongEvent e){
+    public void onSongAddedEvent(final SongDatabaseEvent e){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -141,7 +142,7 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
     }
 
     @Override
-    public void onSongRemovedEvent(SongEvent e) {
+    public void onSongRemovedEvent(SongDatabaseEvent e) {
 
     }
 }

@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.library.Library;
@@ -433,7 +433,7 @@ public class SPMainActivity
     }
 
     @Override
-    public void onSongChangeEvent(SongEvent e) {
+    public void onSongChangeEvent(SongPlaybackEvent e) {
 
         Song tmpSong = e.getSource();
 
@@ -464,7 +464,7 @@ public class SPMainActivity
     }
 
     @Override
-    public void onSongStopEvent(SongEvent e) {
+    public void onSongStopEvent(SongPlaybackEvent e) {
         // Reset navigation header
         // to original state.
 

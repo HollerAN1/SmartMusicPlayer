@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -161,12 +161,12 @@ public class NowPlayingBar implements SongPlaybackEventListener {
     }
 
     @Override
-    public void onSongChangeEvent(SongEvent e) {
+    public void onSongChangeEvent(SongPlaybackEvent e) {
         update(e.getSource());
         show();
     }
     @Override
-    public void onSongStopEvent(SongEvent e) {
+    public void onSongStopEvent(SongPlaybackEvent e) {
         hide();
     }
 }

@@ -25,10 +25,11 @@ import android.widget.ViewSwitcher;
 import com.chibde.visualizer.BarVisualizer;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.SPUtils;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.events.SongShuffleEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongShuffleEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -312,7 +313,7 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
         shuffleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SPMainActivity.mPlayerService.setShuffle(shuffleButton.isSelected());
+                SPMainActivity.mPlayerService.setShuffle(!shuffleButton.isSelected());
             }
         });
 
@@ -330,7 +331,8 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
         //Load large album image
         Picasso.with(getContext())
                 .load(currentSong.getAlbumArt())
-                .transform(new BlurTransformation(getContext(), 30))
+                .transform(new BlurTransformation(getContext(), 10))
+                .placeholder(R.drawable.galaxy)
                 .error(R.drawable.galaxy)
                 .into(largeAlbumArt);
 
@@ -486,27 +488,27 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
     }
 
     @Override
-    public void onSongChangeEvent(SongEvent e) {
+    public void onSongChangeEvent(SongPlaybackEvent e) {
         currentSong = e.getSource();
         updateNowPlaying();
         setUpAlbumArt(null, e.getSource());
     }
 
     @Override
-    public void onSongStopEvent(SongEvent e) {
+    public void onSongStopEvent(SongPlaybackEvent e) {
         currentSong = null;
         updateNowPlaying();
         setUpAlbumArt(null, null);
     }
 
     @Override
-    public void onShuffleOnEvent(SongEvent e) {
+    public void onShuffleOnEvent(SongShuffleEvent e) {
         shuffleButton.setSelected(true);
         shuffleButton.setColorFilter(getResources().getColor(R.color.pastel_rose));
     }
 
     @Override
-    public void onShuffleOffEvent(SongEvent e) {
+    public void onShuffleOffEvent(SongShuffleEvent e) {
         shuffleButton.setSelected(false);
         shuffleButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
     }

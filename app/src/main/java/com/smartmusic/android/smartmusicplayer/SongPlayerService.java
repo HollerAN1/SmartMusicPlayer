@@ -11,7 +11,8 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongShuffleEvent;
 
 import java.util.List;
 import java.util.Random;
@@ -292,8 +293,8 @@ public class SongPlayerService
      * @param info the song the media player has changed to
      * @return An event that describes the song change.
      */
-    private SongEvent getSongChangeEvent(Song info){
-        SongEvent event = new SongEvent(info, songs.indexOf(info), SongEvent.Type.SONG_CHANGED);
+    private SongPlaybackEvent getSongChangeEvent(Song info){
+        SongPlaybackEvent event = new SongPlaybackEvent(info, songs.indexOf(info), SongPlaybackEvent.Type.SONG_CHANGED);
         return event;
     }
 
@@ -303,17 +304,15 @@ public class SongPlayerService
      * @param info The song that was stopped
      * @return An event that describes the stopped song.
      */
-    private SongEvent getSongStopEvent(Song info) {
-        SongEvent event = new SongEvent(info, songs.indexOf(info), SongEvent.Type.SONG_STOPPED);
+    private SongPlaybackEvent getSongStopEvent(Song info) {
+        SongPlaybackEvent event = new SongPlaybackEvent(info, songs.indexOf(info), SongPlaybackEvent.Type.SONG_STOPPED);
         return event;
     }
 
-    private SongEvent getSongShuffleEvent(boolean shuffleOn){
+    private SongShuffleEvent getSongShuffleEvent(boolean shuffleOn){
         // TODO: Create a unique shuffle event class.
-        SongEvent songEvent = new SongEvent(null, 0, shuffleOn
-                                                                    ? SongEvent.Type.SHUFFLE_ON
-                                                                    : SongEvent.Type.SHUFFLE_OFF);
-        return songEvent;
+        SongShuffleEvent songShuffleEvent = new SongShuffleEvent(shuffleOn);
+        return songShuffleEvent;
 
     }
 
