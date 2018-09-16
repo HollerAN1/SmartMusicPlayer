@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 
 import com.smartmusic.android.smartmusicplayer.events.SongDatabaseEvent;
+import com.smartmusic.android.smartmusicplayer.events.SongEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
 import com.smartmusic.android.smartmusicplayer.database.daos.AlbumDao;
@@ -162,7 +163,7 @@ public abstract class SPDatabase extends RoomDatabase {
 
                         db.songDao().insert(s);
 
-                        mEventHandler.dispatchEvent(new SongDatabaseEvent(s, cursor.getColumnCount(), SongDatabaseEvent.Type.SONG_ADDED));
+                        mEventHandler.dispatchEvent(new SongDatabaseEvent(s, SongEvent.Type.SONG_ADDED));
 
                     } while (cursor.moveToNext());
                 }

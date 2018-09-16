@@ -100,9 +100,7 @@ public class SPMainActivity
 
         handleIntent(getIntent());
 
-        getSupportActionBar().setTitle(R.string.LIBRARY);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         repository = new SPRepository(this);
         songEventHandler.addSongPlaybackEventListener(this);
@@ -375,6 +373,10 @@ public class SPMainActivity
             String query = intent.getStringExtra(SearchManager.QUERY);
             doSearch(query);
         }
+    }
+
+    public void setActionBarTitle(int title){
+        getSupportActionBar().setTitle(title);
     }
 
     private void transitionToSearchFragment(){

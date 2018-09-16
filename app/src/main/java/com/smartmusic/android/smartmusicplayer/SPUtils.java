@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextSwitcher;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 
 import java.text.SimpleDateFormat;
+
+import javax.xml.transform.Templates;
 
 /**
  * A utility class with static
@@ -20,6 +23,10 @@ import java.text.SimpleDateFormat;
  * the app.
  */
 public class SPUtils {
+
+    public enum TSAnimationType {
+        SLIDE, FADE
+    }
 
     public static SimpleDateFormat yearMonthDayFormat = new SimpleDateFormat("yyyyMMdd");
 
