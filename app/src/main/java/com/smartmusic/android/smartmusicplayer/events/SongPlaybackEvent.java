@@ -1,16 +1,13 @@
 package com.smartmusic.android.smartmusicplayer.events;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import java.util.EventObject;
 
 /**
  * Created by holle on 3/14/2018.
  */
 
-public class SongPlaybackEvent extends EventObject{
-
+public class SongPlaybackEvent extends SongEvent {
     private int songIndex;
-    private Type type;
     private Song song;
 
 
@@ -21,24 +18,13 @@ public class SongPlaybackEvent extends EventObject{
      * @param type the type of song event
      */
     public SongPlaybackEvent(Song source, int songIndex, Type type){
-        super(source);
         this.song = source;
         this.songIndex = songIndex;
         this.type = type;
     }
 
-    public enum Type{
-
-            SONG_STARTED, SONG_STOPPED, SONG_CHANGED, SONG_PLAY_NEXT, SONG_PLAY_PREVIOUS;
-
-        }
-
     public int getSongIndex(){
         return this.songIndex;
-    }
-
-    public Type getType(){
-        return this.type;
     }
 
     public Song getSource(){
