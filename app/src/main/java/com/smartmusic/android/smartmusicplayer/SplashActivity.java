@@ -65,13 +65,16 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
      * otherwise, prompts the user for those permissions.
      */
     private void checkUserPermissions(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){ // SDK 23
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // SDK 23
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
                         100);
+                return;
             }
+
         }
+        initializeDatabase();
     }
 
     @Override
