@@ -33,9 +33,7 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
 
     private ProgressBar mProgress;
     private TextView mProgressDescription;
-    private boolean mServiceBound = false;
     private int maxSongs = 0;
-    private Handler mProcessHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,8 +43,8 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
 
         // Show the splash screen
         setContentView(R.layout.splash_screen);
-        mProgress = (ProgressBar) findViewById(R.id.splash_screen_progress_bar);
-        mProgressDescription = (TextView) findViewById(R.id.splash_screen_progress_description);
+        mProgress =                 findViewById(R.id.splash_screen_progress_bar);
+        mProgressDescription =      findViewById(R.id.splash_screen_progress_description);
     }
 
     private void startApp() {
@@ -70,19 +68,10 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){ // SDK 23
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED){
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        getResources().getInteger(R.integer.PERMISSION_READ_EXTERNAL_STORAGE_REQUEST));
-//                return;
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
+                        100);
             }
-//            if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                    != PackageManager.PERMISSION_GRANTED){
-//                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 456);
-//            }
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                    != PackageManager.PERMISSION_GRANTED){
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},
-                        getResources().getInteger(R.integer.PERMISSION_RECORD_AUDIO_REQUEST));
-            }
+            return;
         }
 
         initializeDatabase();
@@ -94,13 +83,12 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
             return;
         }
         switch (requestCode){
-            case R.integer.PERMISSION_RECORD_AUDIO_REQUEST:
+            case 100:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//                    new SPRepository(this);
                     initializeDatabase();
                 }else{
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
-                    checkUserPermissions();
+                    startApp();
                 }
                 break;
             default:
@@ -110,6 +98,12 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
 
     }
 
+    /**
+     * Checks if the song database exists
+     * if so, it starts the app. Otherwise
+     * it goes through the process of loading
+     * song into the database.
+     */
     private void initializeDatabase(){
         SPDatabase.getDatabase(this); // initializes database
         if(SPDatabase.doesDatabaseExist(this, SPDatabase.DATABASE_NAME)){
@@ -143,6 +137,6 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
 
     @Override
     public void onSongRemovedEvent(SongDatabaseEvent e) {
-
+        // Song will never be removed on startup.
     }
 }
