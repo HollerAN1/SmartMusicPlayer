@@ -1,6 +1,5 @@
 package com.smartmusic.android.smartmusicplayer;
 
-import android.animation.LayoutTransition;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,42 +8,18 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
-import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
-import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.library.Library;
-import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
-import com.smartmusic.android.smartmusicplayer.playlists.Playlists;
-import com.smartmusic.android.smartmusicplayer.search.SearchResultsAdapter;
-import com.smartmusic.android.smartmusicplayer.search.SearchResultsFragment;
-import com.smartmusic.android.smartmusicplayer.settings.Settings;
-import com.squareup.picasso.Picasso;
-
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SPMainActivity
         extends AppCompatActivity {
@@ -54,6 +29,7 @@ public class SPMainActivity
     public static SongPlayerService mPlayerService;
     public static SPRepository repository; // Database
     private SPNavigationDrawer navDrawer;
+    private SPSearch search;
 
 
     /* Service connection for SongPlayerService */
@@ -84,12 +60,12 @@ public class SPMainActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         repository = new SPRepository(this);
+
+        // Setup navigation drawer
         navDrawer = new SPNavigationDrawer(this, getSupportFragmentManager());
+        navDrawer.init();
 
-        /*Initialize fragment manager*/
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-
+        search = new SPSearch(this, getSupportFragmentManager());
 
         // Check that the activity is using the layout version with
         // the fragment_container
@@ -104,13 +80,8 @@ public class SPMainActivity
 
             /*Instantiates library as first fragment*/
             Library library = new Library();
-
-            transaction
-                    .add(R.id.fragment_container, library, getResources().getString(R.string.LIBRARY_TAG))
-                    .addToBackStack(null)
-                    .commit();
+            transitionToFragment(library, getString(R.string.LIBRARY_TAG));
         }
-
     }
     /*-------------------------------------- ON CREATE METHOD ENDS -----------------------------------------*/
 
@@ -169,56 +140,15 @@ public class SPMainActivity
     public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_menu, menu);
-        setupSearchIcon(menu);
-
+        search.setupSearchIcon(menu);
         return true;
-
-    }
-
-    /**
-     * Sets up the functionality for the search icon
-     * located in the options menu.
-     * @param menu the options menu
-     */
-    private void setupSearchIcon(final Menu menu){
-        final Drawable searchIcon = menu.getItem(0).getIcon();
-        setMenuIconColor(searchIcon);
-
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        searchView.setLayoutTransition(new LayoutTransition());
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {return false;}
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                doSearch(s);
-                return false;
-            }
-        });
-
-        // Close the keyboard and SearchView at same time when the back button is pressed
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean queryTextFocused) {
-                if (!queryTextFocused) {
-                    MenuItemCompat.collapseActionView(menu.getItem(0));
-                }
-            }
-        });
     }
 
     /**
      * Sets the color of a menu icon
      * @param icon the drawable for the menu icon.
      */
-    private void setMenuIconColor(Drawable icon){
+    protected void setMenuIconColor(Drawable icon){
         icon.mutate();
         icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
     }
@@ -228,7 +158,7 @@ public class SPMainActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.search:
-                transitionToSearchFragment();
+                search.transitionToSearchFragment();
                 return true;
         }
         return /*mToggle.onOptionsItemSelected(item) ||*/ super.onOptionsItemSelected(item);
@@ -242,12 +172,12 @@ public class SPMainActivity
 
     /**
      * Handles intents passed to Activity.
-     * @param intent the intent
+     * @param intent the intent to handle
      */
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            doSearch(query);
+            search.doSearch(query);
         }
     }
 
@@ -255,58 +185,17 @@ public class SPMainActivity
         getSupportActionBar().setTitle(title);
     }
 
-    private void transitionToSearchFragment(){
-        SearchResultsFragment searchFrag = (SearchResultsFragment) getSupportFragmentManager()
-                .findFragmentByTag(getResources().getString(R.string.SEARCH_TAG));
-
-        if(searchFrag == null){
-            searchFrag = new SearchResultsFragment();
-        }
-
+    /**
+     * Replaces the fragment_container with the given fragment
+     * distinguished by the given tag.
+     * @param frag the fragment
+     * @param tag the fragment tag
+     */
+    protected void transitionToFragment(Fragment frag, String tag){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, searchFrag, getResources().getString(R.string.SEARCH_TAG))
+                .replace(R.id.fragment_container, frag, tag)
                 .addToBackStack(null)
                 .commit();
-
-    }
-
-    /**
-     * Searches through the database for the given query.
-     * @param query the user's search query.
-     */
-    private void doSearch(final String query) {
-        Fragment searchFrag = getSupportFragmentManager()
-                .findFragmentByTag(getString(R.string.SEARCH_TAG));
-        if(searchFrag != null) {
-            final StickyListHeadersListView list = searchFrag
-                    .getView().findViewById(R.id.search_results_list_view);
-            if (list != null) {
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        final SearchResultsAdapter adapter = (SearchResultsAdapter) list.getAdapter();
-                        adapter.setSongsResult(repository.searchSongs(query));
-                        adapter.setArtistsResult(repository.searchArtists(query));
-                        adapter.setAlbumsResult(repository.searchAlbums(query));
-                        adapter.setPlaylistsResult(repository.searchPlaylists(query));
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-                });
-            }
-        }
-
-
-//        SQLiteHelper sqLiteHelper = ((SPMainActivity)getApplication()).getDbHelper();
-//        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery("SELECT " + DatabaseConstants.COL_LANG_ID + ", " +
-//                DatabaseConstants.COL_LANG_NAME + " FROM " + DatabaseConstants.TABLE_LANG +
-//                " WHERE upper(" + DatabaseConstants.COL_LANG_NAME + ") like '%" + query.toUpperCase() + "%'", null);
-//        setListAdapter(new SimpleCursorAdapter(this, R.layout.container_list_item_view, cursor,
-//                new String[] {DatabaseConstants.COL_LANG_NAME }, new int[]{R.id.list_item}));
     }
 }

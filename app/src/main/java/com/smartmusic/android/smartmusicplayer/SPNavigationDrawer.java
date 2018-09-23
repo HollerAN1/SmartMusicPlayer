@@ -46,14 +46,13 @@ public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelect
         this.activity = activity;
         this.res = activity.getResources();
         this.fragManager = fragManager;
-        init();
     }
 
     /**
      * Sets up all items associated with the
      * navigation drawer.
      */
-    private void init(){
+    protected void init(){
         /*Link Navigation Header Items*/
         songName =               activity.findViewById(R.id.navigation_header_songName);
         songArtist =             activity.findViewById(R.id.navigation_header_artistName);
