@@ -47,13 +47,13 @@ import com.squareup.picasso.Picasso;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SPMainActivity
-        extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SongPlaybackEventListener {
+        extends AppCompatActivity {
 
 
     private static SongEventHandler songEventHandler = new SongEventHandler();
     public static SongPlayerService mPlayerService;
     public static SPRepository repository; // Database
+    private SPNavigationDrawer navDrawer;
 
 
     /* Service connection for SongPlayerService */
@@ -74,16 +74,6 @@ public class SPMainActivity
     };
 
 
-    /* Navigation Header */
-    private TextView navName = null;
-    private TextView navArtist = null;
-    private ImageView navAlbumArt = null;
-
-    /* Navigation Drawer */
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mToggle;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,9 +84,7 @@ public class SPMainActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         repository = new SPRepository(this);
-        songEventHandler.addSongPlaybackEventListener(this);
-
-        setupNavigationDrawer();
+        navDrawer = new SPNavigationDrawer(this, getSupportFragmentManager());
 
         /*Initialize fragment manager*/
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -151,7 +139,7 @@ public class SPMainActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getSongEventHandler().removeSongPlaybackEventListener(this);
+        navDrawer.removeSongEventHandler();
     }
 
 
@@ -185,28 +173,6 @@ public class SPMainActivity
 
         return true;
 
-    }
-
-    /**
-     * Sets up all items associated with the
-     * navigation drawer.
-     */
-    private void setupNavigationDrawer(){
-        /*Link Navigation Header Items*/
-        navName =               findViewById(R.id.navigation_header_songName);
-        navArtist =             findViewById(R.id.navigation_header_artistName);
-        navAlbumArt =           findViewById(R.id.navigation_album_art);
-
-        /*Setup Navigation Drawer*/
-        mDrawerLayout =         findViewById(R.id.drawer_layout);
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mToggle);
-
-        /*Synchronize the indicator with the state of the linked DrawerLayout after onRestoreInstanceState has occurred.*/
-        mToggle.syncState();
-
-        NavigationView navigationView = findViewById(R.id.drawer_navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     /**
@@ -265,76 +231,7 @@ public class SPMainActivity
                 transitionToSearchFragment();
                 return true;
         }
-        return mToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-    }
-
-
-    //Navigation Drawer items
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        mDrawerLayout.closeDrawer(Gravity.START);
-        Fragment transitionFrag = null; // The fragment to transition to
-        String transitionTag = null; // The tag to reference the fragment
-
-        switch (item.getItemId()) {
-            //------------------------------------LIBRARY-----------------------------------------//
-            case R.id.library:
-                Library libraryFrag = (Library) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.LIBRARY_TAG));
-
-                if(libraryFrag == null) {
-                    libraryFrag = new Library();
-                }
-
-                transitionFrag = libraryFrag;
-                transitionTag = getResources().getString(R.string.LIBRARY_TAG);
-
-                break;
-            //-------------------------------------NOW_PLAYING-------------------------------------//
-            case R.id.now_playing:
-                NowPlaying nowPlayingFrag = (NowPlaying) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.NOW_PLAYING_TAG));
-
-                if(nowPlayingFrag == null) {
-                    nowPlayingFrag = new NowPlaying();
-                }
-
-                transitionFrag = nowPlayingFrag;
-                transitionTag = getResources().getString(R.string.NOW_PLAYING_TAG);
-
-                break;
-            //-------------------------------------PLAYLISTS--------------------------------------//
-            case R.id.playlists:
-                Playlists playlistsFrag = (Playlists) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.PLAYLISTS_TAG));
-
-                if(playlistsFrag == null) {
-                    playlistsFrag = new Playlists();
-                }
-
-                transitionFrag = playlistsFrag;
-                transitionTag = getResources().getString(R.string.PLAYLISTS_TAG);
-
-                break;
-            //-------------------------------------SETTINGS---------------------------------------//
-            case R.id.settings:
-                Settings settingsFrag = (Settings) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.SETTINGS_TAG));
-
-                if(settingsFrag == null){
-                    settingsFrag = new Settings();
-                }
-
-                transitionFrag = settingsFrag;
-                transitionTag = getResources().getString(R.string.SETTINGS_TAG);
-
-                break;
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, transitionFrag, transitionTag)
-                .addToBackStack(null)
-                .commit();
-
-        return true;
+        return /*mToggle.onOptionsItemSelected(item) ||*/ super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -411,58 +308,5 @@ public class SPMainActivity
 //                " WHERE upper(" + DatabaseConstants.COL_LANG_NAME + ") like '%" + query.toUpperCase() + "%'", null);
 //        setListAdapter(new SimpleCursorAdapter(this, R.layout.container_list_item_view, cursor,
 //                new String[] {DatabaseConstants.COL_LANG_NAME }, new int[]{R.id.list_item}));
-    }
-
-    @Override
-    public void onSongChangeEvent(SongPlaybackEvent e) {
-
-        Song tmpSong = e.getSource();
-
-        if(tmpSong == null) { return; }
-
-        // Update the navigation header
-//            navAlbumArt.setImageURI(currentSong.getAlbumArt());
-
-        if(navName == null){
-            navName = findViewById(R.id.navigation_header_songName);
-        }
-        if(navArtist == null){
-            navArtist = findViewById(R.id.navigation_header_artistName);
-        }
-
-        if(navAlbumArt == null){
-            navAlbumArt = findViewById(R.id.navigation_album_art);
-        }
-
-        Picasso.with(this)
-                .load(tmpSong.getAlbumArt())
-                .placeholder(R.drawable.temp_album_art)
-                .error(R.drawable.temp_album_art)
-                .into(navAlbumArt);
-
-        navArtist.setText(tmpSong.getArtistName());
-        navName.setText(tmpSong.getSongName());
-    }
-
-    @Override
-    public void onSongStopEvent(SongPlaybackEvent e) {
-        // Reset navigation header
-        // to original state.
-
-        if(navName == null){
-            navName = findViewById(R.id.navigation_header_songName);
-        }
-        if(navArtist == null){
-            navArtist = findViewById(R.id.navigation_header_artistName);
-        }
-
-        if(navAlbumArt == null){
-            navAlbumArt = findViewById(R.id.navigation_album_art);
-        }
-
-        navAlbumArt.setImageResource(R.drawable.temp_album_art);
-
-        navArtist.setText(R.string.select_song_default);
-        navName.setText("");
     }
 }
