@@ -53,8 +53,6 @@ public class SPMainActivity
 
     private static SongEventHandler songEventHandler = new SongEventHandler();
     public static SongPlayerService mPlayerService;
-    private Intent musicIntent;
-    private boolean mMusicBound = false;
     public static SPRepository repository; // Database
 
 
@@ -67,21 +65,14 @@ public class SPMainActivity
             SongPlayerService.SongPlayerBinder binder = (SongPlayerService.SongPlayerBinder) service;
             //get service
             mPlayerService = binder.getService();
-
-            mMusicBound = true;
-
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i(getString(R.string.APP_LOGGER), SPMainActivity.this.getLocalClassName() + " disconnected from SongPlayerService");
-            mMusicBound = false;
         }
     };
 
-
-    private FragmentManager fragmentManager;
-    private FragmentTransaction transaction;
 
     /* Navigation Header */
     private TextView navName = null;
@@ -110,8 +101,6 @@ public class SPMainActivity
         /*Initialize fragment manager*/
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        this.fragmentManager = fragmentManager;
-        this.transaction = transaction;
 
 
         // Check that the activity is using the layout version with
@@ -169,17 +158,14 @@ public class SPMainActivity
     private void bindServices(){
         Log.i(getString(R.string.APP_LOGGER), this.getLocalClassName() + " is binding services");
         // Bind to SongPlayerService
-//        if( musicIntent == null ){
-            musicIntent = new Intent(this, SongPlayerService.class);
-            musicIntent.putExtra(getString(R.string.EXTRA_SENDER), this.getLocalClassName());
-            startService(musicIntent);
-            bindService(musicIntent, musicConnection, Context.BIND_AUTO_CREATE);
-//        }
+        Intent musicIntent = new Intent(this, SongPlayerService.class);
+        musicIntent.putExtra(getString(R.string.EXTRA_SENDER), this.getLocalClassName());
+        startService(musicIntent);
+        bindService(musicIntent, musicConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void unbindServices(){
         unbindService(musicConnection);
-        mMusicBound = false;
     }
 
     /**
@@ -207,19 +193,19 @@ public class SPMainActivity
      */
     private void setupNavigationDrawer(){
         /*Link Navigation Header Items*/
-        navName = (TextView)findViewById(R.id.navigation_header_songName);
-        navArtist = (TextView)findViewById(R.id.navigation_header_artistName);
-        navAlbumArt = (ImageView)findViewById(R.id.navigation_album_art);
+        navName =               findViewById(R.id.navigation_header_songName);
+        navArtist =             findViewById(R.id.navigation_header_artistName);
+        navAlbumArt =           findViewById(R.id.navigation_album_art);
 
         /*Setup Navigation Drawer*/
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout =         findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
 
         /*Synchronize the indicator with the state of the linked DrawerLayout after onRestoreInstanceState has occurred.*/
         mToggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
+        NavigationView navigationView = findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -279,82 +265,75 @@ public class SPMainActivity
                 transitionToSearchFragment();
                 return true;
         }
-        if(mToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return mToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
 
     //Navigation Drawer items
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        mDrawerLayout.closeDrawer(Gravity.START);
+        Fragment transitionFrag = null; // The fragment to transition to
+        String transitionTag = null; // The tag to reference the fragment
+
         switch (item.getItemId()) {
             //------------------------------------LIBRARY-----------------------------------------//
             case R.id.library:
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
                 Library libraryFrag = (Library) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.LIBRARY_TAG));
 
                 if(libraryFrag == null) {
                     libraryFrag = new Library();
                 }
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, libraryFrag, getResources().getString(R.string.LIBRARY_TAG))
-                        .addToBackStack(null)
-                        .commit();
+                transitionFrag = libraryFrag;
+                transitionTag = getResources().getString(R.string.LIBRARY_TAG);
 
-                return true;
+                break;
             //-------------------------------------NOW_PLAYING-------------------------------------//
             case R.id.now_playing:
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
                 NowPlaying nowPlayingFrag = (NowPlaying) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.NOW_PLAYING_TAG));
 
                 if(nowPlayingFrag == null) {
                     nowPlayingFrag = new NowPlaying();
                 }
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, nowPlayingFrag, getResources().getString(R.string.NOW_PLAYING_TAG))
-                        .addToBackStack(null)
-                        .commit();
+                transitionFrag = nowPlayingFrag;
+                transitionTag = getResources().getString(R.string.NOW_PLAYING_TAG);
 
-                return true;
+                break;
             //-------------------------------------PLAYLISTS--------------------------------------//
             case R.id.playlists:
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
                 Playlists playlistsFrag = (Playlists) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.PLAYLISTS_TAG));
 
                 if(playlistsFrag == null) {
                     playlistsFrag = new Playlists();
                 }
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, playlistsFrag, getResources().getString(R.string.PLAYLISTS_TAG))
-                        .addToBackStack(null)
-                        .commit();
+                transitionFrag = playlistsFrag;
+                transitionTag = getResources().getString(R.string.PLAYLISTS_TAG);
 
-                return true;
+                break;
             //-------------------------------------SETTINGS---------------------------------------//
             case R.id.settings:
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
                 Settings settingsFrag = (Settings) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.SETTINGS_TAG));
 
                 if(settingsFrag == null){
                     settingsFrag = new Settings();
                 }
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, settingsFrag, getResources().getString(R.string.SETTINGS_TAG))
-                        .addToBackStack(null)
-                        .commit();
+                transitionFrag = settingsFrag;
+                transitionTag = getResources().getString(R.string.SETTINGS_TAG);
 
-                return true;
+                break;
         }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, transitionFrag, transitionTag)
+                .addToBackStack(null)
+                .commit();
+
         return true;
     }
 
@@ -445,14 +424,14 @@ public class SPMainActivity
 //            navAlbumArt.setImageURI(currentSong.getAlbumArt());
 
         if(navName == null){
-            navName = (TextView)findViewById(R.id.navigation_header_songName);
+            navName = findViewById(R.id.navigation_header_songName);
         }
         if(navArtist == null){
-            navArtist = (TextView)findViewById(R.id.navigation_header_artistName);
+            navArtist = findViewById(R.id.navigation_header_artistName);
         }
 
         if(navAlbumArt == null){
-            navAlbumArt = (ImageView)findViewById(R.id.navigation_album_art);
+            navAlbumArt = findViewById(R.id.navigation_album_art);
         }
 
         Picasso.with(this)
@@ -471,19 +450,19 @@ public class SPMainActivity
         // to original state.
 
         if(navName == null){
-            navName = (TextView)findViewById(R.id.navigation_header_songName);
+            navName = findViewById(R.id.navigation_header_songName);
         }
         if(navArtist == null){
-            navArtist = (TextView)findViewById(R.id.navigation_header_artistName);
+            navArtist = findViewById(R.id.navigation_header_artistName);
         }
 
         if(navAlbumArt == null){
-            navAlbumArt = (ImageView)findViewById(R.id.navigation_album_art);
+            navAlbumArt = findViewById(R.id.navigation_album_art);
         }
 
         navAlbumArt.setImageResource(R.drawable.temp_album_art);
 
-        navArtist.setText("Select a song.");
+        navArtist.setText(R.string.select_song_default);
         navName.setText("");
     }
 }

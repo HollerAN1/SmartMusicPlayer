@@ -1,6 +1,7 @@
 package com.smartmusic.android.smartmusicplayer.database;
 
 import android.arch.persistence.room.Database;
+import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
@@ -57,9 +58,9 @@ public abstract class SPDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(ctx.getApplicationContext(),
                             SPDatabase.class, DATABASE_NAME)
                             .build();
-                    if(!doesDatabaseExist(ctx, DATABASE_NAME)) {
-                        new PopulateDbAsync(INSTANCE, ctx).execute();
-                    }
+//                    if(!doesDatabaseExist(ctx, DATABASE_NAME)) {
+                    new PopulateDbAsync(INSTANCE, ctx).execute();
+//                    }
                 }
             }
         }
@@ -116,8 +117,15 @@ public abstract class SPDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(final Void... params) {
-            loadSongsFromDevice();
-            addAlbumsToArtists();
+            List<Song> songs = db.songDao().getAllSongsStatic();
+            if(getTotalSongCount(context) != songs.size()) {
+                db.songDao().deleteAll(db.songDao().getAllSongsStatic());
+                db.artistDao().deleteAll(db.artistDao().getAllArtistsStatic());
+                db.albumDao().deleteAll(db.albumDao().getAllAlbumsStatic());
+
+                loadSongsFromDevice();
+                addAlbumsToArtists();
+            }
             return null;
         }
 
@@ -188,7 +196,11 @@ public abstract class SPDatabase extends RoomDatabase {
                 return;
             }
 
-            Album al = new Album(s.getAlbumName(), s.getArtistName(), s.getAlbumArt().toString());
+            String albumName = "<Unknown>";
+            if(!s.getAlbumName().equals("")){
+                albumName = s.getAlbumName();
+            }
+            Album al = new Album(albumName, s.getArtistName(), s.getAlbumArt().toString());
             s.setAlbumUID(al.getAlbumUID());
             al.setNumSongs(al.getNumSongs() + 1);
             db.albumDao().insert(al);
@@ -228,5 +240,5 @@ public abstract class SPDatabase extends RoomDatabase {
                 }
             }
         }
-    } // end AsyncTask
+    } // end PopulateDbAsync
 }

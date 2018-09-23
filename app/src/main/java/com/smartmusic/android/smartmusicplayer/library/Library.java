@@ -16,7 +16,8 @@ import com.smartmusic.android.smartmusicplayer.R;
 /**
  * Base class for entire "Library" view that is presented on
  * startup and when the user selects "Library" from the navigation
- * drawer. Contains a view pager to display Songs, Artists and Albums.
+ * drawer. Contains a view pager to display Songs, Artists and Albums
+ * fragments.
  */
 public class Library extends Fragment {
 

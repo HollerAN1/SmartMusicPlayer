@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.library.SongDefaultAdapter;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.squareup.picasso.Picasso;
 
@@ -94,19 +93,19 @@ public class AlbumActivity extends AppCompatActivity {
     }
 
     private void setUpAlbumRecyclerView(){
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        Typeface tvSongNameFont = Typeface.createFromAsset(this.getAssets(),"fonts/Raleway-Regular.ttf");
-        Typeface tvArtistNameFont = Typeface.createFromAsset(this.getAssets(), "fonts/highTea.otf");
-        final SongDefaultAdapter albumAdapter = new SongDefaultAdapter(this, _albumSongs, tvSongNameFont, tvArtistNameFont);
-
-        /*LLM extends Recycler view and specifies the layout*/
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL);
-
-        /*Links layout and divider to recyclerView*/
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        recyclerView.setAdapter(albumAdapter);
+//        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+//        Typeface tvSongNameFont = Typeface.createFromAsset(this.getAssets(),"fonts/Raleway-Regular.ttf");
+//        Typeface tvArtistNameFont = Typeface.createFromAsset(this.getAssets(), "fonts/highTea.otf");
+//        final SongDefaultAdapter albumAdapter = new SongDefaultAdapter(this, _albumSongs, tvSongNameFont, tvArtistNameFont);
+//
+//        /*LLM extends Recycler view and specifies the layout*/
+//        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL);
+//
+//        /*Links layout and divider to recyclerView*/
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerView.addItemDecoration(dividerItemDecoration);
+//        recyclerView.setAdapter(albumAdapter);
     }
 
     @Override

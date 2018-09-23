@@ -1,53 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@color/extra_light_midnight_blue"
     android:padding="5dp"
     android:id="@+id/song_background">
+
+    <TextView
+        android:id="@+id/album_number"
+        style="@style/SPSubtext"
+        android:background="@color/cardview_shadow_start_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:text="@string/album_number_default"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="20sp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp">
+        android:layout_marginStart="15dp"
+        android:padding="2dp"
+        android:layout_toStartOf="@id/list_options"
+        android:layout_toEndOf="@id/album_number">
         <TextView
+            style="@style/SPHeading"
             android:id="@+id/song_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/SONG_TITLE"
-            android:textSize="18dp"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textSize="18sp" />
         <TextView
+            style="@style/SPSubtext"
             android:id="@+id/song_duration"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="4:36" />
+            android:text="@string/duration_default" />
     </LinearLayout>
 
-    <com.wnafee.vector.MorphButton
-        android:id="@+id/song_btnPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/list_options"
-        android:layout_toStartOf="@id/list_options"
-        android:layout_gravity="center"
-        android:layout_margin="5dp"
-        app:vc_startDrawable="@drawable/ic_play_to_stop_anim"
-        app:vc_endDrawable="@drawable/ic_stop_to_play_anim"/>
+    <!--<com.wnafee.vector.MorphButton-->
+        <!--android:id="@+id/song_btnPlay"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_toLeftOf="@id/list_options"-->
+        <!--android:layout_toStartOf="@id/list_options"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_margin="5dp"-->
+        <!--app:vc_startDrawable="@drawable/ic_play_to_stop_anim"-->
+        <!--app:vc_endDrawable="@drawable/ic_stop_to_play_anim"/>-->
 
     <ImageButton
         android:id="@+id/list_options"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="10dp"
         android:background="@color/transparent"
-        android:src="@drawable/ic_more_vert_black_24dp" />
+        android:src="@drawable/ic_more_vert_black_24dp"
+        android:tint="@color/button_tint"
+        android:contentDescription="@string/Options_CD"/>
 
 </RelativeLayout>

@@ -40,4 +40,6 @@ public abstract class PlaylistDao {
 
     @Delete
     public abstract void delete(Playlist playlist);
+    @Delete
+    public abstract void deleteAll(List<Playlist> playlists);
 }

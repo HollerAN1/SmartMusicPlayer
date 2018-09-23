@@ -63,4 +63,6 @@ public abstract class ArtistDao {
     // Delete artist(s)
     @Delete
     public abstract void delete(Artist artist);
+    @Delete
+    public abstract void deleteAll(List<Artist> artists);
 }

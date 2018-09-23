@@ -21,6 +21,10 @@ import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
+
+/**
+ * Adapter for results whenever user conducts a search.
+ */
 public class SearchResultsAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
     private LayoutInflater mInflater;
@@ -45,33 +49,38 @@ public class SearchResultsAdapter extends BaseAdapter implements StickyListHeade
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
         HeaderViewHolder holder;
         if (convertView == null) {
+            // Setup header view
             holder = new HeaderViewHolder();
             convertView = mInflater.inflate(R.layout.header_view, parent, false);
-            holder.headerText = (TextView) convertView.findViewById(R.id.header_text);
+            holder.headerText = convertView.findViewById(R.id.header_text);
             convertView.setTag(holder);
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
         }
 
         int headerId = (int)getHeaderId(position);
+        holder.headerText.setText(getHeaderTextId(headerId));
+        return convertView;
+    }
+
+    /**
+     * Gets the R.string id for the given headerId
+     * @param headerId the id of the header
+     * @return the id of the corresponding string.
+     */
+    private int getHeaderTextId(int headerId){
         switch (headerId){
             case SONG_HEADER_ID:
-                holder.headerText.setText(R.string.pager_title_songs);
-                break;
+                return R.string.pager_title_songs;
             case ARTIST_HEADER_ID:
-                holder.headerText.setText(R.string.pager_title_artists);
-                break;
+                return R.string.pager_title_artists;
             case ALBUM_HEADER_ID:
-                holder.headerText.setText(R.string.pager_title_albums);
-                break;
+                return R.string.pager_title_albums;
             case PLAYLIST_HEADER_ID:
-                holder.headerText.setText("Playlists"); //TODO: Change to R.string
-                break;
-            default:
-                break;
+                return R.string.PLAYLISTS;
         }
 
-        return convertView;
+        return 0;
     }
 
     @Override
@@ -100,7 +109,6 @@ public class SearchResultsAdapter extends BaseAdapter implements StickyListHeade
 
     @Override
     public Object getItem(int i) {
-        int pos = i;
         if( i < songs.size()){
             return songs.get(i);
         } else {
@@ -135,9 +143,9 @@ public class SearchResultsAdapter extends BaseAdapter implements StickyListHeade
         if (view == null) {
             holder = new ItemViewHolder();
             view = mInflater.inflate(R.layout.search_item_view, viewGroup, false);
-            holder.itemName = (TextView) view.findViewById(R.id.search_item_name);
-            holder.additionalInfo = (TextView) view.findViewById(R.id.search_item_additional_info);
-            holder.image = (ImageView) view.findViewById(R.id.search_item_image);
+            holder.itemName =           view.findViewById(R.id.search_item_name);
+            holder.additionalInfo =     view.findViewById(R.id.search_item_additional_info);
+            holder.image =              view.findViewById(R.id.search_item_image);
             view.setTag(holder);
         } else {
             holder = (ItemViewHolder) view.getTag();
@@ -198,13 +206,13 @@ public class SearchResultsAdapter extends BaseAdapter implements StickyListHeade
     }
 
 
-    public static class HeaderViewHolder{
-        public TextView headerText;
+    private static class HeaderViewHolder{
+        private TextView headerText;
     }
 
-    public static class ItemViewHolder{
-        public TextView itemName;
-        public TextView additionalInfo;
-        public ImageView image;
+    private static class ItemViewHolder{
+        private TextView itemName;
+        private TextView additionalInfo;
+        private ImageView image;
     }
 }

@@ -8,39 +8,38 @@
         android:id="@+id/search_item_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/temp_album_art"/>
+        android:src="@drawable/temp_album_art"
+        android:contentDescription="@string/Album_CD"/>
     <TextView
+        style="@style/SPHeading"
         android:id="@+id/search_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/search_item_image"
-        android:layout_alignParentRight="true"
+        android:layout_toEndOf="@id/search_item_image"
+        android:layout_alignParentEnd="true"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:textSize="18dp"
-        android:textColor="@color/pastel_rose"
-        android:fontFamily="@font/exo_medium"
+        android:textSize="18sp"
         android:singleLine="true"
         android:scrollHorizontally="true"
         android:marqueeRepeatLimit ="marquee_forever"
         android:ellipsize="marquee"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:text="Item Name"/>
+        android:text="@string/search_item_default"/>
     <TextView
+        style="@style/SPSubtext"
         android:id="@+id/search_item_additional_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/search_item_image"
-        android:layout_alignParentRight="true"
+        android:layout_toEndOf="@id/search_item_image"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/search_item_name"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:singleLine="true"
         android:layout_alignBottom="@id/search_item_image"
-        android:fontFamily="@font/comfortaa_light"
-        android:textColor="@android:color/white"
-        android:text="Additional Info"/>
+        android:text="@string/search_add_info_default"/>
 
 </RelativeLayout>

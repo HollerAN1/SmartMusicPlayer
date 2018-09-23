@@ -30,6 +30,7 @@
     <color name="midnight_purple">#261b31</color>
     <color name="midnight_blue">#1B2631</color>
     <color name="dark_blue">#182633</color>
+    <color name="faded_blue">#547ca5</color>
     <color name="extra_light_midnight_blue">#364c62</color>
     <color name="light_midnight_blue">#283747</color>
     <color name="light_blue">#0059b3</color>
@@ -45,6 +46,7 @@
 
     <color name="header_color">@color/pastel_rose</color>
     <color name="subtitle_color">@android:color/darker_gray</color>
+    <color name="button_tint">@android:color/white</color>
 
     <color name="tab_background_color">#88a9a9a9</color>
     <color name="tab_selected_background_color">@color/baby_blue</color>

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +21,6 @@ import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.view_models.SongsViewModel;
-import com.wnafee.vector.MorphButton;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class SongListFragment extends Fragment implements SongPlaybackEventListe
 
     private List<Song> _songs;
 
-    private static RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
 
     /*Stores information about the last selected song*/
@@ -53,7 +53,7 @@ public class SongListFragment extends Fragment implements SongPlaybackEventListe
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setRetainInstance(true);
 
@@ -105,7 +105,7 @@ public class SongListFragment extends Fragment implements SongPlaybackEventListe
     private void setUpRecyclerView(final View fragView){
         recyclerView = fragView.findViewById(R.id.recyclerView);
         SongAdapter songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue());
-        FastScroller fastScroller = (FastScroller) fragView.findViewById(R.id.fastscroll);
+        FastScroller fastScroller = fragView.findViewById(R.id.fastscroll);
 
         recyclerView.setAdapter(songAdapter);
 

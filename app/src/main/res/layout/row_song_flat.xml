@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -32,22 +33,6 @@
             android:src="@drawable/temp_album_art" />
     </android.support.v7.widget.CardView>
 
-
-    <!--<Button-->
-    <!--android:id="@+id/btnPlay"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="0"-->
-    <!--android:backgroundTint="#eee9e9"-->
-    <!--android:foreground="@drawable/ripple_effect"-->
-    <!--android:text="Play"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textSize="18dp"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:layout_centerVertical="true"-->
-    <!--android:layout_marginRight="5dp"/>-->
-
-
     <ImageButton
         android:id="@+id/list_options"
         android:layout_width="wrap_content"
@@ -58,20 +43,6 @@
         android:background="@color/transparent"
         android:src="@drawable/ic_more_vert_black_24dp"
         android:tint="@android:color/white"/>
-
-    <!--<com.wnafee.vector.MorphButton-->
-        <!--android:id="@+id/btnPlay"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:layout_toLeftOf="@id/list_options"-->
-        <!--android:layout_toStartOf="@id/list_options"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_margin="5dp"-->
-        <!--app:vc_startDrawable="@drawable/ic_play_to_stop_anim"-->
-        <!--app:vc_endDrawable="@drawable/ic_stop_to_play_anim"-->
-        <!--/>-->
-
 
     <LinearLayout
         android:id="@+id/list_songInfo"
@@ -86,19 +57,18 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/SPHeading"
             android:id="@+id/tvSongName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/SONG_TITLE"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:text="Shape of you"
-            android:textColor="@color/header_color"
-            android:fontFamily="@font/exo_medium"
-            android:textSize="16dp" />
+            android:textSize="16sp"
+            android:marqueeRepeatLimit="marquee_forever" />
 
         <TextView
+            style="@style/SPSubtext"
             android:id="@+id/tvArtistName"
             android:layout_width="match_parent"
             android:layout_height="18dp"
@@ -106,13 +76,10 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:marqueeRepeatLimit="marquee_forever"
-            android:text="Ed Sheeran"
-            android:textColor="@color/subtitle_color"
-            android:fontFamily="@font/exo_medium"
-            android:textSize="12dp" />
+            android:textSize="12sp"
+            android:text="@string/ARTIST_NAME" />
+
     </LinearLayout>
-
-
 </RelativeLayout>
 
 

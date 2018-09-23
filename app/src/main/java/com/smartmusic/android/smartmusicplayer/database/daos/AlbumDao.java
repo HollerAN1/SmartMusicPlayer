@@ -59,4 +59,6 @@ public abstract class AlbumDao {
     // Delete album(s)
     @Delete
     public abstract void delete(Album album);
+    @Delete
+    public abstract void deleteAll(List<Album> albums);
 }

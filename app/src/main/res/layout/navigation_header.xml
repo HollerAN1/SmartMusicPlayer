@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header_layout"
     android:elevation="20dp">
 
@@ -10,48 +11,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/music_pic"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/Album_CD"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/image_gradient_overlay" />
+        android:src="@drawable/image_gradient_overlay"
+        tools:ignore="ContentDescription"/>
 
     <TextView
         android:id="@+id/now_playing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Now Playing"
+        android:text="@string/NOW_PLAYING"
         android:textColor="@android:color/white"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:fontFamily="@font/archivo_black"
         android:textAllCaps="true"
         android:textStyle="bold"
         android:layout_margin="5dp"
         />
     <TextView
+        style="@style/SPSubtext"
         android:id="@+id/navigation_header_artistName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select a song"
-        android:textSize="16dp"
-        android:textColor="@android:color/white"
-        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/select_song_default"
+        android:textSize="16sp"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="8dp"
         android:ellipsize="end"/>
     <TextView
+        style="@style/SPHeading"
         android:id="@+id/navigation_header_songName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textSize="20dp"
-        android:textColor="@color/pastel_rose"
+        android:textSize="20sp"
         android:layout_above="@id/navigation_header_artistName"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:ellipsize="end"
-        android:fontFamily="@font/exo_medium"
         />
 
 </RelativeLayout>

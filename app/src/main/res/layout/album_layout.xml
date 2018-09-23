@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/album_maincontent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,7 +39,8 @@
                     android:src="@drawable/temp_album_art"
                     android:scaleType="centerCrop"
                     android:fitsSystemWindows="true"
-                    app:layout_collapseMode="parallax"/>
+                    app:layout_collapseMode="parallax"
+                    android:contentDescription="@string/Album_CD"/>
 
             </android.support.v7.widget.CardView>
 
@@ -66,31 +68,31 @@
                 android:id="@+id/album_gmailitem_letter"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:transitionName="@string/album_art_transition_name"/>
+                android:layout_marginStart="10dp"
+                android:transitionName="@string/album_art_transition_name"
+                tools:ignore="ContentDescription"/>
             <TextView
+                style="@style/SPHeading"
                 android:id="@+id/album_artist_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Artist Name"
-                android:textColor="@color/pastel_rose"
-                android:layout_marginLeft="10dp"
-                android:textSize="18dp"
-                android:layout_toRightOf="@id/album_gmailitem_letter"
+                android:text="@string/ARTIST_NAME"
+                android:layout_marginStart="10dp"
+                android:textSize="18sp"
+                android:layout_toEndOf="@id/album_gmailitem_letter"
                 android:transitionName="@string/artist_name_transition_name"
-                android:fontFamily="@font/exo_medium"
                 />
             <TextView
+                style="@style/SPSubtext"
                 android:id="@+id/album_song_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4 songs"
+                android:text="@string/num_songs"
                 android:layout_below="@id/album_artist_name"
-                android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@id/album_gmailitem_letter"
-                android:fontFamily="@font/comfortaa_light"/>
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/album_gmailitem_letter" />
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

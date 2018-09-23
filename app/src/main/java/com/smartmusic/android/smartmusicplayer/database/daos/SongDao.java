@@ -45,4 +45,7 @@ public abstract class SongDao {
 
     @Delete
     public abstract void delete(Song song);
+
+    @Delete
+    public abstract void deleteAll(List<Song> songs);
 }

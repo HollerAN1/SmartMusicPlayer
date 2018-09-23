@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.view.GestureDetector;
@@ -108,85 +109,59 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
         // Reference views
         if( v != null ) {
             albumArtBackground =     v.findViewById(R.id.now_playing_album_art_background);
-            songName =          v.findViewById(R.id.now_playing_songName_textSwitcher);
-            artistName =        v.findViewById(R.id.now_playing_artistName_textSwitcher);
-            playButton =        v.findViewById(R.id.now_playing_play_button);
-            seekBar =           v.findViewById(R.id.now_playing_seekBar);
-            progressCount =     v.findViewById(R.id.now_playing_progress);
-            duration =          v.findViewById(R.id.now_playing_duration);
-            favoriteButton =    v.findViewById(R.id.now_playing_favorite);
-            prevButton =        v.findViewById(R.id.now_playing_previous_button);
-            nextButton =        v.findViewById(R.id.now_playing_next_button);
-            shuffleButton =     v.findViewById(R.id.now_playing_shuffle);
-//            visualizer = (BarVisualizer) v.findViewById(R.id.visualizer);
+            songName =               v.findViewById(R.id.now_playing_songName_textSwitcher);
+            artistName =             v.findViewById(R.id.now_playing_artistName_textSwitcher);
+            playButton =             v.findViewById(R.id.now_playing_play_button);
+            seekBar =                v.findViewById(R.id.now_playing_seekBar);
+            progressCount =          v.findViewById(R.id.now_playing_progress);
+            duration =               v.findViewById(R.id.now_playing_duration);
+            favoriteButton =         v.findViewById(R.id.now_playing_favorite);
+            prevButton =             v.findViewById(R.id.now_playing_previous_button);
+            nextButton =             v.findViewById(R.id.now_playing_next_button);
+            shuffleButton =          v.findViewById(R.id.now_playing_shuffle);
+            visualizer =             v.findViewById(R.id.visualizer);
             initAlbumCover(v);
         }
 
-//        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.pastel_rose));
-//        visualizer.setDensity(70);
+        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.midnight_blue));
+        visualizer.setDensity(70);
+        int sessionId = SPMainActivity.mPlayerService.getMediaPlayer().getAudioSessionId();
+        if(sessionId != -1)
+            visualizer.setPlayer(sessionId);
 
-        // Setup song title view
-        songName.setFactory(new ViewSwitcher.ViewFactory() {
-            public View makeView() {
-                // create a TextView
-                TextView t = new TextView(getContext());
-
-                t.setTextColor(getResources().getColor(R.color.pastel_rose));
-                t.setTypeface(SPUtils.getHeaderTypeface(getContext()));
-                t.setTextSize(26);
-                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-                t.setGravity(Gravity.CENTER);
-                return t;
-            }
-        });
-
-        // Setup song artist view
-        artistName.setFactory(new ViewSwitcher.ViewFactory() {
-            public View makeView() {
-                // create a TextView
-                TextView t = new TextView(getContext());
-
-                t.setTextColor(Color.WHITE);
-                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
-                t.setTextSize(14);
-                t.setAllCaps(true);
-                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-                t.setGravity(Gravity.CENTER);
-                return t;
-            }
-        });
+//        // Setup song title view
+//        songName.setFactory(new ViewSwitcher.ViewFactory() {
+//            public View makeView() {
+//                // create a TextView
+//                TextView t = new TextView(getContext());
+//
+//                t.setTextColor(getResources().getColor(R.color.pastel_rose));
+//                t.setTypeface(SPUtils.getHeaderTypeface(getContext()));
+//                t.setTextSize(26);
+//                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+//                t.setGravity(Gravity.CENTER);
+//                return t;
+//            }
+//        });
+//
+//        // Setup song artist view
+//        artistName.setFactory(new ViewSwitcher.ViewFactory() {
+//            public View makeView() {
+//                // create a TextView
+//                TextView t = new TextView(getContext());
+//
+//                t.setTextColor(Color.WHITE);
+//                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
+//                t.setTextSize(14);
+//                t.setAllCaps(true);
+//                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+//                t.setGravity(Gravity.CENTER);
+//                return t;
+//            }
+//        });
 
         setTextSwitcherAnimations(songName, SPUtils.TSAnimationType.SLIDE);
         setTextSwitcherAnimations(artistName, SPUtils.TSAnimationType.SLIDE);
-
-
-        // Setup song progress counter
-        progressCount.setFactory(new ViewSwitcher.ViewFactory() {
-            @Override
-            public View makeView() {
-                // create a TextView
-                TextView t = new TextView(getContext());
-
-                t.setTextColor(Color.WHITE);
-                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
-                t.setTextSize(18);
-                return t;
-            }
-        });
-
-        // Setup song duration
-        duration.setFactory(new ViewSwitcher.ViewFactory() {
-            @Override
-            public View makeView() {
-                // create a TextView
-                TextView t = new TextView(getContext());
-
-                t.setTextColor(Color.WHITE);
-                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
-                t.setTextSize(18);
-                return t;
-            }
-        });
 
         setTextSwitcherAnimations(progressCount, SPUtils.TSAnimationType.FADE);
         setTextSwitcherAnimations(duration, SPUtils.TSAnimationType.FADE);
@@ -377,15 +352,6 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
 
         favoriteButton.setSelected(currentSong.getStats().isFavorited());
         shuffleButton.setSelected(SPMainActivity.mPlayerService.isShuffleOn());
-
-//        int sessionId = SPMainActivity.mPlayerService.getMediaPlayer().getAudioSessionId();
-//        if(sessionId != -1)
-////        visualizer.setAudioSessionId(sessionId);
-//        visualizer.setPlayer(sessionId);
-//
-//        // After a second start updating the progress bar
-//        mHandler.postDelayed(updateTimeRunnable, 1000);
-
     }
 
     @Override

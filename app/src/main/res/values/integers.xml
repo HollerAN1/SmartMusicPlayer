@@ -7,4 +7,6 @@
     <integer name="PERMISSION_INTERNET_REQUEST">104</integer>
 
     <integer name="anim_duration_default">500</integer>
+    <integer name="header_text_size">16</integer>
+    <integer name="subtext_text_size">12</integer>
 </resources>

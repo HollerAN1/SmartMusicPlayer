@@ -2,9 +2,15 @@
     <string name="app_name">SmartPlayer</string>
     <string name="APP_LOGGER">SmartPlayerLogger</string>
 
+    <string name="getting_songs_progress_label">Getting songs...</string>
+    <string name="adding_songs_progress_bar_title">Adding Songs</string>
+
 
     <string name="search_hint">Search here...</string>
     <string name="search_label">Search</string>
+    <string name="header_default_text">Header</string>
+    <string name="search_item_default">Item Name</string>
+    <string name="search_add_info_default">Additional Info</string>
 
 
     <string name="open">Open</string>
@@ -22,12 +28,18 @@
 
     <!-- Now Playing -->
     <string name="NOW_PLAYING">Now Playing</string>
+    <string name="duration_default">0:00</string>
+    <string name="select_song_default">Select A Song</string>
 
     <!-- Playlists -->
     <string name="PLAYLISTS">Playlists</string>
 
     <!-- Settings -->
     <string name="SETTINGS">Settings</string>
+
+    <!--AlbumActivity-->
+    <string name="album_number_default">1</string>
+    <string name="num_songs">%1$d song(s)</string>
 
     <!-- Song Info -->
     <!-- Tags -->
@@ -81,5 +93,14 @@
     <string name="EXTRA_ALBUM_ART">EXTRA_ALBUM_ART</string>
     <string name="EXTRA_ALBUM_SONGLIST">EXTRA_ALBUM_SONGLIST</string>
     <string name="EXTRA_SENDER">EXTRA_SENDER</string>
+
+    <!--Content Descriptions-->
+    <string name="Options_CD">Options</string>
+    <string name="Album_CD">Album</string>
+    <string name="Previous_CD">Play previous song</string>
+    <string name="Next_CD">Play next song</string>
+    <string name="Shuffle_CD">Toggle shuffle</string>
+    <string name="Play_CD">Play/Pause</string>
+    <string name="Favorite_CD">Toggle Favorite</string>
 
 </resources>

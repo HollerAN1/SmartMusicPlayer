@@ -1,111 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:wave="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/light_midnight_blue"
+    android:id="@+id/now_playing_main_layout">
 
-    <!--<com.chibde.audiovisulaizer.visualizer.BarVisualizer-->
-        <!--android:id="@+id/visualizer"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="250dp"/>-->
-    <RelativeLayout
-        android:id="@+id/now_playing_main_layout"
+    <ImageView
+        android:id="@+id/now_playing_album_art_background"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.7"
+        android:contentDescription="@string/Album_CD"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/light_midnight_blue_gradient"
+        tools:ignore="ContentDescription"/>
+
+    <LinearLayout
+        android:id="@+id/now_playing_controls"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/light_midnight_blue">
-        <ImageView
-            android:id="@+id/now_playing_album_art_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:alpha="0.7"/>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/light_midnight_blue_gradient"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"
+        android:background="@color/cardview_shadow_start_color"
+        >
+        <RelativeLayout
+            android:id="@+id/seekBar_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
 
-        <!--<ImageView-->
-            <!--android:id="@+id/now_playing_collapse"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_margin="8dp"-->
-            <!--android:src="@drawable/ic_expand_more_black_40dp"-->
-            <!--android:tint="@color/cardview_light_background" />-->
-
-        <!--<android.support.v7.widget.CardView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginTop="85dp"-->
-            <!--android:background="@color/cardview_dark_background"-->
-            <!--app:cardElevation="20dp">-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/now_playing_favorite_ghost"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/favorite_button_large"-->
-                <!--android:tint="@android:color/holo_red_light"-->
-                <!--android:elevation="50dp"-->
-                <!--android:padding="55dp"-->
-                <!--android:visibility="gone"-->
-                <!--/>-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/now_playing_album_art"-->
-                <!--android:layout_width="260dp"-->
-                <!--android:layout_height="260dp"-->
-                <!--android:elevation="20dp"-->
-                <!--android:src="@drawable/temp_album_art"-->
-                <!--android:transitionName="@string/album_art_transition_name" />-->
-
-        <!--</android.support.v7.widget.CardView>-->
-
-        <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:id="@+id/album_container"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginTop="75dp"-->
-            <!--android:elevation="10dp"-->
-            <!--android:translationZ="10dp"/>-->
+            <TextSwitcher
+                android:id="@+id/now_playing_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp"
+                android:padding="5dp">
+                <!--Text Switcher requires two TextViews to work-->
+                <TextView
+                    style="@style/SPSubtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/duration_default"
+                    android:textSize="18sp" />
+                <TextView
+                    style="@style/SPSubtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/duration_default"
+                    android:textSize="18sp" />
+            </TextSwitcher>
 
 
-
+            <TextSwitcher
+                android:id="@+id/now_playing_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true">
+                <!--Text Switcher requires two TextViews to work-->
+                <TextView
+                    style="@style/SPSubtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/duration_default"
+                    android:textSize="18sp" />
+                <TextView
+                    style="@style/SPSubtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/duration_default"
+                    android:textSize="18sp" />
+            </TextSwitcher>
+            <SeekBar
+                android:id="@+id/now_playing_seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/now_playing_progress"
+                android:layout_toStartOf="@id/now_playing_duration"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
         <RelativeLayout
             android:id="@+id/button_items"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:padding="5dp"
             android:transitionGroup="true">
 
-            <!--<android.support.design.widget.FloatingActionButton-->
-                <!--app:fabCustomSize="70dp"-->
-                <!--app:elevation="5dp"-->
-                <!--android:id="@+id/now_playing_play_button"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/small_play_button"-->
-                <!--android:transitionName="@string/play_button_transition_name"-->
-                <!--android:scaleType="centerCrop"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:layout_margin="5dp"-->
-                <!--/>-->
-
             <be.rijckaert.tim.animatedvector.FloatingMusicActionButton
+                android:id="@+id/now_playing_play_button"
                 app:fabSize="normal"
                 app:elevation="5dp"
-                android:id="@+id/now_playing_play_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:backgroundTint="@color/pastel_rose"
@@ -116,25 +110,16 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="5dp"/>
-            <!--<ImageView-->
-                <!--android:id="@+id/now_playing_play_button"-->
-                <!--android:layout_width="90dp"-->
-                <!--android:layout_height="90dp"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:scaleType="centerCrop"-->
-                <!--android:src="@drawable/small_play_button"-->
-                <!--android:tint="@color/pastel_rose"-->
-                <!--android:transitionName="@string/play_button_transition_name" />-->
 
             <ImageView
                 android:id="@+id/now_playing_previous_button"
                 android:layout_width="40sp"
                 android:layout_height="40sp"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/now_playing_play_button"
+                android:layout_toStartOf="@id/now_playing_play_button"
                 android:src="@drawable/ic_skip_previous_black_40dp"
-                android:tint="@android:color/white" />
+                android:tint="@android:color/white"
+                android:contentDescription="@string/Previous_CD"/>
 
 
             <ImageView
@@ -142,203 +127,160 @@
                 android:layout_width="40sp"
                 android:layout_height="40sp"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/now_playing_play_button"
+                android:layout_toEndOf="@id/now_playing_play_button"
                 android:src="@drawable/ic_skip_next_black_40dp"
-                android:tint="@android:color/white" />
+                android:tint="@android:color/white"
+                android:contentDescription="@string/Next_CD"/>
 
             <ImageView
                 android:id="@+id/now_playing_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="30dp"
-                android:layout_toLeftOf="@id/now_playing_previous_button"
+                android:layout_marginEnd="30dp"
+                android:layout_toStartOf="@id/now_playing_previous_button"
                 android:padding="15dp"
                 android:src="@drawable/favorite_button_small"
-                android:tint="@android:color/holo_red_light" />
+                android:tint="@android:color/holo_red_light"
+                android:contentDescription="@string/Favorite_CD"/>
 
             <ImageView
                 android:id="@+id/now_playing_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="30dp"
-                android:layout_toRightOf="@id/now_playing_next_button"
+                android:layout_marginStart="30dp"
+                android:layout_toEndOf="@id/now_playing_next_button"
                 android:padding="15dp"
                 android:src="@drawable/ic_shuffle_black_30dp"
-                android:tint="@android:color/white" />
-
-
+                android:tint="@android:color/white"
+                android:contentDescription="@string/Shuffle_CD"/>
         </RelativeLayout>
+    </LinearLayout>
 
+    <com.chibde.visualizer.BarVisualizer
+        android:id="@+id/visualizer"
+        android:layout_width="match_parent"
+        android:layout_above="@id/now_playing_controls"
+        android:layout_height="250dp"/>
 
-        <SeekBar
-            android:id="@+id/now_playing_seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/button_items"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="0" />
-        <!--android:background="#B38b8989"-->
-
-        <TextSwitcher
-            android:id="@+id/now_playing_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/now_playing_seekBar"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="5dp"
-            android:padding="5dp">
-
-            <!--<TextView-->
-                <!--android:id="@+id/now_playing_progress"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="0:00"-->
-                <!--android:textSize="18dp"-->
-                <!--android:fontFamily="@font/comfortaa_light"-->
-                <!--android:textColor="@android:color/white" />-->
-        </TextSwitcher>
-
+    <LinearLayout
+        android:id="@+id/now_playing_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_above="@id/now_playing_controls"
+        android:layout_marginBottom="100dp">
 
         <TextSwitcher
-            android:id="@+id/now_playing_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/now_playing_seekBar"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0"
-            android:layout_alignParentRight="true">
-            <!--<TextView-->
-                <!--android:id="@+id/now_playing_duration"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_above="@id/now_playing_seekBar"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_marginRight="5dp"-->
-                <!--android:padding="5dp"-->
-                <!--android:text="0:00"-->
-                <!--android:textSize="18dp"-->
-                <!--android:fontFamily="@font/comfortaa_light"-->
-                <!--android:textColor="@android:color/white" />-->
-        </TextSwitcher>
-
-
-        <LinearLayout
-            android:id="@+id/now_playing_title_layout"
+            android:id="@+id/now_playing_songName_textSwitcher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_above="@id/now_playing_seekBar"
-            android:layout_marginBottom="30dp">
-
-            <TextSwitcher
-                android:id="@+id/now_playing_songName_textSwitcher"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/now_playing_seekBar"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/exo_medium">
-            <!--<TextView-->
-                <!--android:id="@+id/now_playing_songName"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:singleLine="true"-->
-                <!--android:layout_toLeftOf="@id/now_playing_collapse"-->
-                <!--android:text="Song Title"-->
-                <!--android:textColor="@color/pastel_rose"-->
-                <!--android:fontFamily="@font/exo_medium"-->
-                <!--android:textSize="26dp"-->
-                <!--android:ellipsize="marquee"-->
-                <!--android:fadingEdge="horizontal"-->
-                <!--android:scrollHorizontally="true"-->
-                <!--android:marqueeRepeatLimit="marquee_forever"-->
-                <!--android:transitionName="@string/song_title_transition_name"-->
-                <!--android:layout_gravity="center"/>-->
-            </TextSwitcher>
-
-
-            <TextSwitcher
-                android:id="@+id/now_playing_artistName_textSwitcher"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/now_playing_seekBar"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:fontFamily="@font/comfortaa_light">
-            <!--<TextView-->
-                <!--android:id="@+id/now_playing_artistName"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:singleLine="true"-->
-                <!--android:layout_alignParentLeft="true"-->
-                <!--android:layout_below="@id/now_playing_songName"-->
-
-                <!--android:layout_toLeftOf="@id/now_playing_collapse"-->
-                <!--android:ellipsize="end"-->
-                <!--android:text="Artist Name"-->
-                <!--android:textAllCaps="true"-->
-                <!--android:textColor="@android:color/white"-->
-                <!--android:fontFamily="@font/comfortaa_light"-->
-                <!--android:textSize="14dp"-->
-                <!--android:transitionName="@string/artist_name_transition_name"-->
-                <!--android:layout_gravity="center"/>-->
-            </TextSwitcher>
-        </LinearLayout>
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/album_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/now_playing_title_layout">
-
-
-            <android.support.v7.widget.CardView
+            android:layout_gravity="center"
+            android:fontFamily="@font/exo_medium">
+            <!--TextSwitcher requires two TextViews-->
+            <TextView
+                style="@style/SPHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/cardview_light_background"
-                android:translationZ="5dp"
-                app:cardElevation="5dp"
-                app:cardCornerRadius="5dp"
-                android:visibility="visible"
-                android:layout_centerInParent="true">
+                android:textSize="26sp"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="@string/SONG_TITLE"
+                android:transitionName="@string/song_title_transition_name"
+                android:layout_gravity="center"/>
+            <TextView
+                style="@style/SPHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="26sp"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="@string/SONG_TITLE"
+                android:transitionName="@string/song_title_transition_name"
+                android:layout_gravity="center"/>
+        </TextSwitcher>
 
-                <ImageView
-                    android:id="@+id/now_playing_favorite_ghost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/favorite_button_large"
-                    android:tint="@android:color/holo_red_light"
-                    android:elevation="50dp"
-                    android:padding="65dp"
-                    android:visibility="gone"
-                    android:layout_gravity="center"
-                    />
 
-                <ImageView
-                    android:id="@+id/now_playing_album_art"
-                    android:layout_width="280dp"
-                    android:layout_height="280dp"
-                    android:elevation="20dp"
-                    android:src="@drawable/temp_album_art"
-                    android:transitionName="@string/album_art_transition_name"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center" />
+        <TextSwitcher
+            android:id="@+id/now_playing_artistName_textSwitcher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/comfortaa_light">
+            <!--TextSwitcher requires two TextViews-->
+            <TextView
+                style="@style/SPSubtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="marquee"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:text="@string/ARTIST_NAME"
+                android:transitionName="@string/artist_name_transition_name"/>
+            <TextView
+                style="@style/SPSubtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="marquee"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:text="@string/ARTIST_NAME"
+                android:transitionName="@string/artist_name_transition_name"/>
+        </TextSwitcher>
+    </LinearLayout>
 
-            </android.support.v7.widget.CardView>
-        </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/album_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/now_playing_title_layout">
 
-    <!--<android.opengl.GLSurfaceView-->
-        <!--android:id="@+id/now_playing_audio_visual"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="200dp"-->
-        <!--android:layout_gravity="center" />-->
 
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_light_background"
+            android:translationZ="5dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="5dp"
+            android:visibility="visible"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/now_playing_favorite_ghost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/favorite_button_large"
+                android:tint="@android:color/holo_red_light"
+                android:elevation="50dp"
+                android:padding="65dp"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                tools:ignore="ContentDescription"
+                />
+
+            <ImageView
+                android:id="@+id/now_playing_album_art"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:elevation="20dp"
+                android:src="@drawable/temp_album_art"
+                android:transitionName="@string/album_art_transition_name"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:contentDescription="@string/Album_CD"/>
+
+        </android.support.v7.widget.CardView>
     </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>
