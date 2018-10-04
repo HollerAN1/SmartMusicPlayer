@@ -17,8 +17,8 @@ import com.smartmusic.android.smartmusicplayer.R;
 public class LibraryPagerAdapter extends FragmentPagerAdapter {
 
     private Context context;
-    final int PAGE_COUNT = 3;
-    private String tabTitles[];
+    private static final int PAGE_COUNT = 3;
+    private static String tabTitles[];
 
     public LibraryPagerAdapter(FragmentManager fm, Context context){
         super(fm);
