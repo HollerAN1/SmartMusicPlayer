@@ -130,13 +130,7 @@ public class NowPlaying extends SPFragment implements SongPlaybackEventListener,
             initAlbumCover(v);
         }
 
-        visualizer.setEnabled(false);
-        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.faded_pastel_rose));
-        visualizer.setDensity(70);
-        int sessionId = SPMainActivity.mPlayerService.getMediaPlayer().getAudioSessionId();
-        if(sessionId != -1)
-            visualizer.setPlayer(sessionId);
-        visualizer.setEnabled(true);
+        setupVisualizer();
 
 
         setTextSwitcherAnimations(songName, SPUtils.TSAnimationType.SLIDE);
@@ -277,6 +271,26 @@ public class NowPlaying extends SPFragment implements SongPlaybackEventListener,
         mHandler.postDelayed(updateTimeRunnable, 1000);
     }
 
+    private void resetVisualizer(){
+        if(getView() == null){ return; }
+
+        visualizer.release();
+        visualizer = null;
+
+        visualizer = getView().findViewById(R.id.visualizer);
+        setupVisualizer();
+    }
+
+    private void setupVisualizer(){
+        visualizer.setEnabled(false);
+        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.faded_pastel_rose));
+        visualizer.setDensity(70);
+        int sessionId = SPMainActivity.mPlayerService.getMediaPlayer().getAudioSessionId();
+        if(sessionId != -1)
+            visualizer.setPlayer(sessionId);
+        visualizer.setEnabled(true);
+    }
+
     /**
      * Sets both in and out animations of a given type to
      * the given textSwitcher.
@@ -346,6 +360,7 @@ public class NowPlaying extends SPFragment implements SongPlaybackEventListener,
     public void update(){
         updateNowPlaying();
         updateAlbumCover();
+        resetVisualizer();
     }
 
     @Override
