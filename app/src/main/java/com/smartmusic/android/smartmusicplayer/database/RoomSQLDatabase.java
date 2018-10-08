@@ -201,7 +201,8 @@ public abstract class RoomSQLDatabase
          */
         private void addSongToAlbum(Song s){
             Album existingAlbum = db.albumDao().findAlbumByName(s.getAlbumName());
-            if( existingAlbum != null ){
+            if(existingAlbum != null){
+
                 s.setAlbumUID(existingAlbum.getAlbumUID());
                 existingAlbum.setNumSongs(existingAlbum.getNumSongs() + 1);
                 db.albumDao().insert(existingAlbum);

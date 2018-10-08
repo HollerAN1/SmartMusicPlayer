@@ -24,6 +24,7 @@ import android.widget.TextSwitcher;
 import com.chibde.visualizer.BarVisualizer;
 import com.smartmusic.android.smartmusicplayer.SPFragment;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
+import com.smartmusic.android.smartmusicplayer.utils.SPMotionUtils;
 import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
@@ -67,9 +68,6 @@ public class NowPlaying extends SPFragment implements SongPlaybackEventListener,
     private BarVisualizer visualizer;
 
     private View view;
-
-    private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
 
     @Override
@@ -422,26 +420,7 @@ public class NowPlaying extends SPFragment implements SongPlaybackEventListener,
 
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                    boolean result = false;
-                    try {
-                        float diffY = e2.getY() - e1.getY();
-                        float diffX = e2.getX() - e1.getX();
-                        if (Math.abs(diffX) > Math.abs(diffY)) {
-                            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                                if (diffX > 0) {
-                                    // Swipe Right
-                                    SPMainActivity.mPlayerService.playPreviousSong();
-                                } else {
-                                    // Swipe Left
-                                    SPMainActivity.mPlayerService.playNextSong();
-                                }
-                                result = true;
-                            }
-                        }
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-                    return result;
+                    return SPMotionUtils.swipeChangeSong(e1, e2, velocityX, velocityY);
                 }
             });
 

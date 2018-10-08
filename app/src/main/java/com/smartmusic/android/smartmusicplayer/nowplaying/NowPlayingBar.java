@@ -6,8 +6,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.transition.Slide;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +20,8 @@ import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlaying;
+import com.smartmusic.android.smartmusicplayer.utils.SPMotionUtils;
+import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.squareup.picasso.Picasso;
 
 import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
@@ -80,10 +85,31 @@ public class NowPlayingBar implements SongPlaybackEventListener {
                 onMediaButtonPress();
             }
         });
-        nowPlayingBar.setOnClickListener(new View.OnClickListener() {
+//        nowPlayingBar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                transitionToNowPlaying();
+//            }
+//        });
+
+        nowPlayingBar.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
+                @Override
+                public boolean 	onSingleTapConfirmed(MotionEvent e){
+                    transitionToNowPlaying();
+                    return true;
+                }
+
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    return SPMotionUtils.swipeChangeSong(e1, e2, velocityX, velocityY);
+                }
+            });
+
             @Override
-            public void onClick(View view) {
-                transitionToNowPlaying();
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
             }
         });
 
