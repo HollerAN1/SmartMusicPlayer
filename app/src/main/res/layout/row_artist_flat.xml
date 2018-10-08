@@ -99,5 +99,14 @@
             android:textSize="12dp" />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:foregroundGravity="bottom"
+        android:alpha="0.1"
+        android:padding="3dp"
+        android:background="@android:color/darker_gray"
+        android:layout_alignStart="@id/list_songInfo"/>
+
 
 </RelativeLayout>

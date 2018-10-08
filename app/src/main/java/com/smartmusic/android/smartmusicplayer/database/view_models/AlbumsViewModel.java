@@ -4,8 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
-import com.smartmusic.android.smartmusicplayer.comparators.albums.AlbumNameComparator;
+import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.utils.comparators.albums.AlbumNameComparator;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 
 import java.util.Comparator;
@@ -18,7 +19,7 @@ public class AlbumsViewModel extends AndroidViewModel {
 
     public AlbumsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(application);
+        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
         mAllAlbums = mRepository.getAllAlbumsNameSort();
         this.sort = new AlbumNameComparator();
     }

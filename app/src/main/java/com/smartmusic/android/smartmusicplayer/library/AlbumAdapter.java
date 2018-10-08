@@ -1,6 +1,7 @@
 package com.smartmusic.android.smartmusicplayer.library;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.album.AlbumActivity;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
@@ -110,6 +112,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                 .placeholder(R.drawable.temp_album_art)
                 .error(R.drawable.temp_album_art)
                 .into(albumHolder.tileAlbumArt);
+
+        albumHolder.background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                transitionToAlbumActivity(al);
+            }
+        });
     }
 
     /**
@@ -136,6 +145,27 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         List<Album> newAlbums = _albums;
         newAlbums.add(album);
         setAlbums(newAlbums);
+    }
+
+    private void transitionToAlbumActivity(Album a){
+        Intent intent = new Intent(context, AlbumActivity.class);
+        intent.putExtra(context.getString(R.string.EXTRA_ALBUM_UID), a.getAlbumUID());
+        intent.putExtra(context.getString(R.string.EXTRA_ALBUM_NAME), a.getAlbumName());
+        intent.putExtra(context.getString(R.string.EXTRA_ALBUM_ARTIST), a.getArtistName());
+        intent.putExtra(context.getString(R.string.EXTRA_ALBUM_ART), a.getAlbumArt().toString());
+
+
+//        final ImageView albumArt = (ImageView) view.findViewById(R.id.tile_albumArt);
+//        final TextView artistName = (TextView) view.findViewById(R.id.tile_artist_name);
+//                final TextView albumName = (TextView) view.findViewById(R.id.tile_album_name);
+//
+//                Pair<View, String> albumArtTransition = Pair.create((View)albumArt, getString(R.string.album_art_transition_name));
+//                Pair<View, String> artistNameTransition = Pair.create((View)artistName, getString(R.string.artist_name_transition_name));
+//                Pair<View, String> containerTransition = Pair.create(view, getString(R.string.album_container_transition_name));
+//                ActivityOptionsCompat options = ActivityOptionsCompat
+//                        .makeSceneTransitionAnimation(getActivity(), albumArtTransition, artistNameTransition, containerTransition);
+
+        context.startActivity(intent);
     }
 
     /**

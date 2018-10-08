@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
+import com.smartmusic.android.smartmusicplayer.SPFragment;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
@@ -104,7 +105,7 @@ public class SongListFragment extends Fragment implements SongPlaybackEventListe
 
     private void setUpRecyclerView(final View fragView){
         recyclerView = fragView.findViewById(R.id.recyclerView);
-        SongAdapter songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue());
+        SongAdapter songAdapter = new SongAdapter(getContext(), mModel.getAllSongs().getValue(), SongAdapter.HolderType.LIBRARY);
         FastScroller fastScroller = fragView.findViewById(R.id.fastscroll);
 
         recyclerView.setAdapter(songAdapter);

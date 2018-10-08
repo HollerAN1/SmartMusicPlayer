@@ -115,6 +115,7 @@ public class SongPlayerService
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
+        mediaPlayer.reset();
     }
 
     /**
@@ -156,6 +157,10 @@ public class SongPlayerService
                     if (mediaPlayer.isPlaying()){
                         stop();
                     }
+
+                    mediaPlayer.release();
+                    mediaPlayer = new MediaPlayer();
+                    initPlayer();
 
                     mediaPlayer.setDataSource(s.getSongUrl());
                     songModel = s;

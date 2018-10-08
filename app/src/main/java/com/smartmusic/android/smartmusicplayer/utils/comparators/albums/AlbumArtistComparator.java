@@ -1,4 +1,4 @@
-package com.smartmusic.android.smartmusicplayer.comparators.albums;
+package com.smartmusic.android.smartmusicplayer.utils.comparators.albums;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 

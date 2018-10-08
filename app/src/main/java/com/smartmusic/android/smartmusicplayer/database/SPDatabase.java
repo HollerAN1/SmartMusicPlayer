@@ -1,244 +1,97 @@
 package com.smartmusic.android.smartmusicplayer.database;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
-import android.content.ContentUris;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.provider.MediaStore;
 
-import com.smartmusic.android.smartmusicplayer.events.SongDatabaseEvent;
-import com.smartmusic.android.smartmusicplayer.events.SongEvent;
-import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
-import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
-import com.smartmusic.android.smartmusicplayer.database.daos.AlbumDao;
-import com.smartmusic.android.smartmusicplayer.database.daos.ArtistDao;
-import com.smartmusic.android.smartmusicplayer.database.daos.PlaylistDao;
-import com.smartmusic.android.smartmusicplayer.database.daos.SongDao;
-import com.smartmusic.android.smartmusicplayer.database.daos.SongPlaylistJoinDao;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.database.entities.SongPlaylistJoin;
-import com.smartmusic.android.smartmusicplayer.database.entities.Stat;
 
-import java.io.File;
 import java.util.List;
 
-@Database(entities = {Song.class, Playlist.class, Artist.class, Album.class, Stat.class, SongPlaylistJoin.class}, version = 1)
-@TypeConverters({Converters.class})
-public abstract class SPDatabase extends RoomDatabase {
-    public abstract SongDao songDao();
-    public abstract PlaylistDao playlistDao();
-    public abstract ArtistDao artistDao();
-    public abstract AlbumDao albumDao();
-    public abstract SongPlaylistJoinDao songPlaylistJoinDao();
+/**
+ * A class that abstracts the layer between the
+ * database and the application.
+ */
+public interface SPDatabase {
+    // store/delete/load songs
+     void storeSong(Song song);
+     void storeSongs(List<Song> songs);
+     void deleteSong(Song song);
+     void deleteSongs(List<Song> songs);
+     Song loadSongByName(String songName);
+     Song loadSongByUID(String songUID);
 
-    public static final String DATABASE_NAME = "SmartPlayerDatabase3";
-    private static SPDatabase INSTANCE; // singleton to prevent having multiple instances of the database opened at the same time.
+    // store/delete/load artists
+     void storeArtist(Artist artist);
+     void storeArtists(List<Artist> artists);
+     void deleteArtist(Artist artist);
+     void deleteArtists(List<Artist> artists);
+     Artist loadArtistByName(String artistName);
+     Artist loadArtistByUID(String artistUID);
 
-    private static SongEventHandler mEventHandler = new SongEventHandler();
+    // store/delete/load albums
+     void storeAlbum(Album album);
+     void storeAlbums(List<Album> albums);
+     void deleteAlbum(Album album);
+     void deleteAlbums(List<Album> albums);
+     Album loadAlbumByName(String albumName);
+     Album loadAlbumByUID(String albumUID);
 
-    /**
-     * Returns the instance of the database. Ensures that
-     * there is only ever one instance of the database.
-     * @param ctx the current context
-     * @return the database instance.
-     */
-    public static SPDatabase getDatabase(final Context ctx) {
-        if (INSTANCE == null) {
-            synchronized (SPDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(ctx.getApplicationContext(),
-                            SPDatabase.class, DATABASE_NAME)
-                            .build();
-//                    if(!doesDatabaseExist(ctx, DATABASE_NAME)) {
-                    new PopulateDbAsync(INSTANCE, ctx).execute();
-//                    }
-                }
-            }
-        }
-        return INSTANCE;
-    }
-
-    public static SPDatabase getTestDatabase(final Context ctx) {
-        if (INSTANCE == null) {
-            synchronized (SPDatabase.class) {
-                INSTANCE = Room.inMemoryDatabaseBuilder(ctx.getApplicationContext(),
-                        SPDatabase.class)
-                        .build();
-            }
-        }
-        return INSTANCE;
-    }
-
-    /**
-     * Takes the database file name and determines whether the file
-     * exists.
-     * @param context the current context
-     * @param dbName the database file name
-     * @return true if it exists, false otherwise
-     */
-    public static boolean doesDatabaseExist(Context context, String dbName) {
-        File dbFile = context.getDatabasePath(dbName);
-        return dbFile.exists();
-    }
-
-    /**
-     * Parses the device's local storage to return the number
-     * of songs.
-     * @param context the current context
-     * @return the number of songs found in the media store
-     */
-    public static int getTotalSongCount(Context context) {
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //locates media
-        String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
-        Cursor cursor = context.getContentResolver().query(uri,null,selection,null,null);
-        if(cursor != null){
-            return cursor.getCount();
-        }
-        return 0;
-    }
-
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-        SPDatabase db;
-        Context context;
-
-        PopulateDbAsync(SPDatabase db, Context ctx) {
-            this.db = db;
-            this.context = ctx;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            List<Song> songs = db.songDao().getAllSongsStatic();
-            if(getTotalSongCount(context) != songs.size()) {
-                db.songDao().deleteAll(db.songDao().getAllSongsStatic());
-                db.artistDao().deleteAll(db.artistDao().getAllArtistsStatic());
-                db.albumDao().deleteAll(db.albumDao().getAllAlbumsStatic());
-
-                loadSongsFromDevice();
-                addAlbumsToArtists();
-            }
-            return null;
-        }
-
-        /**
-         * Parses the media store and loads each song
-         * into the database.
-         */
-        private void loadSongsFromDevice(){
-            Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //locates media
-            String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
-            Cursor cursor = context.getContentResolver().query(uri,null,selection,null,null);
-            if(cursor != null){
-                if(cursor.moveToFirst()){
-                    do{
-                        String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                        String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                        String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                        int track = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
-                        int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                        String year = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
-                        String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-//                        long dateAdded = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED));
-                        String displayName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
-                        long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
-//
-//                        String dateString = SPUtils.yearMonthDayFormat.format(new Date(dateAdded)).toString();
-
-                        Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
-                        Uri albumArt = ContentUris.withAppendedId(albumArtUri, cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
+    // store/delete/load playlists
+     void storePlaylist(Playlist playlist);
+     void storePlaylists(List<Playlist> playlists);
+     void deletePlaylist(Playlist playlist);
+     void deletePlaylists(List<Playlist> playlists);
+     Playlist loadPlaylistByName(String playlistName);
+     Playlist loadPlaylistByUID(String playlistName);
 
 
-                        Song s = new Song(name,
-                                artist,
-                                album,
-                                url,
-                                albumArt.toString(),
-                                track, duration, year,
-                                null,
-                                size, displayName);
+     void addSongToArtist(Artist artist, Song song);
+     void addSongToAlbum(Album album, Song song);
+     void addSongToPlaylist(Playlist playlist, Song song);
 
-                        addSongToArtist(s);
-                        addSongToAlbum(s);
+     void removeSongFromArtist(Artist artist, Song song);
+     void removeSongFromAlbum(Album album, Song song);
+     void removeSongFromPlaylist(Playlist playlist, Song song);
 
-                        db.songDao().insert(s);
-
-                        mEventHandler.dispatchEvent(new SongDatabaseEvent(s, SongEvent.Type.SONG_ADDED));
-
-                    } while (cursor.moveToNext());
-                }
-
-                cursor.close();
-
-            }
-        } // end loadFromDevice()
-
-        /**
-         * Given a song, checks the database to see if
-         * the album exists. If not, it will be created and
-         * added. The song is then marked with UID of the album.
-         * @param s a Song object
-         */
-        private void addSongToAlbum(Song s){
-            Album existingAlbum = db.albumDao().findAlbumByName(s.getAlbumName());
-            if( existingAlbum != null ){
-                s.setAlbumUID(existingAlbum.getAlbumUID());
-                existingAlbum.setNumSongs(existingAlbum.getNumSongs() + 1);
-                db.albumDao().insert(existingAlbum);
-                return;
-            }
-
-            String albumName = "<Unknown>";
-            if(!s.getAlbumName().equals("")){
-                albumName = s.getAlbumName();
-            }
-            Album al = new Album(albumName, s.getArtistName(), s.getAlbumArt().toString());
-            s.setAlbumUID(al.getAlbumUID());
-            al.setNumSongs(al.getNumSongs() + 1);
-            db.albumDao().insert(al);
-            return;
-        }
+    // Search with queries
+     List<Song> searchSongsWithQuery(String query);
+     List<Artist> searchArtistsWithQuery(String query);
+     List<Album> searchAlbumsWithQuery(String query);
+     List<Playlist> searchPlaylistsWithQuery(String query);
 
 
-        /**
-         * Given a song, checks the database to see if the
-         * artist already exists. If not, it will be created and
-         * added. The song is then marked with the UID of the artist.
-         * @param s a Song object
-         */
-        private void addSongToArtist(Song s){
-            Artist existingArtist = db.artistDao().findArtistByName(s.getArtistName());
-            if( existingArtist != null ){
-                s.setArtistUID(existingArtist.getArtistUID());
-                existingArtist.setNumSongs(existingArtist.getNumSongs() + 1);
-                db.artistDao().insert(existingArtist);
-                return;
-            }
+     int getSongCount();                                        // Get number of songs in database
+     int getAlbumCount();                                       // Get number of albums in database
+     int getArtistCount();                                      // Get number of artists in database
+     int getPlaylistCount();                                    // Get number of playlists in database
 
-            Artist artist = new Artist(s.getArtistName());
-            s.setArtistUID(artist.getArtistUID());
-            artist.setNumSongs(artist.getNumSongs() + 1);
-            db.artistDao().insert(artist);
-            return;
-        }
+    // Get songs with various sorts.
+     LiveData<List<Song>> getAllSongsNoSort();                  // No sort implemented
+     LiveData<List<Song>> getAllSongsNameSort();                // Songs sorted by song name
+     LiveData<List<Song>> getAllSongsArtistSort();              // Songs sorted by artist name
+     LiveData<List<Song>> getAllSongsAlbumSort();               // Songs sorted by album name
 
-        private void addAlbumsToArtists(){
-            List<Album> allAlbums = db.albumDao().getAllAlbumsStatic();
-            for(Album album : allAlbums){
-                Artist artist = db.artistDao().findArtistByName(album.getArtistName());
-                if(artist != null) {
-                    artist.setNumAlbums(artist.getNumAlbums() + 1);
-                    db.artistDao().insert(artist);
-                }
-            }
-        }
-    } // end PopulateDbAsync
+    // Get artists with various sorts.
+     LiveData<List<Artist>> getAllArtistsNoSort();              // No sort implemented
+     LiveData<List<Artist>> getAllArtistsNameSort();            // Artists sorted by artist name
+     LiveData<List<Artist>> getAllArtistsBySongCount();         // Artists sorted by number of songs
+
+    // Get albums with various sorts.
+     LiveData<List<Album>> getAllAlbumsNoSort();                // No sort implemented.
+     LiveData<List<Album>> getAllAlbumsNameSort();              // Albums sorted by album name
+     LiveData<List<Album>> getAllAlbumsArtistSort();            // Albums sorted by artist name
+     LiveData<List<Album>> getAllAlbumsBySongCount();           // Albums sorted by number of songs
+
+    // Get playlists with various sorts.
+     LiveData<List<Playlist>> getAllPlaylistsNoSort();          // No sort implemented.
+     LiveData<List<Playlist>> getAllPlaylistsNameSort();        // Playlists sorted by playlist name
+     LiveData<List<Playlist>> getAllPlaylistsBySongCount();     // Playlists sorted by number of songs
+
+
+     LiveData<List<Song>> getSongsForAlbum(String albumUID);
+     LiveData<List<Song>> getSongsForArtist(String artistUID);
+     LiveData<List<Song>> getSongsForPlaylist(String playlistUID);
 }

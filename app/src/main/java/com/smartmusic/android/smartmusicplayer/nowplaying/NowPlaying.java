@@ -1,5 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.nowplaying;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -7,10 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,13 +19,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextSwitcher;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 //import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 import com.chibde.visualizer.BarVisualizer;
+import com.smartmusic.android.smartmusicplayer.SPFragment;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
-import com.smartmusic.android.smartmusicplayer.SPUtils;
+import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
@@ -39,7 +37,7 @@ import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 
-public class NowPlaying extends Fragment implements SongPlaybackEventListener, SongShuffleEventListener {
+public class NowPlaying extends SPFragment implements SongPlaybackEventListener, SongShuffleEventListener {
 
     // Song info
     private TextSwitcher songName;
@@ -68,24 +66,33 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
     private Song currentSong;
     private BarVisualizer visualizer;
 
+    private View view;
+
+    private static final int SWIPE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setRetainInstance(true);
 
-        View v =  inflater.inflate(R.layout.fragment_now_playing, container, false);
+        view = inflater.inflate(R.layout.fragment_now_playing, container, false);
         setRetainInstance(true);
 
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        SPMainActivity.getSongEventHandler().addSongPlaybackEventListener(this);
-        SPMainActivity.getSongEventHandler().addSongShuffleEventListener(this);
         currentSong = SPMainActivity.mPlayerService.getCurrentSong();
         setSharedElementEnterTransition(new ChangeBounds());
 
-        initNowPlaying(v);
-        return v;
+        initNowPlaying(view);
+
+        // Make sure views are initialized before assigning handlers.
+        SPMainActivity.getSongEventHandler().addSongPlaybackEventListener(this);
+        SPMainActivity.getSongEventHandler().addSongShuffleEventListener(this);
+
+        return view;
     }
 
     @Override
@@ -123,42 +130,14 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
             initAlbumCover(v);
         }
 
-        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.midnight_blue));
+        visualizer.setEnabled(false);
+        visualizer.setColor(ContextCompat.getColor(getContext(), R.color.faded_pastel_rose));
         visualizer.setDensity(70);
         int sessionId = SPMainActivity.mPlayerService.getMediaPlayer().getAudioSessionId();
         if(sessionId != -1)
             visualizer.setPlayer(sessionId);
+        visualizer.setEnabled(true);
 
-//        // Setup song title view
-//        songName.setFactory(new ViewSwitcher.ViewFactory() {
-//            public View makeView() {
-//                // create a TextView
-//                TextView t = new TextView(getContext());
-//
-//                t.setTextColor(getResources().getColor(R.color.pastel_rose));
-//                t.setTypeface(SPUtils.getHeaderTypeface(getContext()));
-//                t.setTextSize(26);
-//                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-//                t.setGravity(Gravity.CENTER);
-//                return t;
-//            }
-//        });
-//
-//        // Setup song artist view
-//        artistName.setFactory(new ViewSwitcher.ViewFactory() {
-//            public View makeView() {
-//                // create a TextView
-//                TextView t = new TextView(getContext());
-//
-//                t.setTextColor(Color.WHITE);
-//                t.setTypeface(SPUtils.getSubtextTypeface(getContext()));
-//                t.setTextSize(14);
-//                t.setAllCaps(true);
-//                t.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-//                t.setGravity(Gravity.CENTER);
-//                return t;
-//            }
-//        });
 
         setTextSwitcherAnimations(songName, SPUtils.TSAnimationType.SLIDE);
         setTextSwitcherAnimations(artistName, SPUtils.TSAnimationType.SLIDE);
@@ -321,16 +300,16 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
      * Updates Now Playing fragment
      */
     private void updateNowPlaying(){
-        if(currentSong == null){
+        if(currentSong == null || view == null){
             return;
         }
 
         //Load large album image
         Picasso.with(getContext())
                 .load(currentSong.getAlbumArt())
-                .transform(new BlurTransformation(getContext(), 10))
-                .placeholder(R.drawable.galaxy)
-                .error(R.drawable.galaxy)
+                .transform(new BlurTransformation(getContext(), 2))
+                .placeholder(R.drawable.temp_album_art)
+                .error(R.drawable.temp_album_art)
                 .into(albumArtBackground);
 
 
@@ -357,6 +336,9 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(visualizer != null) {
+            visualizer.release();
+        }
         SPMainActivity.getSongEventHandler().removeSongPlaybackEventListener(this);
         SPMainActivity.getSongEventHandler().removeSongShuffleEventListener(this);
     }
@@ -372,6 +354,12 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
         mHandler.removeCallbacks(updateTimeRunnable);
     }
 
+    @Override
+    public void pressedBack() {
+        super.pressedBack();
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
     /**
      * Initializes all elements located
      * within the album cover.
@@ -384,6 +372,7 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
             albumArt = v.findViewById(R.id.now_playing_album_art);
             favoriteGhost = v.findViewById(R.id.now_playing_favorite_ghost);
         }
+
 
         albumArt.setOnTouchListener(new View.OnTouchListener() {
             private GestureDetector gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener(){
@@ -414,6 +403,30 @@ public class NowPlaying extends Fragment implements SongPlaybackEventListener, S
                 @Override
                 public boolean 	onSingleTapConfirmed(MotionEvent e){
                     return true;
+                }
+
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    boolean result = false;
+                    try {
+                        float diffY = e2.getY() - e1.getY();
+                        float diffX = e2.getX() - e1.getX();
+                        if (Math.abs(diffX) > Math.abs(diffY)) {
+                            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                                if (diffX > 0) {
+                                    // Swipe Right
+                                    SPMainActivity.mPlayerService.playPreviousSong();
+                                } else {
+                                    // Swipe Left
+                                    SPMainActivity.mPlayerService.playNextSong();
+                                }
+                                result = true;
+                            }
+                        }
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                    return result;
                 }
             });
 

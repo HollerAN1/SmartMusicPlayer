@@ -42,6 +42,7 @@
     <color name="pastel_pink">#ffd1dc</color>
     <color name="pastel_orange">#ffb347</color>
     <color name="pastel_rose">#ff8747</color>
+    <color name="faded_pastel_rose">#48ff8747</color>
 
 
     <color name="header_color">@color/pastel_rose</color>
@@ -49,7 +50,8 @@
     <color name="button_tint">@android:color/white</color>
 
     <color name="tab_background_color">#88a9a9a9</color>
-    <color name="tab_selected_background_color">@color/baby_blue</color>
+    <color name="tab_selected_background_color">#981B2631</color>
+    <color name="text_color">@android:color/white</color>
 
     <color name="light_grey">#D3D3D3</color>
 

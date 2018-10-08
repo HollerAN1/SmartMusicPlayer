@@ -14,9 +14,6 @@ import java.util.List;
 
 @Dao
 public abstract class PlaylistDao {
-//    @Query("SELECT * FROM playlist_table")
-//    public abstract LiveData<List<PlaylistWithSongs>> getAllWithSongs(); // LiveData ensures data is updated on database changes
-
     @Query("SELECT * FROM playlist_table")
     public abstract LiveData<List<Playlist>> getAll();
 
@@ -31,6 +28,9 @@ public abstract class PlaylistDao {
 
     @Query("SELECT * FROM playlist_table WHERE name LIKE '%' || :query || '%' ORDER BY name")
     public abstract List<Playlist> searchPlaylists(String query);
+
+    @Query("SELECT COUNT(name) FROM playlist_table")
+    public abstract int getNumPlaylists();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertAll(Playlist... playlists);

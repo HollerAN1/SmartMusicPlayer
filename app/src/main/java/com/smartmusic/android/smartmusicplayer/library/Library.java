@@ -9,7 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.smartmusic.android.smartmusicplayer.NowPlayingBar;
+import com.smartmusic.android.smartmusicplayer.SPFragment;
+import com.smartmusic.android.smartmusicplayer.nowplaying.NowPlayingBar;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.R;
 
@@ -19,10 +20,11 @@ import com.smartmusic.android.smartmusicplayer.R;
  * drawer. Contains a view pager to display Songs, Artists and Albums
  * fragments.
  */
-public class Library extends Fragment {
+public class Library extends SPFragment {
 
-    View mainView = null;
+    private View mainView = null;
     private NowPlayingBar nowPlayingBar;
+    private ViewPager viewPager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -70,7 +72,7 @@ public class Library extends Fragment {
                 new LibraryPagerAdapter(
                         getFragmentManager(), getContext());
 
-        ViewPager viewPager = mainView.findViewById(R.id.library_view_pager);
+        viewPager = mainView.findViewById(R.id.library_view_pager);
         TabLayout tabLayout = mainView.findViewById(R.id.library_tab_layout);
         tabLayout.setupWithViewPager(viewPager, true);
         viewPager.setAdapter(libraryPagerAdapter);
@@ -80,6 +82,14 @@ public class Library extends Fragment {
         ((ViewGroup)tabLayout.getChildAt(0)).getChildAt(0).setBackground(getResources().getDrawable(R.drawable.tab_background_left));
         ((ViewGroup)tabLayout.getChildAt(0)).getChildAt(1).setBackground(getResources().getDrawable(R.drawable.tab_background_middle));
         ((ViewGroup)tabLayout.getChildAt(0)).getChildAt(2).setBackground(getResources().getDrawable(R.drawable.tab_background_right));
+    }
+
+    @Override
+    public void pressedBack() {
+        super.pressedBack();
+        if(viewPager.getCurrentItem() != 0){
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
     }
 }
 

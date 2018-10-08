@@ -6,20 +6,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
-import com.smartmusic.android.smartmusicplayer.SPUtils;
+import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.ArtistDiffCallback;
 import com.smartmusic.android.smartmusicplayer.R;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
-import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHolder> implements SectionTitleProvider {

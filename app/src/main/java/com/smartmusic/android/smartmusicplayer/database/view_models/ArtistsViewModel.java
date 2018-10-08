@@ -4,8 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
-import com.smartmusic.android.smartmusicplayer.comparators.artists.ArtistNameComparator;
+import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
+import com.smartmusic.android.smartmusicplayer.utils.comparators.artists.ArtistNameComparator;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 
 import java.util.Comparator;
@@ -18,7 +19,7 @@ public class ArtistsViewModel extends AndroidViewModel {
 
     public ArtistsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(application);
+        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
         mAllArtists = mRepository.getAllArtistsNameSort();
         this.sort = new ArtistNameComparator();
     }

@@ -93,6 +93,7 @@
     <string name="EXTRA_ALBUM_ART">EXTRA_ALBUM_ART</string>
     <string name="EXTRA_ALBUM_SONGLIST">EXTRA_ALBUM_SONGLIST</string>
     <string name="EXTRA_SENDER">EXTRA_SENDER</string>
+    <string name="EXTRA_ALBUM_UID">EXTRA_ALBUM_UID</string>
 
     <!--Content Descriptions-->
     <string name="Options_CD">Options</string>

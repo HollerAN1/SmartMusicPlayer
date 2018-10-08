@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smartmusic.android.smartmusicplayer.R;
-import com.smartmusic.android.smartmusicplayer.SPUtils;
+import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;

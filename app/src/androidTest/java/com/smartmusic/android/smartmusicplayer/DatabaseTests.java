@@ -3,9 +3,8 @@ package com.smartmusic.android.smartmusicplayer;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
-import com.smartmusic.android.smartmusicplayer.database.SPDatabase;
+import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.daos.AlbumDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.ArtistDao;
 import com.smartmusic.android.smartmusicplayer.database.daos.PlaylistDao;
@@ -34,7 +33,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class DatabaseTests {
 
     /* Database to test with */
-    private SPDatabase mDatabase;
+    private RoomSQLDatabase mDatabase;
 
     private final String LOGGER_TAG = "DatabaseTestsLogger";
 
@@ -66,7 +65,7 @@ public class DatabaseTests {
     @Before
     public void createDb() {
         Context context = InstrumentationRegistry.getTargetContext();
-        mDatabase = SPDatabase.getTestDatabase(context); // In-memory instance
+        mDatabase = RoomSQLDatabase.getTestDatabase(context); // In-memory instance
         mSongDao = mDatabase.songDao();
         mAlbumDao = mDatabase.albumDao();
         mArtistDao = mDatabase.artistDao();

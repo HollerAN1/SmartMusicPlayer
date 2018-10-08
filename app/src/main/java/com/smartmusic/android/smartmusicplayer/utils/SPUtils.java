@@ -1,21 +1,14 @@
-package com.smartmusic.android.smartmusicplayer;
+package com.smartmusic.android.smartmusicplayer.utils;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextSwitcher;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 
 import java.text.SimpleDateFormat;
-
-import javax.xml.transform.Templates;
 
 /**
  * A utility class with static
@@ -34,16 +27,16 @@ public class SPUtils {
     /**
      * Converts millisecond time to minutes:seconds
      * @param milliseconds the number of milliseconds
-     * @return
+     * @return the string time representation in the format minutes:seconds
      */
-    public static String milliToTime(int milliseconds) {
+    public static String milliToTime(Integer milliseconds) {
         String finalTimerString = "";
-        String secondsString = "";
+        String secondsString;
 
         // Convert total duration into time
-        int hours = (int) (milliseconds / (1000 * 60 * 60));
-        int minutes = (int) (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
-        int seconds = (int) ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
+        int hours =         (milliseconds / (1000 * 60 * 60));
+        int minutes =       (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds =       ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
         // Add hours if there
         if (hours > 0) {
             finalTimerString = hours + ":";
@@ -98,30 +91,12 @@ public class SPUtils {
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
-
-    public static Typeface getHeaderTypeface(Context context){
-        Typeface tf = ResourcesCompat.getFont(context, R.font.exo_medium);
-        return tf;
-    }
-
-    public static Typeface getSubtextTypeface(Context context){
-        Typeface tf = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-        return tf;
-    }
-
-    public static Typeface getTitleTypeface(Context context){
-        Typeface tf = ResourcesCompat.getFont(context, R.font.archivo_black);
-        return tf;
-    }
-
     public static Animation getSlideInLeftAnimation(Context context){
-        Animation inL = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-        return inL;
+        return AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
     }
 
     public static Animation getSlideOutRightAnimation(Context context){
-        Animation outR = AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right);
-        return outR;
+        return AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right);
     }
 
     public static Animation getFadeInAnimation(Context context){

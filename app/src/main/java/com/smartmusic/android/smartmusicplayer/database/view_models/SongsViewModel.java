@@ -3,15 +3,11 @@ package com.smartmusic.android.smartmusicplayer.database.view_models;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
 
-import com.smartmusic.android.smartmusicplayer.comparators.songs.SongNameComparator;
+import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
-import com.smartmusic.android.smartmusicplayer.library.SongAdapter;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class SongsViewModel extends AndroidViewModel {
@@ -25,7 +21,7 @@ public class SongsViewModel extends AndroidViewModel {
 
     public SongsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(application);
+        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
         mAllSongs = mRepository.getAllSongsNameSort();
     }
 

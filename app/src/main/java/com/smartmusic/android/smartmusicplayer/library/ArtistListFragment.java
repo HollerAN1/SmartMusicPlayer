@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.SPFragment;
 import com.smartmusic.android.smartmusicplayer.database.entities.Artist;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.database.view_models.ArtistsViewModel;

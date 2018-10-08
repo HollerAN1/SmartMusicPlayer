@@ -6,19 +6,21 @@ import android.arch.lifecycle.LiveData;
 
 import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
-import com.smartmusic.android.smartmusicplayer.database.entities.Playlist;
+import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 
 import java.util.List;
 
-public class PlaylistsViewModel extends AndroidViewModel {
+public class AlbumViewModel extends AndroidViewModel{
     private SPRepository mRepository;
-    private LiveData<List<Playlist>> mAllPlaylists;
+    private LiveData<List<Song>> mSongs;
 
-    public PlaylistsViewModel(Application application) {
+    public AlbumViewModel(Application application) {
         super(application);
         mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
-        mAllPlaylists = mRepository.getAllPlaylistsNameSort();
     }
 
-    public LiveData<List<Playlist>> getAllPlaylists() { return mAllPlaylists; }
+    public LiveData<List<Song>> getAllAlbumSongs() { return mSongs; }
+    public void setAlbumUID(String albumUID){
+        mSongs = mRepository.getSongsForAlbum(albumUID);
+    }
 }

@@ -3,14 +3,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/extra_light_midnight_blue"
+    android:background="@color/cardview_shadow_start_color"
     android:padding="5dp"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
     android:id="@+id/song_background">
 
     <TextView
         android:id="@+id/album_number"
         style="@style/SPSubtext"
-        android:background="@color/cardview_shadow_start_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -27,10 +28,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerVertical="true"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="50dp"
         android:padding="2dp"
         android:layout_toStartOf="@id/list_options"
-        android:layout_toEndOf="@id/album_number">
+        android:layout_alignParentStart="true">
         <TextView
             style="@style/SPHeading"
             android:id="@+id/song_title"

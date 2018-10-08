@@ -1,4 +1,4 @@
-package com.smartmusic.android.smartmusicplayer;
+package com.smartmusic.android.smartmusicplayer.nowplaying;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEventListener;

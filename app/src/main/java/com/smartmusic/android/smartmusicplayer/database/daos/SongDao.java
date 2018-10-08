@@ -37,6 +37,9 @@ public abstract class SongDao {
     @Query("SELECT * FROM song_table WHERE songUID LIKE :uid")
     public abstract Song findSongByUID(String uid);
 
+    @Query("SELECT COUNT(song_name) FROM song_table")
+    public abstract int getNumSongs();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertAll(Song... songs);
 

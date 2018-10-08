@@ -1,5 +1,6 @@
 package com.smartmusic.android.smartmusicplayer.database.daos;
 
+        import android.arch.lifecycle.LiveData;
         import android.arch.persistence.room.Dao;
         import android.arch.persistence.room.Insert;
         import android.arch.persistence.room.Query;
@@ -16,5 +17,5 @@ public abstract class SongPlaylistJoinDao {
     @Query("SELECT * FROM song_table INNER JOIN" +
             " song_playlist_join ON song_table.songUID = song_playlist_join.songUID " +
             "WHERE song_playlist_join.playlistUID=:playlistUID")
-    public abstract List<Song> getSongsForPlaylist(final String playlistUID);
+    public abstract LiveData<List<Song>> getSongsForPlaylist(final String playlistUID);
 }

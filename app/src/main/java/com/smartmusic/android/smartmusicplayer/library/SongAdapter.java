@@ -2,9 +2,8 @@ package com.smartmusic.android.smartmusicplayer.library;
 
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.SongDiffCallback;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -28,19 +28,25 @@ import java.util.List;
  * THIS HANDLES DATA COLLECTION AND BINDS IT TO THE VIEW
  */
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> implements SectionTitleProvider {
+public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionTitleProvider {
 
     private List<Song> _songs;
     private Context context;
+    private HolderType type;
+
+    public enum HolderType {
+        LIBRARY, ALBUM_LIST
+    }
 
     /**
      * Constructor for SongAdapter
      * @param context context
      * @param songs list of songs
      */
-    public SongAdapter(Context context, List<Song> songs) {
+    public SongAdapter(Context context, List<Song> songs, HolderType type) {
         this.context = context;
         this._songs = songs;
+        this.type = type;
     }
 
     @Override
@@ -73,11 +79,27 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
      * @return 	A new HeaderViewHolder that holds a View of the given view type.
      */
     @Override
-    public SongHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
-        View myView = LayoutInflater.from(context).inflate(R.layout.row_song_flat,viewGroup,false);
-        return new SongHolder(myView);
+
+        View holderView;
+        switch(type){
+            case LIBRARY:
+                holderView = LayoutInflater.from(context).inflate(R.layout.row_song_flat,viewGroup,false);
+                return new LibrarySongHolder(holderView);
+            case ALBUM_LIST:
+                holderView = LayoutInflater.from(context).inflate(R.layout.row_song_default,viewGroup,false);
+                return new AlbumListSongHolder(holderView);
+            default:
+                holderView = LayoutInflater.from(context).inflate(R.layout.row_song_flat,viewGroup,false);
+                return new LibrarySongHolder(holderView);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return this.type.ordinal();
     }
 
     /**
@@ -101,8 +123,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
      *                   set.
      */
     @Override
-    public void onBindViewHolder(final SongHolder songHolder, final int i) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder songHolder, final int i) {
         final Song s = _songs.get(i);
+        switch (type){
+            case LIBRARY:
+                bindLibraryViewHolder((LibrarySongHolder)songHolder, s);
+                break;
+            case ALBUM_LIST:
+                bindAlbumListViewHolder((AlbumListSongHolder)songHolder, s);
+                break;
+        }
+    }
+
+
+    private void bindLibraryViewHolder(LibrarySongHolder songHolder, final Song s){
         songHolder.tvSongName.setText(s.getSongName());
         songHolder.tvSongArtist.setText(s.getArtistName());
 
@@ -134,24 +168,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
         });
     }
 
+    private void bindAlbumListViewHolder(AlbumListSongHolder songHolder, Song s){
+        songHolder.songName.setText(s.getSongName());
+        songHolder.songDuration.setText(SPUtils.milliToTime((int)s.getDuration()));
+        songHolder.albumNumber.setText(""); // TODO: Get album number from song.
+    }
+
     /**
      * Updates the view holder to the
      * song playing state.
-     * @param songHolder
+     * @param songHolder the song holder to change
      */
-    private void setSongPlayingView(SongHolder songHolder){
-        // Playing
+    private void setSongPlayingView(LibrarySongHolder songHolder){
         songHolder.tvSongName.setHorizontallyScrolling(true);
-//            songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.tintedBackground));
-//        songHolder.background.setBackgroundResource(R.drawable.orange_glow_gradient);
         songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.cardview_shadow_start_color));
-//            songHolder.tvSongName.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
-//        if(songHolder.btnAction.getState() != MorphButton.MorphState.END) {
-//            songHolder.btnAction.setState(MorphButton.MorphState.END, true);
-//        }
-//        songHolder.btnAction.setSelected(true);
-//        songHolder.btnAction.setForegroundColorFilter(Color.WHITE,
-//                PorterDuff.Mode.SRC_ATOP);
         songHolder.tvSongName.setSelected(true);
         songHolder.tvSongArtist.setSelected(true);
     }
@@ -159,9 +189,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
     /**
      * Updates the view holder to the song
      * not playing state.
-     * @param songHolder
+     * @param songHolder the song holder to change
      */
-    private void setSongNotPlayingView(SongHolder songHolder){
+    private void setSongNotPlayingView(LibrarySongHolder songHolder){
         songHolder.tvSongName.setHorizontallyScrolling(false);
         songHolder.background.setBackground(null);
         songHolder.tvSongName.setSelected(false);
@@ -212,17 +242,31 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> im
      RecyclerView instances may hold strong references to extra off-screen
      item views for caching purposes
      */
-    public class SongHolder extends RecyclerView.ViewHolder{
-        TextView tvSongName,tvSongArtist;
-        ImageView tvAlbumArt;
-        View background;
+    public class LibrarySongHolder extends RecyclerView.ViewHolder{
+        private TextView tvSongName,tvSongArtist;
+        private ImageView tvAlbumArt;
+        private View background;
 
-        public SongHolder(View itemView) {
+        public LibrarySongHolder(View itemView) {
             super(itemView);
-            tvSongName = (TextView) itemView.findViewById(R.id.tvSongName);
-            tvSongArtist = (TextView) itemView.findViewById(R.id.tvArtistName);
-            background = (View)itemView.findViewById(R.id.list_background);
-            tvAlbumArt = (ImageView)itemView.findViewById(R.id.list_albumArt);
+            tvSongName =            itemView.findViewById(R.id.tvSongName);
+            tvSongArtist =          itemView.findViewById(R.id.tvArtistName);
+            background =            itemView.findViewById(R.id.list_background);
+            tvAlbumArt =            itemView.findViewById(R.id.list_albumArt);
+        }
+    }
+
+    public class AlbumListSongHolder extends RecyclerView.ViewHolder{
+        private TextView songName,songDuration;
+        private View background;
+        private TextView albumNumber;
+
+        public AlbumListSongHolder(View itemView) {
+            super(itemView);
+            songName =              itemView.findViewById(R.id.song_title);
+            songDuration =          itemView.findViewById(R.id.song_duration);
+            background =            itemView.findViewById(R.id.song_background);
+            albumNumber =           itemView.findViewById(R.id.album_number);
         }
     }
 }

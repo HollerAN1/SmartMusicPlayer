@@ -42,10 +42,13 @@ public abstract class AlbumDao {
     @Query("SELECT * FROM album_table WHERE album_name LIKE '%' || :query || '%' ORDER BY album_name")
     public abstract List<Album> searchAlbums(String query);
 
+    @Query("SELECT COUNT(album_name) FROM album_table")
+    public abstract int getNumAlbums();
+
 
     // Get songs for album
     @Query("SELECT * FROM song_table WHERE album_uid LIKE :albumUID")
-    public abstract List<Song> getSongsForAlbum(String albumUID);
+    public abstract LiveData<List<Song>> getSongsForAlbum(String albumUID);
 
 
     // Insert album(s)

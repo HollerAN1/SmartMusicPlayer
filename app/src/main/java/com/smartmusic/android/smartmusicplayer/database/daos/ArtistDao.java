@@ -40,15 +40,18 @@ public abstract class ArtistDao {
     @Query("SELECT * FROM artist_table WHERE artist_name LIKE '%' || :query || '%' ORDER BY artist_name")
     public abstract List<Artist> searchArtists(String query);
 
+    @Query("SELECT COUNT(artist_name) FROM artist_table")
+    public abstract int getNumArtists();
+
 
     // Get songs for artist
     @Query("SELECT * FROM song_table WHERE artist_uid LIKE :artistUID")
-    public abstract List<Song> getSongsForArtist(String artistUID);
+    public abstract LiveData<List<Song>> getSongsForArtist(String artistUID);
 
 
     // Get albums for artist
     @Query("SELECT * FROM album_table WHERE artist_uid LIKE :artistUID")
-    public abstract List<Album> getAlbumsForArtist(String artistUID);
+    public abstract LiveData<List<Album>> getAlbumsForArtist(String artistUID);
 
     // Insert artist(s)
     // Note: Only saves artist information. Related song

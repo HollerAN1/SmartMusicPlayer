@@ -13,10 +13,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.SPRepository;
 import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
 import com.smartmusic.android.smartmusicplayer.library.Library;
@@ -25,21 +27,19 @@ public class SPMainActivity
         extends AppCompatActivity {
 
 
-    private static SongEventHandler songEventHandler = new SongEventHandler();
-    public static SongPlayerService mPlayerService;
-    public static SPRepository repository; // Database
-    private SPNavigationDrawer navDrawer;
-    private SPSearch search;
-
+    private static SongEventHandler songEventHandler = new SongEventHandler();                      // Handles song events
+    public static SongPlayerService mPlayerService;                                                 // Handles song playback
+    public static SPRepository repository;                                                          // Database
+    private SPNavigationDrawer navDrawer;                                                           // Navigation Drawer
+    private SPSearch search;                                                                        // Options menu search icon
+    private SPOnBackPressedListener backPressedListener;
 
     /* Service connection for SongPlayerService */
     private ServiceConnection musicConnection = new ServiceConnection(){
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i(getString(R.string.APP_LOGGER), SPMainActivity.this.getLocalClassName() + " connected to SongPlayerService");
             SongPlayerService.SongPlayerBinder binder = (SongPlayerService.SongPlayerBinder) service;
-            //get service
             mPlayerService = binder.getService();
         }
 
@@ -59,11 +59,10 @@ public class SPMainActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        repository = new SPRepository(this);
+        repository = new SPRepository(RoomSQLDatabase.getDatabase(this));
 
         // Setup navigation drawer
         navDrawer = new SPNavigationDrawer(this, getSupportFragmentManager());
-        navDrawer.init();
 
         search = new SPSearch(this, getSupportFragmentManager());
 
@@ -84,6 +83,19 @@ public class SPMainActivity
         }
     }
     /*-------------------------------------- ON CREATE METHOD ENDS -----------------------------------------*/
+
+    public void setOnBackPressedListener(SPOnBackPressedListener backPressedListener){
+        this.backPressedListener = backPressedListener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backPressedListener != null){
+            backPressedListener.pressedBack();
+            return;
+        }
+        super.onBackPressed();
+    }
 
     @Override
     protected void onStart() {
@@ -161,7 +173,7 @@ public class SPMainActivity
                 search.transitionToSearchFragment();
                 return true;
         }
-        return /*mToggle.onOptionsItemSelected(item) ||*/ super.onOptionsItemSelected(item);
+        return navDrawer.onNavOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override

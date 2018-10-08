@@ -24,6 +24,9 @@ import com.squareup.picasso.Picasso;
 
 import static com.smartmusic.android.smartmusicplayer.SPMainActivity.getSongEventHandler;
 
+/**
+ * Handles all Navigation Drawer functionality.
+ */
 public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelectedListener, SongPlaybackEventListener{
 
     private TextView songName;
@@ -35,6 +38,7 @@ public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelect
     private FragmentManager fragManager;
 
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mToggle;
 
     /**
      * Creates a Navigation Drawer object that handles
@@ -46,6 +50,7 @@ public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelect
         this.activity = activity;
         this.res = activity.getResources();
         this.fragManager = fragManager;
+        init();
     }
 
     /**
@@ -60,7 +65,7 @@ public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelect
 
         /*Setup Navigation Drawer*/
         mDrawerLayout =         activity.findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mToggle = new ActionBarDrawerToggle(activity, mDrawerLayout, R.string.open, R.string.close);
+        mToggle = new ActionBarDrawerToggle(activity, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
 
         /*Synchronize the indicator with the state of the linked DrawerLayout after onRestoreInstanceState has occurred.*/
@@ -74,6 +79,10 @@ public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelect
 
     public void removeSongEventHandler(){
         getSongEventHandler().removeSongPlaybackEventListener(this);
+    }
+
+    public boolean onNavOptionsItemSelected(MenuItem item){
+        return mToggle.onOptionsItemSelected(item);
     }
 
     @Override
@@ -132,6 +141,8 @@ public class SPNavigationDrawer implements NavigationView.OnNavigationItemSelect
 
                 break;
         }
+
+        if(transitionFrag == null){ return false; }
 
         fragManager
                 .beginTransaction()

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +12,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smartmusic.android.smartmusicplayer.database.SPDatabase;
+import com.smartmusic.android.smartmusicplayer.database.RoomSQLDatabase;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.events.SongDatabaseChangedListener;
 import com.smartmusic.android.smartmusicplayer.events.SongDatabaseEvent;
-import com.smartmusic.android.smartmusicplayer.events.SongPlaybackEvent;
 import com.smartmusic.android.smartmusicplayer.events.SongEventHandler;
 
 /**
@@ -105,11 +103,12 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
      * song into the database.
      */
     private void initializeDatabase(){
-        SPDatabase.getDatabase(this); // initializes database
-        if(SPDatabase.doesDatabaseExist(this, SPDatabase.DATABASE_NAME)){
+        // TODO: refactor RoomSQLDatabase to SPDatabase. App should depend on abstraction.
+        RoomSQLDatabase.getDatabase(this); // initializes database
+        if(RoomSQLDatabase.doesDatabaseExist(this)){
             startApp();
         } else {
-            maxSongs = SPDatabase.getTotalSongCount(this);
+            maxSongs = RoomSQLDatabase.getNumberOfSongsStoredOnDevice(this);
             mProgress.setMax(maxSongs);
             mProgress.setProgress(0);
         }
