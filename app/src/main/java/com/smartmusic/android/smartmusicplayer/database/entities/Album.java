@@ -112,6 +112,20 @@ public class Album implements Comparable<Album> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj == this){return true;}
+        if(!(obj instanceof Album)){return false;}
+        Album album = (Album) obj;
+        return  album.getAlbumName().equals(this.getAlbumName())
+                && album.getArtistName().equals(this.getArtistName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getAlbumUID().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Album: " + this.albumName + " by " + this.artistName;
     }

@@ -93,6 +93,19 @@ public class Artist implements Comparable<Artist> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj == this){return true;}
+        if(!(obj instanceof Artist)){return false;}
+        Artist artist = (Artist) obj;
+        return  artist.getArtistName().equals(this.getArtistName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getArtistUID().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Artist: " + this.artistName;
     }

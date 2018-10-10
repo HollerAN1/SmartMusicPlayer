@@ -114,6 +114,19 @@ public class Playlist implements Comparable<Playlist> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj == this){return true;}
+        if(!(obj instanceof Playlist)){return false;}
+        Playlist playlist = (Playlist) obj;
+        return  playlist.getName().equals(this.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getPlaylistUID().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Playlist: " + this.name;
     }

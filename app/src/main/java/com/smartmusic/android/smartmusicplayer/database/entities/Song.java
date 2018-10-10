@@ -222,6 +222,21 @@ public class Song implements Comparable<Song>, Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj == this){return true;}
+        if(!(obj instanceof Song)){return false;}
+        Song song = (Song) obj;
+        return song.getSongName().equals(this.getSongName()) &&
+                song.getArtistName().equals(this.getArtistName()) &&
+                song.getAlbumName().equals(this.getAlbumName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getSongUID().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Song: " + this.songName + " by " + this.artistName;
     }
