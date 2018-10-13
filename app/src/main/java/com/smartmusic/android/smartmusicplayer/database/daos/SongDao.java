@@ -51,4 +51,6 @@ public abstract class SongDao {
 
     @Delete
     public abstract void deleteAll(List<Song> songs);
+    @Query("DELETE FROM song_table")
+    public abstract void deleteAllSongs();
 }

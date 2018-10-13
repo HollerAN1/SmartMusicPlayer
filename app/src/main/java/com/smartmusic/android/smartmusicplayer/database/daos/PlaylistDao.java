@@ -42,4 +42,6 @@ public abstract class PlaylistDao {
     public abstract void delete(Playlist playlist);
     @Delete
     public abstract void deleteAll(List<Playlist> playlists);
+    @Query("DELETE FROM playlist_table")
+    public abstract void deleteAllPlaylists();
 }

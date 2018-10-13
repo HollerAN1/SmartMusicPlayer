@@ -33,8 +33,8 @@ public abstract class AlbumDao {
 
 
     // Find album by fields
-    @Query("SELECT * FROM album_table WHERE album_name LIKE :name")
-    public abstract Album findAlbumByName(String name);
+    @Query("SELECT * FROM album_table WHERE album_name LIKE :albumName AND artist_name LIKE :artistName")
+    public abstract Album findAlbumByCredentials(String albumName, String artistName);
 
     @Query("SELECT * FROM album_table WHERE albumUID LIKE :uid")
     public abstract Album findAlbumByUID(String uid);
@@ -64,4 +64,7 @@ public abstract class AlbumDao {
     public abstract void delete(Album album);
     @Delete
     public abstract void deleteAll(List<Album> albums);
+
+    @Query("DELETE FROM album_table")
+    public abstract void deleteAllAlbums();
 }

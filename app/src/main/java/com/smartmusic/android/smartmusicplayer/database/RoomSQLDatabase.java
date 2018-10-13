@@ -5,6 +5,7 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +29,7 @@ import com.smartmusic.android.smartmusicplayer.database.entities.SongPlaylistJoi
 import com.smartmusic.android.smartmusicplayer.database.entities.Stat;
 
 import java.io.File;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +42,14 @@ public abstract class RoomSQLDatabase
     // public DAOs for testing purposes
     // and are required by Room API
     //
-    // ONLY SPDatabase methods should access these!
+    // ONLY SPDatabase override methods should access these!
     public abstract SongDao songDao();
     public abstract PlaylistDao playlistDao();
     public abstract ArtistDao artistDao();
     public abstract AlbumDao albumDao();
     public abstract SongPlaylistJoinDao songPlaylistJoinDao();
 
+    private static final String DEFAULT_UNKNOWN_STR = "<Unknown";
     private static final String DATABASE_NAME = "SmartPlayerDatabase3";
     private static RoomSQLDatabase INSTANCE; // singleton to prevent having multiple instances of the database opened at the same time.
 
@@ -58,14 +61,14 @@ public abstract class RoomSQLDatabase
      * @param ctx the current context
      * @return the database instance.
      */
-    public static RoomSQLDatabase getDatabase(final Context ctx) {
+    public static SPDatabase getDatabase(final Context ctx) {
         if (INSTANCE == null) {
             synchronized (RoomSQLDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(ctx.getApplicationContext(),
                             RoomSQLDatabase.class, DATABASE_NAME)
                             .build();
-                    new PopulateDbAsync(INSTANCE, ctx).execute();
+                    new PopulateDbAsyncTask(INSTANCE, ctx.getContentResolver()).execute();
                 }
             }
         }
@@ -102,14 +105,14 @@ public abstract class RoomSQLDatabase
     /**
      * Parses the device's local storage to return the number
      * of songs.
-     * @param context the current context
+     * @param contentResolver the application content resolver
      * @return the number of songs found in the media store
      */
-    public static int getNumberOfSongsStoredOnDevice(Context context) {
+    public static int getNumberOfSongsStoredOnDevice(ContentResolver contentResolver) {
         int songCount = 0;
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //locates media
         String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
-        Cursor cursor = context.getContentResolver().query(uri,null,selection,null,null);
+        Cursor cursor = contentResolver.query(uri,null,selection,null,null);
         if(cursor != null){
             songCount = cursor.getCount();
         }
@@ -117,81 +120,118 @@ public abstract class RoomSQLDatabase
         return songCount;
     }
 
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
+    private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Boolean> {
         // TODO: Refactor the startup process of loading songs and recognizing changes in db
         RoomSQLDatabase db;
-        Context context;
+        ContentResolver contentResolver;
 
-        PopulateDbAsync(RoomSQLDatabase db, Context ctx) {
+        PopulateDbAsyncTask(RoomSQLDatabase db, ContentResolver contentResolver) {
             this.db = db;
-            this.context = ctx;
+            this.contentResolver = contentResolver;
         }
 
         @Override
-        protected Void doInBackground(final Void... params) {
-            List<Song> songs = db.songDao().getAllSongsStatic();
-            if(getNumberOfSongsStoredOnDevice(context) != songs.size()) {
-                db.songDao().deleteAll(db.songDao().getAllSongsStatic());
-                db.artistDao().deleteAll(db.artistDao().getAllArtistsStatic());
-                db.albumDao().deleteAll(db.albumDao().getAllAlbumsStatic());
+        protected Boolean doInBackground(final Void... params) {
+            boolean successfulLoad = false;
+            int songsInDatabase = db.getSongCount();
+            if(getNumberOfSongsStoredOnDevice(contentResolver) != songsInDatabase) {
+                // Wipe database of song info
+                db.deleteAllSongs();
+                db.deleteAllArtists();
+                db.deleteAllAlbums();
 
-                loadSongsFromDevice();
-                addAlbumsToArtists();
+                // Perform a reload of database
+                successfulLoad = loadSongsFromDeviceIntoDB();
             }
-            return null;
+            return successfulLoad;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean successfulLoad) {
+            super.onPostExecute(successfulLoad);
+            // TODO: If false show error message.
         }
 
         /**
          * Parses the media store and loads each song
          * into the database.
+         * @return true if loaded successfully, false if there was an error
          */
-        private void loadSongsFromDevice(){
-            Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //locates media
-            String selection = MediaStore.Audio.Media.IS_MUSIC+"!=0";
-            Cursor cursor = context.getContentResolver().query(uri,null,selection,null,null);
-            if(cursor != null){
-                if(cursor.moveToFirst()){
-                    do{
-                        String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                        String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                        String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                        int track = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
-                        int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                        String year = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
-                        String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-//                        long dateAdded = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED));
-                        String displayName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
-                        long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
+        private boolean loadSongsFromDeviceIntoDB(){
+            boolean error = false;
+            Cursor mediaCursor = contentResolver
+                                .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                        null,
+                                        MediaStore.Audio.Media.IS_MUSIC + "!=0",
+                                        null,
+                                        null);
+//            Cursor albumCursor = contentResolver
+//                                .query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//                                        new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
+//                                MediaStore.Audio.Albums._ID+ "=?",
+//                                        null,
+//                                        null);
+            if ( (mediaCursor != null) ) {
+                if ( (mediaCursor.moveToFirst()) ) {
+                    do {
+                        try {
+                            String name = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                            String artist = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                            String url = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                            int track = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
+                            int duration = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                            String year = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
+                            String album = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
+//                        long dateAdded = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED));
+                            String displayName = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
+                            long size = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
+//                            String path = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 //
 //                        String dateString = SPUtils.yearMonthDayFormat.format(new Date(dateAdded)).toString();
 
-                        Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
-                        Uri albumArt = ContentUris.withAppendedId(albumArtUri, cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
+                            Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
+                            Uri albumArt
+                                    = ContentUris
+                                    .withAppendedId( albumArtUri,
+                                                     mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID)));
 
 
-                        Song s = new Song(name,
-                                artist,
-                                album,
-                                url,
-                                albumArt.toString(),
-                                track, duration, year,
-                                null,
-                                size, displayName);
+                            Song s = new Song(name,
+                                    artist,
+                                    album,
+                                    url,
+                                    albumArt.toString(),
+                                    track, duration, year,
+                                    null,
+                                    size, displayName);
 
-                        addSongToArtist(s);
-                        addSongToAlbum(s);
+                            updateDatabaseForSong(s);
 
-                        db.songDao().insert(s);
+                            mEventHandler.dispatchEvent(new SongDatabaseEvent(s, SongEvent.Type.SONG_ADDED));
+                        } catch (Exception e){
+                            e.printStackTrace();
+                            error = true;
+                        }
 
-                        mEventHandler.dispatchEvent(new SongDatabaseEvent(s, SongEvent.Type.SONG_ADDED));
-
-                    } while (cursor.moveToNext());
+                    } while ( (mediaCursor.moveToNext()) );
                 }
 
-                cursor.close();
+//                albumCursor.close();
+                mediaCursor.close();
 
+            } else {
+                error = true;
             }
+            return error;
         } // end loadFromDevice()
+
+        private void updateDatabaseForSong(Song s){
+            Artist artist = updateOrInitializeArtistWith(s);
+            Album album = updateOrInitializeAlbumWith(s);
+            db.addAlbumToArtist(album, artist);
+
+            db.storeSong(s);
+        }
 
         /**
          * Given a song, checks the database to see if
@@ -199,24 +239,27 @@ public abstract class RoomSQLDatabase
          * added. The song is then marked with UID of the album.
          * @param s a Song object
          */
-        private void addSongToAlbum(Song s){
-            Album existingAlbum = db.albumDao().findAlbumByName(s.getAlbumName());
+        private Album updateOrInitializeAlbumWith(Song s){
+            Album existingAlbum = db.loadAlbumByCredentials(!(s.getAlbumName().equals(""))
+                                                            ? s.getAlbumName()
+                                                            : DEFAULT_UNKNOWN_STR,
+                                                            !(s.getArtistName().equals(""))
+                                                            ? s.getArtistName()
+                                                            : DEFAULT_UNKNOWN_STR);
             if(existingAlbum != null){
-
-                s.setAlbumUID(existingAlbum.getAlbumUID());
-                existingAlbum.setNumSongs(existingAlbum.getNumSongs() + 1);
-                db.albumDao().insert(existingAlbum);
-                return;
+                // Update existing album
+                db.addSongToAlbum(existingAlbum, s);
+                return existingAlbum;
+            } else {
+                // Create new album
+                String albumName = DEFAULT_UNKNOWN_STR;
+                if (!(s.getAlbumName().isEmpty()) && !(s.getAlbumName().equals(""))) {
+                    albumName = s.getAlbumName();
+                }
+                Album newAlbum = new Album(albumName, s.getArtistName(), s.getAlbumArtUri());
+                db.addSongToAlbum(newAlbum, s);
+                return newAlbum;
             }
-
-            String albumName = "<Unknown>";
-            if(!s.getAlbumName().equals("")){
-                albumName = s.getAlbumName();
-            }
-            Album al = new Album(albumName, s.getArtistName(), s.getAlbumArt().toString());
-            s.setAlbumUID(al.getAlbumUID());
-            al.setNumSongs(al.getNumSongs() + 1);
-            db.albumDao().insert(al);
         }
 
 
@@ -226,32 +269,27 @@ public abstract class RoomSQLDatabase
          * added. The song is then marked with the UID of the artist.
          * @param s a Song object
          */
-        private void addSongToArtist(Song s){
-            Artist existingArtist = db.loadArtistByName(s.getArtistName());
+        private Artist updateOrInitializeArtistWith(Song s){
+            Artist existingArtist = db.loadArtistByName( !(s.getArtistName().equals(""))
+                                                        ? s.getArtistName()
+                                                        : DEFAULT_UNKNOWN_STR);
             if( existingArtist != null ){
-                s.setArtistUID(existingArtist.getArtistUID());
-                existingArtist.setNumSongs(existingArtist.getNumSongs() + 1);
-                db.storeArtist(existingArtist);
-                return;
-            }
-
-            Artist artist = new Artist(s.getArtistName());
-            s.setArtistUID(artist.getArtistUID());
-            artist.setNumSongs(artist.getNumSongs() + 1);
-            db.storeArtist(artist);
-        }
-
-        private void addAlbumsToArtists(){
-            List<Album> allAlbums = db.albumDao().getAllAlbumsStatic();
-            for(Album album : allAlbums){
-                Artist artist = db.loadArtistByName(album.getArtistName());
-                if(artist != null) {
-                    artist.setNumAlbums(artist.getNumAlbums() + 1);
-                    db.storeArtist(artist);
+                // Update existing artist
+                db.addSongToArtist(existingArtist, s);
+                return existingArtist;
+            } else {
+                // Create new artist
+                String artistName = DEFAULT_UNKNOWN_STR;
+                if (!(s.getArtistName().isEmpty()) && !(s.getArtistName().equals(""))) {
+                    artistName = s.getArtistName();
                 }
+
+                Artist newArtist = new Artist(artistName);
+                db.addSongToArtist(newArtist, s);
+                return newArtist;
             }
         }
-    } // end PopulateDbAsync
+    } // end PopulateDbAsyncTask
 
 
     @Override
@@ -311,8 +349,8 @@ public abstract class RoomSQLDatabase
     }
 
     @Override
-    public Album loadAlbumByName(String albumName) {
-        return albumDao().findAlbumByName(albumName);
+    public Album loadAlbumByCredentials(String albumName, String albumArtist) {
+        return albumDao().findAlbumByCredentials(albumName, albumArtist);
     }
 
     @Override
@@ -343,13 +381,28 @@ public abstract class RoomSQLDatabase
     }
 
     @Override
-    public void addSongToArtist(final Artist artist, final Song song) {
+    public void addAlbumToArtist(Album album, Artist artist) {
+        artist.setNumAlbums(artist.getNumAlbums() + 1);
+        album.setArtistName(artist.getArtistName());
+        album.setArtistUid(artist.getArtistUID());
+        storeArtist(artist);
+        storeAlbum(album);
+    }
 
+    @Override
+    public void addSongToArtist(final Artist artist, final Song song) {
+        song.setArtistUID(artist.getArtistUID());
+        artist.setNumSongs(artist.getNumSongs() + 1);
+        storeSong(song);
+        storeArtist(artist);
     }
 
     @Override
     public void addSongToAlbum(final Album album, final Song song) {
-
+        song.setAlbumUID(album.getAlbumUID());
+        album.setNumSongs(album.getNumSongs() + 1);
+        storeSong(song);
+        storeAlbum(album);
     }
 
     @Override
@@ -549,5 +602,25 @@ public abstract class RoomSQLDatabase
     @Override
     public void removeSongFromPlaylist(Playlist playlist, Song song) {
         // TODO: implement
+    }
+
+    @Override
+    public void deleteAllSongs() {
+        songDao().deleteAllSongs();
+    }
+
+    @Override
+    public void deleteAllArtists() {
+        artistDao().deleteAllArtists();
+    }
+
+    @Override
+    public void deleteAllAlbums() {
+        albumDao().deleteAllAlbums();
+    }
+
+    @Override
+    public void deleteAllPlaylists() {
+        playlistDao().deleteAllPlaylists();
     }
 }

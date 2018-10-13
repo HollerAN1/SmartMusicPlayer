@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/recycler_view_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.smartmusic.android.smartmusicplayer.SPMainActivity">
+    tools:context="com.smartmusic.android.smartmusicplayer.SPMainActivity" >
 
-    <include layout="@layout/recycler_view_header"
-        android:id="@+id/includedHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:visibility="gone"
-        />
-
-    <android.support.v7.widget.RecyclerView
-    android:id="@+id/recyclerView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:smoothScrollbar="true"
-    android:nestedScrollingEnabled="true"
-    android:layout_below="@id/includedHeader"/>
-    <!--android:layoutAnimation="@anim/layout_animation_fall_down"-->
-
-    <com.futuremind.recyclerviewfastscroll.FastScroller
-        android:id="@+id/fastscroll"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
+        android:background="@drawable/recycler_view_background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.smartmusic.android.smartmusicplayer.SPMainActivity">
+
+
+        <include layout="@layout/recycler_view_header"
+            android:id="@+id/includedHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            />
+
+        <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:smoothScrollbar="true"
+        android:nestedScrollingEnabled="true"
         android:layout_below="@id/includedHeader"/>
-    
-</RelativeLayout>
+        <!--android:layoutAnimation="@anim/layout_animation_fall_down"-->
+
+        <com.futuremind.recyclerviewfastscroll.FastScroller
+            android:id="@+id/fastscroll"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/includedHeader"/>
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

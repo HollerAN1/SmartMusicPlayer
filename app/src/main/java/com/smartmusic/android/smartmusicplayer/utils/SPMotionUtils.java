@@ -5,12 +5,13 @@ import android.view.MotionEvent;
 import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 
 /**
- * Class to handle Smart Player motion
- * events. Such as swipe and drag.
+ * Class to handle Smart Player motion events repeated throughout code
+ * Such as swipe and drag.
  */
 public class SPMotionUtils {
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
 
     public static boolean swipeChangeSong(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         boolean result = false;

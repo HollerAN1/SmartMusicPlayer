@@ -15,11 +15,13 @@ import java.util.List;
  * database and the application.
  */
 public interface SPDatabase {
+
     // store/delete/load songs
      void storeSong(Song song);
      void storeSongs(List<Song> songs);
      void deleteSong(Song song);
      void deleteSongs(List<Song> songs);
+     void deleteAllSongs();
      Song loadSongByName(String songName);
      Song loadSongByUID(String songUID);
 
@@ -28,6 +30,7 @@ public interface SPDatabase {
      void storeArtists(List<Artist> artists);
      void deleteArtist(Artist artist);
      void deleteArtists(List<Artist> artists);
+     void deleteAllArtists();
      Artist loadArtistByName(String artistName);
      Artist loadArtistByUID(String artistUID);
 
@@ -36,7 +39,8 @@ public interface SPDatabase {
      void storeAlbums(List<Album> albums);
      void deleteAlbum(Album album);
      void deleteAlbums(List<Album> albums);
-     Album loadAlbumByName(String albumName);
+     void deleteAllAlbums();
+     Album loadAlbumByCredentials(String albumName, String albumArtist);
      Album loadAlbumByUID(String albumUID);
 
     // store/delete/load playlists
@@ -44,10 +48,12 @@ public interface SPDatabase {
      void storePlaylists(List<Playlist> playlists);
      void deletePlaylist(Playlist playlist);
      void deletePlaylists(List<Playlist> playlists);
+     void deleteAllPlaylists();
      Playlist loadPlaylistByName(String playlistName);
      Playlist loadPlaylistByUID(String playlistName);
 
 
+     void addAlbumToArtist(Album album, Artist artist);
      void addSongToArtist(Artist artist, Song song);
      void addSongToAlbum(Album album, Song song);
      void addSongToPlaylist(Playlist playlist, Song song);

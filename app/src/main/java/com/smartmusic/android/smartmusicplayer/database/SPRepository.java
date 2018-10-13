@@ -1,6 +1,8 @@
 package com.smartmusic.android.smartmusicplayer.database;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.smartmusic.android.smartmusicplayer.database.entities.Album;
@@ -18,8 +20,8 @@ public class SPRepository {
 
     private SPDatabase database;
 
-    public SPRepository(SPDatabase database){
-        this.database = database;
+    public SPRepository(Context context){
+        this.database = RoomSQLDatabase.getDatabase(context);
     }
 
     // Get songs
@@ -77,7 +79,7 @@ public class SPRepository {
     public Artist getArtistByName(String artistName){ return database.loadArtistByName(artistName); }
     public Artist getArtistByUID(String artistUID){ return database.loadArtistByUID(artistUID); }
 
-    public Album getAlbumByName(String albumName){ return database.loadAlbumByName(albumName); }
+    public Album getAlbumByCredentials(String albumName, String artistName){ return database.loadAlbumByCredentials(albumName, artistName); }
     public Album getAlbumByUID(String albumUID){ return database.loadAlbumByUID(albumUID); }
 
     public Playlist getPlaylistByName(String playlistName){ return database.loadPlaylistByName(playlistName); }

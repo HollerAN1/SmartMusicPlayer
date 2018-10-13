@@ -21,7 +21,7 @@ public class SongsViewModel extends AndroidViewModel {
 
     public SongsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
+        mRepository = new SPRepository(application);
         mAllSongs = mRepository.getAllSongsNameSort();
     }
 

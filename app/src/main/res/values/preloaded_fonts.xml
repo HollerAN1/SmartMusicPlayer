@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+        <item>@font/abel</item>
+        <item>@font/actor</item>
+        <item>@font/advent_pro_light</item>
+        <item>@font/advent_pro_thin</item>
+        <item>@font/alef</item>
         <item>@font/archivo_black</item>
         <item>@font/armata</item>
         <item>@font/asap</item>

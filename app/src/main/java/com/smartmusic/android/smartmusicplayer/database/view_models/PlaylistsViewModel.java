@@ -16,7 +16,7 @@ public class PlaylistsViewModel extends AndroidViewModel {
 
     public PlaylistsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
+        mRepository = new SPRepository(application);
         mAllPlaylists = mRepository.getAllPlaylistsNameSort();
     }
 

@@ -108,7 +108,7 @@ public class SplashActivity extends AppCompatActivity implements SongDatabaseCha
         if(RoomSQLDatabase.doesDatabaseExist(this)){
             startApp();
         } else {
-            maxSongs = RoomSQLDatabase.getNumberOfSongsStoredOnDevice(this);
+            maxSongs = RoomSQLDatabase.getNumberOfSongsStoredOnDevice(this.getContentResolver());
             mProgress.setMax(maxSongs);
             mProgress.setProgress(0);
         }

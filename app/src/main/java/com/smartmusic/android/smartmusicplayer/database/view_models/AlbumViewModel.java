@@ -16,7 +16,7 @@ public class AlbumViewModel extends AndroidViewModel{
 
     public AlbumViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
+        mRepository = new SPRepository(application);
     }
 
     public LiveData<List<Song>> getAllAlbumSongs() { return mSongs; }

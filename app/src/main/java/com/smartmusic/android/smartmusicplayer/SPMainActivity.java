@@ -59,7 +59,7 @@ public class SPMainActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        repository = new SPRepository(RoomSQLDatabase.getDatabase(this));
+        repository = new SPRepository(this);
 
         // Setup navigation drawer
         navDrawer = new SPNavigationDrawer(this, getSupportFragmentManager());

@@ -51,7 +51,8 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public String getSectionTitle(int position) {
-        //this String will be shown in a bubble for specified position
+        // RecyclerView Fast Scroll
+        // This String will be shown in a bubble for specified position
         if(_songs != null) {
             return _songs.get(position).getSongName().substring(0, 1);
         }
@@ -247,7 +248,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         private ImageView tvAlbumArt;
         private View background;
 
-        public LibrarySongHolder(View itemView) {
+        LibrarySongHolder(View itemView) {
             super(itemView);
             tvSongName =            itemView.findViewById(R.id.tvSongName);
             tvSongArtist =          itemView.findViewById(R.id.tvArtistName);
@@ -261,7 +262,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         private View background;
         private TextView albumNumber;
 
-        public AlbumListSongHolder(View itemView) {
+        AlbumListSongHolder(View itemView) {
             super(itemView);
             songName =              itemView.findViewById(R.id.song_title);
             songDuration =          itemView.findViewById(R.id.song_duration);

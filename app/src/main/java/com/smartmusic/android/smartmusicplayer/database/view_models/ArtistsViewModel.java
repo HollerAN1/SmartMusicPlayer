@@ -19,7 +19,7 @@ public class ArtistsViewModel extends AndroidViewModel {
 
     public ArtistsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
+        mRepository = new SPRepository(application);
         mAllArtists = mRepository.getAllArtistsNameSort();
         this.sort = new ArtistNameComparator();
     }

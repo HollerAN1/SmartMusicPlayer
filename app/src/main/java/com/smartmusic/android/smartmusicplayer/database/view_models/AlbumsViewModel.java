@@ -19,7 +19,7 @@ public class AlbumsViewModel extends AndroidViewModel {
 
     public AlbumsViewModel(Application application) {
         super(application);
-        mRepository = new SPRepository(RoomSQLDatabase.getDatabase(application));
+        mRepository = new SPRepository(application);
         mAllAlbums = mRepository.getAllAlbumsNameSort();
         this.sort = new AlbumNameComparator();
     }
