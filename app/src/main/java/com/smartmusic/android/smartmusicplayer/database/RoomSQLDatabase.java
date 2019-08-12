@@ -165,29 +165,23 @@ public abstract class RoomSQLDatabase
                                         MediaStore.Audio.Media.IS_MUSIC + "!=0",
                                         null,
                                         null);
-//            Cursor albumCursor = contentResolver
-//                                .query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-//                                        new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
-//                                MediaStore.Audio.Albums._ID+ "=?",
-//                                        null,
-//                                        null);
+
             if ( (mediaCursor != null) ) {
                 if ( (mediaCursor.moveToFirst()) ) {
                     do {
                         try {
-                            String name = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                            String artist = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                            String url = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                            int track = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
-                            int duration = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                            String year = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
-                            String album = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-//                        long dateAdded = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED));
-                            String displayName = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
-                            long size = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
-//                            String path = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-//
-//                        String dateString = SPUtils.yearMonthDayFormat.format(new Date(dateAdded)).toString();
+                            String name         = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                            String artist       = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                            String url          = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+
+                            int track           = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
+                            int duration        = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+
+                            String year         = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
+                            String album        = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
+                            String displayName  = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
+
+                            long size           = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
 
                             Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
                             Uri albumArt
