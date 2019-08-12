@@ -17,6 +17,9 @@ import com.smartmusic.android.smartmusicplayer.SPMainActivity;
 import com.smartmusic.android.smartmusicplayer.diff_callbacks.SongDiffCallback;
 import com.smartmusic.android.smartmusicplayer.database.entities.Song;
 import com.smartmusic.android.smartmusicplayer.R;
+import com.smartmusic.android.smartmusicplayer.library.view_holders.SongHolder_Album;
+import com.smartmusic.android.smartmusicplayer.library.view_holders.SongHolder_Library;
+import com.smartmusic.android.smartmusicplayer.library.view_holders.SongListViewHolder;
 import com.smartmusic.android.smartmusicplayer.utils.SPUtils;
 import com.squareup.picasso.Picasso;
 
@@ -28,7 +31,7 @@ import java.util.List;
  * THIS HANDLES DATA COLLECTION AND BINDS IT TO THE VIEW
  */
 
-public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionTitleProvider {
+public class SongAdapter extends RecyclerView.Adapter<SongListViewHolder> implements SectionTitleProvider {
 
     private List<Song> _songs;
     private Context context;
@@ -80,7 +83,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
      * @return 	A new HeaderViewHolder that holds a View of the given view type.
      */
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public SongListViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         /*Inflate a new view hierarchy from the specified xml resource.
         .inflate(resource, root view, boolean attach to root)*/
 
@@ -88,13 +91,13 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         switch(type){
             case LIBRARY:
                 holderView = LayoutInflater.from(context).inflate(R.layout.row_song_flat,viewGroup,false);
-                return new LibrarySongHolder(holderView);
+                return new SongHolder_Library(context, holderView);
             case ALBUM_LIST:
                 holderView = LayoutInflater.from(context).inflate(R.layout.row_song_default,viewGroup,false);
-                return new AlbumListSongHolder(holderView);
+                return new SongHolder_Album(context, holderView);
             default:
                 holderView = LayoutInflater.from(context).inflate(R.layout.row_song_flat,viewGroup,false);
-                return new LibrarySongHolder(holderView);
+                return new SongHolder_Library(context, holderView);
         }
     }
 
@@ -124,80 +127,11 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
      *                   set.
      */
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder songHolder, final int i) {
+    public void onBindViewHolder(@NonNull final SongListViewHolder songHolder, final int i) {
         final Song s = _songs.get(i);
-        switch (type){
-            case LIBRARY:
-                bindLibraryViewHolder((LibrarySongHolder)songHolder, s);
-                break;
-            case ALBUM_LIST:
-                bindAlbumListViewHolder((AlbumListSongHolder)songHolder, s);
-                break;
-        }
+        songHolder.bind(s);
     }
 
-
-    private void bindLibraryViewHolder(LibrarySongHolder songHolder, final Song s){
-        songHolder.tvSongName.setText(s.getSongName());
-        songHolder.tvSongArtist.setText(s.getArtistName());
-
-        Uri uri = s.getAlbumArt();
-        Picasso.with(context)
-                .load(uri)
-                .placeholder(R.drawable.temp_album_art)
-                .error(R.drawable.temp_album_art)
-                .into(songHolder.tvAlbumArt);
-
-        if(!s.isSelected()){
-            setSongNotPlayingView(songHolder);
-        } else {
-            setSongPlayingView(songHolder);
-        }
-
-        songHolder.background.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!s.isSelected()){
-                    SPMainActivity.mPlayerService.playSong(s);
-                    return;
-                }
-                // Stop the selected song
-                if (s.isSelected() || (SPMainActivity.mPlayerService.isSongPlaying())) {
-                    SPMainActivity.mPlayerService.stop();
-                }
-            }
-        });
-    }
-
-    private void bindAlbumListViewHolder(AlbumListSongHolder songHolder, Song s){
-        songHolder.songName.setText(s.getSongName());
-        songHolder.songDuration.setText(SPUtils.milliToTime((int)s.getDuration()));
-        songHolder.albumNumber.setText(""); // TODO: Get album number from song.
-    }
-
-    /**
-     * Updates the view holder to the
-     * song playing state.
-     * @param songHolder the song holder to change
-     */
-    private void setSongPlayingView(LibrarySongHolder songHolder){
-        songHolder.tvSongName.setHorizontallyScrolling(true);
-        songHolder.background.setBackgroundColor(context.getResources().getColor(R.color.cardview_shadow_start_color));
-        songHolder.tvSongName.setSelected(true);
-        songHolder.tvSongArtist.setSelected(true);
-    }
-
-    /**
-     * Updates the view holder to the song
-     * not playing state.
-     * @param songHolder the song holder to change
-     */
-    private void setSongNotPlayingView(LibrarySongHolder songHolder){
-        songHolder.tvSongName.setHorizontallyScrolling(false);
-        songHolder.background.setBackground(null);
-        songHolder.tvSongName.setSelected(false);
-        songHolder.tvSongArtist.setSelected(false);
-    }
 
     /**
      * Returns the total number of items in the data set held by the adapter.
@@ -226,50 +160,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         setSongs(newSongs);
     }
 
-
-    /**
-     * A HeaderViewHolder describes an item view and metadata about its place
-     * within the RecyclerView.
-
-     RecyclerView.Adapter implementations should subclass HeaderViewHolder
-     and add fields for caching potentially expensive findViewById(int)
-     results.
-
-     While RecyclerView.LayoutParams belong to the RecyclerView.LayoutManager,
-     ViewHolders belong to the adapter. Adapters should feel free to use their
-     own custom HeaderViewHolder implementations to store data that makes binding
-     view contents easier. Implementations should assume that individual item
-     views will hold strong references to HeaderViewHolder objects and that
-     RecyclerView instances may hold strong references to extra off-screen
-     item views for caching purposes
-     */
-    public class LibrarySongHolder extends RecyclerView.ViewHolder{
-        private TextView tvSongName,tvSongArtist;
-        private ImageView tvAlbumArt;
-        private View background;
-
-        LibrarySongHolder(View itemView) {
-            super(itemView);
-            tvSongName =            itemView.findViewById(R.id.tvSongName);
-            tvSongArtist =          itemView.findViewById(R.id.tvArtistName);
-            background =            itemView.findViewById(R.id.list_background);
-            tvAlbumArt =            itemView.findViewById(R.id.list_albumArt);
-        }
-    }
-
-    public class AlbumListSongHolder extends RecyclerView.ViewHolder{
-        private TextView songName,songDuration;
-        private View background;
-        private TextView albumNumber;
-
-        AlbumListSongHolder(View itemView) {
-            super(itemView);
-            songName =              itemView.findViewById(R.id.song_title);
-            songDuration =          itemView.findViewById(R.id.song_duration);
-            background =            itemView.findViewById(R.id.song_background);
-            albumNumber =           itemView.findViewById(R.id.album_number);
-        }
-    }
 }
 
 
